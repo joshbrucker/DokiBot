@@ -7,7 +7,7 @@ const db = require(__basedir + '/utils/db');
 
 var poemUpdate = function(message, client) {
 
-	// Allows only DokiBot to send messages in thot-poems
+	// Allows only DokiBot to send messages in doki-poems
     if (message.channel.name == 'doki-poems') {
     	if (message.author != client.user) {
     		message.delete();
@@ -15,18 +15,12 @@ var poemUpdate = function(message, client) {
     	}
     }
 
-    // Ensures that the channel "thot-poems" exists
     var poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
-    if (!poemChannel) {
-        message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled '
-    		+ '\`doki-poems\` and DokiBot will add the first word posted every interval to a poem.');
-        return;
-    }
-
-    var firstWord = message.content.split(' ')[0];
+    if (!poemChannel) return;
 
     if (message.author == client.user) return;
 
+    var firstWord = message.content.split(' ')[0];
     if (!firstWord) return;
 
     if (isUrl(firstWord)) return;
