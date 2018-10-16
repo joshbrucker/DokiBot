@@ -1,0 +1,34 @@
+{
+	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `doki` | `moniquote` | `ost` | `poem` | `waifu` | `nep`\n\n",
+	"invalidArg": ":x: That's not a valid command to look up!\nUse `help` for a list of all commands.",
+	"commands": [
+			{
+				"name": "help",
+				"text": "Lists info about commands. B-Baka!\n\n**Usage**: `help <command>`"
+			},
+			{
+				"name": "doki",
+				"text": "`doki` | Posts a random Doki Doki picture.\n\n**Usage**: `doki [nsfw] [monika | sayori | yuri | natsuki]`"
+			},
+			{
+				"name": "ost",
+				"text": "`ost` | Plays songs from the official Doki Doki OST\n\n**Usage**: `ost <arguments>`\n\n__Arguments__: `play [1-15]` | `playall` | `stop` | `pause` | `resume` | `skip` | `queue` | `clear` | `list`"
+			},
+			{
+				"name": "moniquote",
+				"text": "`moniquote` | Posts one of Monika's quotes from the end of the game\n\n**Usage**: `moniquote`"
+			},
+			{
+				"name": "poem",
+				"text": "`poem` | Uses commands related to the doki-poems feature\n\n**Usage**: `poem <arguments>`\n\n__Arguments__: `end` | `frequency [minute | hour | day]`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
+			},
+			{
+				"name": "waifu",
+				"text": "`waifu` | Posts a picture of a waifu\n\n**Usage**: `waifu [nsfw]`\n\n"
+			},
+			{
+				"name": "nep",
+				"text": "`nep` | Nepu nepu!\n\n**Usage**: `nep [<character>]`\n\n"
+			}
+	]
+}
