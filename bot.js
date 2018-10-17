@@ -33,9 +33,11 @@ client.on('error', (error) => {
 });
 
 process.on('SIGINT', (code) => {
-	for (var id in voice) {
-		client.guilds.get(id).voiceConnection.disconnect();
-	}
+    for (var id in voice.servers) {
+        if (voice.servers.hasOwnProperty(id)) {
+            client.guilds.get(id).voiceConnection.disconnect();
+        }
+    }
 
 	process.exit();
 });

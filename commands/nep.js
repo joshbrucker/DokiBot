@@ -10,29 +10,34 @@ const player = require('play-sound');
 const YTDL = require('ytdl-core');
 const Discord = require('discord.js');
 
-var voice = require(__basedir + '/utils/voice');
+const voice = require(__basedir + '/utils/voice');
 
 var nep = function(message, args) {
 	var id = message.guild.id;
+	var channel = message.channel;
 
 	if (!message.member.voiceChannel) {
-    	message.channel.send('You need to be in a voice channel to use the `nep` command!');
+    	message.channel.send('You need to be in a voice channel to use `nep`');
     	return;
 	}
 
-	// Sets up variables accessed by all voice chat operations
-    if (!voice[id]) {
-        voice[id] = {
-        	currTask: 'nep',
-        	timeout: null
-        };
-    } else {
-    	if (voice[id].currTask) {
-    		message.channel.send('Voice chat already in use!');
-    		return;
-    	} else {
-    		voice[id].currTask = 'nep';
-    	}
+	// Sets up serverwide voice chat management
+	if (!voice.servers[id]) {
+		voice.servers[id] = {
+			task: {
+				name: null,
+				dispatcher: null
+			},
+			timeout: null
+		};
+	}
+
+	const server = voice.servers[id];
+	const task = server.task;
+
+    if (task.name) {
+        channel.send('Voice chat already in use through the `' + task.name + '` command!');
+        return;
     }
 
     var character;
@@ -45,8 +50,7 @@ var nep = function(message, args) {
 
 	fs.readdir(('./assets/nep_audio/' + character), (err, files) => {
 		if (err) {
-	    	message.channel.send('Can\'t find character ' + character + '!');
-	    	voice[id].currTask = null;
+	    	channel.send('Can\'t find character ' + character + '!');
 	    } else {
 	    	if (!message.guild.voiceConnection) {
        			message.member.voiceChannel.join()
@@ -62,24 +66,32 @@ var nep = function(message, args) {
 
 var playSound = function(message, connection, files, character) {
 	var id = message.guild.id;
+	const server = voice.servers[id];
+    const task = server.task;
+    
 	var randomInt = Math.floor(Math.random() * files.length);
 
-	var dispatcher = connection.playFile('./assets/nep_audio/' + character + '/' + files[randomInt]);
+	task.name = 'nep';
 
-	dispatcher.on('start', () => {
-	    if (voice[id].timeout) {
-	        clearTimeout(voice[id].timeout);
-	        voice[id].timeout = null;
+	task.dispatcher = connection.playFile('./assets/nep_audio/' + character + '/' + files[randomInt]);
+
+	task.dispatcher.once('start', () => {
+	    if (server.timeout) {
+	        clearTimeout(server.timeout);
+	        server.timeout = null;
 	    }
 	});
 
-	dispatcher.on('end', () => {
-		voice[id].currTask = null;
+	task.dispatcher.once('end', () => {
+		server.task = {
+			name: null,
+			dispatcher: null
+		};
 
-	    voice[id].timeout = setTimeout(() => {
-	        delete voice[id];
+	    server.timeout = setTimeout(() => {
+	        delete voice.servers[id];
 	        connection.disconnect();
-	    }, 300000);
+	    }, voice.leaveTime);
 	});
 
 

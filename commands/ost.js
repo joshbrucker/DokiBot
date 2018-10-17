@@ -1,9 +1,3 @@
-/*
-    The OST command is disbaled temporarily until
-    I iron out a bunch of issues with its
-    interactions with nep.js
-*/
-
 const fs = require('fs');
 const path = require('path');
 const YTDL = require('ytdl-core');
@@ -12,147 +6,180 @@ const soundtrack = require(__basedir + '/assets/soundtrack.json');
 const utils = require(__basedir + '/utils/utils');
 const voice = require(__basedir + '/utils/voice');
 
-var servers = {};
-/*
-    server_id = {
-        queue,
-        dispatcher,
-        pauseTimer
-    }
-*/
-
 var ost = function(message, args) {
 
-    message.channel.send('The OST function is currently down for maintenance.');
-    return;
-
     var id = message.guild.id
+    var channel = message.channel;
 
     if (args.length < 1) {
         utils.invalidArgsMsg(message, 'ost');
         return;
     }
 
+    // List does not use voice chat and should be run apart from the others
+    if (args[0] == 'list') {
+	    var msg = '```ml\nDoki Doki Literature Club OST\n';
+        for (var i = 0; i < soundtrack.length; i++) {
+            msg += '\n\"' + (i + 1) + '. ' + soundtrack[i].name + '\"';
+        }
+        msg += '\`\`\`';
+        channel.send(msg);
+    	return;
+    }
+
     if (!message.member.voiceChannel) {
-        message.channel.send('You must be in a voice channel to use \`-ost\`');
+        message.channel.send('You must be in a voice channel to use `ost`');
         return;
     }
 
-    if (!voice[id]) {
-        voice[id] = {
-            currTask: 'ost',
+    // Sets up serverwide voice chat management
+    if (!voice.servers[id]) {
+        voice.servers[id] = {
+            task: {
+            	name: null,
+            	dispatcher: null
+            },
             timeout: null
         };
+    }
+
+    const server = voice.servers[id];
+    const task = server.task;
+
+    if (task.name && task.name != 'ost') {
+        channel.send('Voice chat already in use through the `' + task.name + '` command!');
+        return;
     } else {
-        if (!voice[id].currTask) {
-            voice[id].currTask = 'ost';
-        } else if (voice[id].currTask != 'ost') {
-            message.channel.send('Voice chat already in use!');
-            return;
-        }
+    	if (task.queue == undefined) {
+    		task.queue = [];
+    	}
+    	if (task.pauseTimeout == undefined) {
+    		task.pauseTimeout = null;
+    	}
     }
-
-    // Sets up server queue
-    if (servers[id] == null) {
-        servers[id] = {
-            queue: []
-        };
-    }
-
-    var server = servers[id];
 
     var cmd = args[0].toLowerCase();
     args.splice(0, 1);
+
     switch (cmd) {
         case 'play':
             if (args.length == 1) {
-                if (args[0] >= 1 && args[0] <= soundtrack.length) {
-                    var song;
+            	var songNum = args[0] - 1;
+                if (songNum >= 0 && songNum < soundtrack.length) {
+                    var song = soundtrack[songNum];
+                    var queueLength = task.queue.length;
 
-                    for (var i  = 0; i < soundtrack.length; i++) {
-                        if (i + 1 == args[0]) {
-                            song = soundtrack[i];
-                        }
-                    }
+                    if (queueLength + 1 <= 30) {
+	                    task.queue.push(song);
 
-                    if (server.queue.length > 0) {
-                        message.channel.send('Adding \`' + song.name + '\` to the queue');
+	                    if (queueLength > 0) {
+	                        channel.send('Adding `' + song.name + '` to the queue!');
+	                    } else {
+	                    	channel.send('Now playing `' + song.name + '`');
+	                    	if (!message.guild.voiceConnection) {
+		                        message.member.voiceChannel.join()
+		                            .then((connection) => {
+		                                playMusic(message, connection);
+		                            });
+		                    } else {
+		                        playMusic(message, message.guild.voiceConnection);
+		                    }
+	                    }
                     } else {
-                        message.channel.send('Now playing \`' + song.name + '\`');
-                    }
-
-                    server.queue.push(song);
-
-                    if (!message.guild.voiceConnection) {
-                        message.member.voiceChannel.join()
-                            .then((connection) => {
-                                playMusic(message, connection);
-                            });
-                    } else if (server.queue.length == 0) {
-                        playMusic(message, message.guild.voiceConnection);
+                    	channel.send('The queue is maxed-out at 30! Calm down!');
                     }
                 } else {
-                    message.channel.send('Invalid number. Use \`ost list\` for a list of all songs.');
+                    channel.send('Invalid OST number. Use `ost list` for a list of all songs.');
                 }
             } else {
-                message.channel.send('Invalid number. Use \`ost list\` for a list of all songs.');
+                channel.send('Invalid usage. Use \`help ost\` to see proper usage.');
             }
             break;
         case 'playall':
-            for (var i  = 0; i < soundtrack.length; i++) {
-                server.queue.push(soundtrack[i]);
+            channel.send('Adding all OST songs to the queue!');
+
+        	var queueLength = task.queue.length;
+
+            for (var i = 0; i < soundtrack.length; i++) {
+            	if (task.queue.length + 1 <= 30) {
+                	task.queue.push(soundtrack[i]);
+            	} else {
+                    channel.send('The queue is maxed-out at 30! Calm down!');
+                    break;
+            	}
             }
 
-            message.channel.send('Adding all OST songs to the queue');
-
-            if (!message.guild.voiceConnection) {
-                message.member.voiceChannel.join()
-                    .then((connection) => {
-                        playMusic(message, connection);
-                    });
-            } else if (server.queue.length == 0) {
-                playMusic(message, connection);
+            if (queueLength == 0) {
+	            if (!message.guild.voiceConnection) {
+	                message.member.voiceChannel.join()
+	                    .then((connection) => {
+	                        playMusic(message, connection);
+	                    });
+	            } else {
+	                playMusic(message, message.guild.voiceConnection);
+	            }
             }
             break;
         case 'stop':
-            if (server.dispatcher) {
-                server.queue = [];
-                server.dispatcher.end();
+            if (task.dispatcher) {
+            	channel.send(':stop_button: Stopping playback...');
+                task.queue = [];
+                task.dispatcher.end();
+            } else {
+            	channel.send('Nothing to stop!');
             }
             break;
+            
+        // Pause & Resume cause strange audio lag -> temporarily disabled.
         case 'pause':
-            if (server.dispatcher) {
-                 if (!server.dispatcher.paused) {
-                     message.channel.send(':pause_button: Pausing...');
-                     server.dispatcher.pause();
+        	channel.send('The pause feature is temporarily disabled.');
+            // if (task.dispatcher) {
+            //      if (!task.dispatcher.paused) {
+            //          channel.send(':pause_button: Pausing...');
+            //          task.dispatcher.pause();
 
-                     server.pauseTimer = setTimeout(() => {
-                        server.dispatcher.end();
-                     }, 3000);
-                 }
-            }
+            //          task.pauseTimeout = setTimeout(() => {
+            //             channel.send('Pause timed out, moving to next song!');
+            //             task.pauseTimeout = null;
+            //             task.dispatcher.end();
+            //          }, 5000);
+            //          return;
+            //      } else {
+            //      	channel.send('Playback is already paused!');
+            //      }
+            // } else {
+            // 	channel.send('Nothing to pause!');
+            // }
             break;
         case 'resume':
-            if (server.dispatcher) {
-                if (server.dispatcher.paused) {
-                    message.channel.send(':arrow_forward: Resuming...');
-                    server.dispatcher.resume();
+        	channel.send('The resume feature is temporarily disabled.');
+            // if (task.dispatcher) {
+            //     if (task.dispatcher.paused) {
+            //         channel.send(':arrow_forward: Resuming...');
+            //         task.dispatcher.resume();
 
-                    if (server.pauseTimer) {
-                        clearTimeout(server.pauseTimer);
-                        server.pauseTimer = null;
-                    }
-                }
-            }
+            //         clearTimeout(task.pauseTimeout);
+            //         task.pauseTimeout = null;
+            //         return;
+            //     } else {
+            //     	channel.send('Can\'t resume because playback isn\'t paused!');
+            //     }
+            // } else {
+            // 	channel.send('Nothing to resume!');
+            // }
             break;
         case 'skip':
-            if (server.dispatcher) {
-                if (server.queue[1]) {
-                    message.channel.send('Skipping... Now playing \`' + server.queue[1].name + '\`');
+            if (task.dispatcher) {
+                if (task.queue[1]) {
+                    channel.send(':fast_forward: Skipping...');
+                    channel.send('Now playing \`' + task.queue[1].name + '\`');
                 } else {
-                    message.channel.send('Skipping... End of queue!');
+                    channel.send(':fast_forward: Skipping...');
+                    channel.send('End of queue!');
                 }
-                server.dispatcher.end();
+                task.dispatcher.end();
+            } else {
+            	channel.send('Nothing to skip!');
             }
             break;
         case 'queue':
@@ -160,54 +187,48 @@ var ost = function(message, args) {
             //TODO: Tidy this up and make it more readable
 
             const pageLength = 10;
-            var maxPage = Math.ceil(server.queue.length / pageLength);
+            var maxPage = Math.ceil(task.queue.length / pageLength);
             var msg;
 
             if (args.length == 1) {
                 var page = args[0];
 
                 if (page > maxPage) {
-                    message.channel.send('Invalid queue page.');
+                    channel.send('Invalid queue page.');
                 } else {
                     msg = '\`\`\`ml\nCurrent Queue (Page ' + page + ' Of ' + maxPage + ')\n';
 
                     var startIndex = pageLength * (page - 1);
 
                     var endIndex;
-                    if (page == maxPage) {
-                        endIndex = server.queue.length % pageLength + (maxPage - 1) * pageLength;
+                    if (page == maxPage && task.queue.length % pageLength != 0) {
+                        endIndex = task.queue.length % pageLength + (maxPage - 1) * pageLength;
                     } else {
                         endIndex = page * pageLength;
                     }
 
                     for (var i = startIndex; i < endIndex; i++) {
-                        msg += '\n\"' + (i + 1) + '. ' + server.queue[i].name + '\"';
+                        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
                     }
                     msg += '\`\`\`';
-                    message.channel.send(msg);
+                    channel.send(msg);
                 }
             } else {
                 msg = '\`\`\`ml\nCurrent Queue (Page 1 Of ' + maxPage + ')\n';
-                for (var i = 0; (i < pageLength) && (i < server.queue.length); i++) {
-                    msg += '\n\"' + (i + 1) + '. ' + server.queue[i].name + '\"';
+                for (var i = 0; (i < pageLength) && (i < task.queue.length); i++) {
+                    msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
                 }
                 msg += '\`\`\`';
-                message.channel.send(msg);
+                channel.send(msg);
             }
             break;
         case 'clear':
-            server.queue = [];
-            if (server.dispatcher) {
-                server.dispatcher.end();
-            }
-            break;
-        case 'list':
-            var msg = '\`\`\`ml\nDoki Doki Literature Club OST\n'
-            for (var i = 0; i < soundtrack.length; i++) {
-                msg += '\n\"" + (i + 1)' + '. ' + soundtrack[i].name + '\"';
-            }
-            msg += '\`\`\`';
-            message.channel.send(msg);
+        	if (task.dispatcher) {
+        		channel.send('Cleared the queue!');
+        		task.queue = [task.queue[0]];
+        	} else {
+        		channel.send('Nothing to clear!');
+        	}
             break;
         default:
             utils.invalidArgsMsg(message, 'ost');
@@ -216,31 +237,35 @@ var ost = function(message, args) {
 
 var playMusic = function(message, connection) {
     var id = message.guild.id;
-    var server = servers[id];
+    const server = voice.servers[id];
+    const task = server.task;
 
-    server.dispatcher = connection.playStream(YTDL(server.queue[0].url, {filter: 'audioonly'}));
+    task.name = 'ost';
 
-    server.dispatcher.on('start', () => {
-        if (voice[id].timeout) {
-            clearTimeout(voice[id].timeout);
-            voice[id].timeout = null;
+    task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
+
+    task.dispatcher.once('start', () => {
+        if (server.timeout) {
+            clearTimeout(server.timeout);
+            server.timeout = null;
         }
     });
 
-    server.dispatcher.on('end', () => {
-        server.queue.shift();
+    task.dispatcher.once('end', () => {
+    	task.queue.shift();
 
-        if (server.queue[0]) {
+        if (task.queue[0]) {
             playMusic(message, connection);
         } else {
-            server.dispatcher = null;
-            voice[id].currTask = null;
+            server.task = {
+            	name: null,
+            	dispatcher: null
+            };
 
-            voice[id].timeout = setTimeout(() => {
-                delete voice[id];
-                delete servers[id];
+            server.timeout = setTimeout(() => {
+                delete voice.servers[id];
                 connection.disconnect();
-            }, 300000);
+            }, voice.leaveTime);
         }
     });
 };

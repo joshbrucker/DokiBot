@@ -1,15 +1,20 @@
+var servers = {}; 
 /*
-	May change this. A file with just one variable
-	makes me a bit uncomfortable, although it is
-	easier to track it down than making it global.
-*/
-
-var voice = {}; 
-/*
-	server_id = {
-		currTask
+	server_id: {
+		task: {
+			name,
+			dispatcher,
+			[task-specific property],
+			...
+			[task-specific property]
+		},
 		timeout
 	}
 */
 
-module.exports = voice;
+var leaveTime = 300000;
+
+module.exports = {
+	servers,
+	leaveTime
+};
