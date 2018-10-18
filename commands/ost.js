@@ -129,44 +129,40 @@ var ost = function(message, args) {
             	channel.send('Nothing to stop!');
             }
             break;
-            
-        // Pause & Resume cause strange audio lag -> temporarily disabled.
         case 'pause':
-        	channel.send('The pause feature is temporarily disabled.');
-            // if (task.dispatcher) {
-            //      if (!task.dispatcher.paused) {
-            //          channel.send(':pause_button: Pausing...');
-            //          task.dispatcher.pause();
+            if (task.dispatcher) {
+                 if (!task.dispatcher.paused) {
+                     channel.send(':pause_button: Pausing...');
+                     task.dispatcher.pause();
 
-            //          task.pauseTimeout = setTimeout(() => {
-            //             channel.send('Pause timed out, moving to next song!');
-            //             task.pauseTimeout = null;
-            //             task.dispatcher.end();
-            //          }, 5000);
-            //          return;
-            //      } else {
-            //      	channel.send('Playback is already paused!');
-            //      }
-            // } else {
-            // 	channel.send('Nothing to pause!');
-            // }
+                     task.pauseTimeout = setTimeout(() => {
+                        channel.send('Pause timed out, moving to next song!');
+                        task.pauseTimeout = null;
+                        task.dispatcher.end();
+                     }, 300000);
+                     return;
+                 } else {
+                 	channel.send('Playback is already paused!');
+                 }
+            } else {
+            	channel.send('Nothing to pause!');
+            }
             break;
         case 'resume':
-        	channel.send('The resume feature is temporarily disabled.');
-            // if (task.dispatcher) {
-            //     if (task.dispatcher.paused) {
-            //         channel.send(':arrow_forward: Resuming...');
-            //         task.dispatcher.resume();
+            if (task.dispatcher) {
+                if (task.dispatcher.paused) {
+                    channel.send(':arrow_forward: Resuming...');
+                    task.dispatcher.resume();
 
-            //         clearTimeout(task.pauseTimeout);
-            //         task.pauseTimeout = null;
-            //         return;
-            //     } else {
-            //     	channel.send('Can\'t resume because playback isn\'t paused!');
-            //     }
-            // } else {
-            // 	channel.send('Nothing to resume!');
-            // }
+                    clearTimeout(task.pauseTimeout);
+                    task.pauseTimeout = null;
+                    return;
+                } else {
+                	channel.send('Can\'t resume because playback isn\'t paused!');
+                }
+            } else {
+            	channel.send('Nothing to resume!');
+            }
             break;
         case 'skip':
             if (task.dispatcher) {
@@ -245,6 +241,8 @@ var playMusic = function(message, connection) {
     task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
 
     task.dispatcher.once('start', () => {
+        connection.player.streamingData.pausedTime = 0;
+
         if (server.timeout) {
             clearTimeout(server.timeout);
             server.timeout = null;
