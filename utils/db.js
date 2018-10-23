@@ -9,8 +9,9 @@ var addGuild = async function(id, func) {
 	try {
 		conn = await pool.getConnection();
 
-		var res = await conn.query(`INSERT INTO guild (id) VALUES ('${id}')
-									ON DUPLICATE KEY UPDATE id=id;`);
+		var res = await conn.query(`INSERT INTO guild (id) VALUES (?)
+									ON DUPLICATE KEY UPDATE id=id;`, [id]);
+
 		conn.end();
 		if (func) {
 			func();
@@ -27,7 +28,7 @@ var removeGuild = async function(id, func) {
 	try {
 		conn = await pool.getConnection();
 
-		var res = await conn.query(`DELETE FROM guild WHERE id = '${id}';`);
+		var res = await conn.query(`DELETE FROM guild WHERE id = ?;`, [id]);
 
 		conn.end();
 		if (func) {
@@ -54,10 +55,10 @@ var getGuild = async function(id, func) {
 	try {
 		conn = await pool.getConnection();
 
-		var res = await conn.query(`SELECT * FROM guild WHERE id = '${id}';`);
+		var res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
 		if (!res) {
-			await conn.query(`INSERT INTO guild (id) VALUES ('${id}');`);
-			res = await conn.query(`SELECT * FROM guild WHERE id = '${id}';`);
+			await conn.query(`INSERT INTO guild (id) VALUES (?);`, [id]);
+			res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
 		}
 
 		conn.end();
@@ -75,7 +76,7 @@ var savePrefix = async function(id, prefix, func) {
 	try {
 		conn = await pool.getConnection();
 
-		var res = await conn.query(`UPDATE guild SET prefix = '${prefix}' WHERE id = '${id}';`);
+		var res = await conn.query(`UPDATE guild SET prefix = ? WHERE id = ?;`, [prefix, id]);
 
 		conn.end();
 		if (func) {
@@ -93,12 +94,7 @@ var savePoemId = async function(id, pId, func) {
 	try {
 		conn = await pool.getConnection();
 
-		// Only adds quotes if value is not null
-    	if (pId != null) {
-    		pId = `\'${pId}\'`;
-    	}
-
-		var res = await conn.query(`UPDATE guild SET poem_id = ${pId} WHERE id = '${id}';`);
+		var res = await conn.query(`UPDATE guild SET poem_id = ? WHERE id = ?;`, [pId, id]);
 
 		conn.end();
 		if (func) {
@@ -115,7 +111,7 @@ var savePoemFreq = async function(id, freq, func) {
 	try {
 		conn = await pool.getConnection();
 
-		var res = await conn.query(`UPDATE guild SET poem_freq = '${freq}' WHERE id = '${id}';`);
+		var res = await conn.query(`UPDATE guild SET poem_freq = ? WHERE id = ?;`, [freq, id]);
 
 		conn.end();
 		if (func) {
