@@ -17,6 +17,7 @@ var poem = function(message, args) {
                         } else {
                             poemChannel.fetchMessage(guild.poem_id).then((msg) => {
                                 var filepath = '';
+                                var words = msg.content.split(' ');
                                 for (let i = 0; (i < words.length) && (i < 3); i++) {
                                     if (utils.isLegalFileName(words[i])) {
                                         filepath += words[i] + ' ';
