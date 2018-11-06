@@ -86,7 +86,7 @@ var secondsConverter = function(int) {
 };
 
 var getGeneralChat = function(guild) {
-    return guild.channels.find('name', 'general');
+    return guild.channels.find((channel) => channel.name === 'general');
 };
 
 var getMostPermissibleChannel = function(client, guild) {
@@ -114,20 +114,22 @@ var isLegalFileName = function(str) {
     }
 }
 
-var getRandomUser = function(client, guild) {
+var getMembers = function(guild) {
     var members = guild.members.array();
-    var randUser = client.user;
-    while (randUser.bot) {
-        randUser = members[Math.floor(Math.random() * members.length)].user;
+    var humans = [];
+    for (let i = 0; i < members.length; i++) {
+        if (!members[i].user.bot) {
+            humans.push(members[i]);
+        }
     }
-    return randUser;
-};
+    return humans;
+}
 
 module.exports = {
     invalidArgsMsg,
     toTitleCase,
     getMostPermissibleChannel,
-    getRandomUser,
+    getMembers,
     getGeneralChat,
     dateFormat,
     timeFormat,
