@@ -27,23 +27,22 @@ var insult = function(client) {
 			for (let guild of client.guilds.array()) {
 				if (guild.available) {
 					var message = lines[Math.floor(Math.random() * lines.length)];
-					var occurrences = message.match(/%user%/g).length;
 
 					var channel = utils.getGeneralChat(guild);
 					if (!channel) {
 						channel = utils.getMostPermissibleChannel(client, guild);
 					}
 
-					var picked = [];
+					var members = utils.getMembers(guild);
+					var occurrences = message.match(/%user%/g).length;
 					for (let i = 0; i < occurrences; i++) {
-						var user = utils.getRandomUser(client, guild);
-						if (guild.memberCount >= occurrences) {
-							while (picked.includes(user.id)) {
-								user = utils.getRandomUser(client, guild);
-							}
-							picked.push(user.id);
-						}
+						var index = Math.floor(Math.random() * members.length);
+						var user = members[index];
 						message = message.replace('%user%', '<@' + user.id + '>');
+
+						if (members.length > 1) {
+							members.splice(index, 1);
+						}
 					}
 					channel.send(message);
 				} else {
