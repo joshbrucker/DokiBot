@@ -1,25 +1,21 @@
 {
   "name": "thotbot",
   "version": "1.0.0",
-  "description": "Best bot ever",
+  "description": "A bot based on the hit game Doki Doki Literature Club.",
   "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "author": "Joshua Brucker",
+  "license": "ISC",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
-    "danbooru": "^3.0.7",
-    "discord.io": "github:woor/discord.io#gateway_v6",
+    "danbooru": "^3.0.8",
     "discord.js": "^11.4.2",
-    "ffmpeg": "0.0.4",
-    "graphql-request": "^1.8.2",
     "is-url": "^1.2.4",
     "libsodium-wrappers": "^0.7.3",
     "mariadb": "^2.0.0-alpha",
-    "node-fetch": "^2.2.0",
-    "node-opus": "^0.2.9",
-    "npm": "^6.4.0",
-    "play-sound": "^1.1.2",
-    "prism-media": "^0.1.0",
-    "winston": "^2.4.0",
-    "ytdl-core": "^0.20.4"
+    "node-fetch": "^2.3.0",
+    "node-opus": "^0.3.1",
+    "ytdl-core": "^0.28.0"
   }
 }
