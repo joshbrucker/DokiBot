@@ -1,12 +1,5 @@
-/*
-	Voice chat commands are new and still buggy.
-	There's overlap that still needs to be checked
-	and fixed between nep.js and ost.js
-*/
-
 const fs = require('fs');
 const path = require('path');
-const player = require('play-sound');
 const YTDL = require('ytdl-core');
 const Discord = require('discord.js');
 
