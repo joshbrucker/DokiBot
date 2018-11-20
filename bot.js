@@ -108,11 +108,6 @@ client.on('message', (message) => {
 	                    case 'anime':
 	                        commands.anime(message, args);
 	                        break;
-	                    case 'disconnect':
-	                    	if (message.guild.voiceConnection) {
-	                    		message.guild.voiceConnection.disconnect();
-	                    	}
-	                    	break;
 	                }
 	            }
 	        }
