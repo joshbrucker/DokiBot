@@ -25,7 +25,7 @@ const insult = require('./etc/insult.js');
 const client = new Discord.Client();
 
 process.on('unhandledRejection', (reason, p) => {
-    console.log(reason);
+	console.log('Unhandled Rejection:', p);
 });
 
 client.on('error', (error) => {
@@ -62,67 +62,69 @@ client.on('guildDelete', (guild) => {
 });
 
 client.on('message', (message) => {
-    db.getGuild(message.guild.id, (guild) => {
+	if (message.guild) {
+	    db.getGuild(message.guild.id, (guild) => {
 
-        var prefix = guild.prefix;
+	        var prefix = guild.prefix;
 
-        var content = message.content.toLowerCase();
+	        var content = message.content.toLowerCase();
 
-        if (content.substring(0, prefix.length) == prefix && content.length > 1) {
-            if (message.channel.name != 'doki-poems') {
-                var args = content.substring(prefix.length).split(' ');
-                var cmd = args[0].toLowerCase();
-                args = args.splice(1);
+	        if (content.substring(0, prefix.length) == prefix && content.length > 1) {
+	            if (message.channel.name != 'doki-poems') {
+	                var args = content.substring(prefix.length).split(' ');
+	                var cmd = args[0].toLowerCase();
+	                args = args.splice(1);
 
-                switch(cmd) {
-                    case 'doki':
-                        commands.doki(message, args);
-                        break;
-                    case 'waifu':
-                        commands.waifu(message, args);
-                        break;
-                    case 'moniquote':
-                        commands.moniquote(message, args);
-                        break;
-                    case 'nep':
-                        commands.nep(message, args);
-                        break;
-                    case 'poem':
-                        if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
-                            commands.poem(message, args);
-                        } else {
-                            message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
-                                + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
-                        }
-                        break;
-                    case "help":
-                        commands.help(message, args);
-                        break;
-                    case "ost":
-                        commands.ost(message, args);
-                        break;
-                    case 'prefix':
-                        commands.prefix(message, args);
-                        break;
-                    case 'anime':
-                        commands.anime(message, args);
-                        break;
-                    case 'disconnect':
-                    	if (message.guild.voiceConnection) {
-                    		message.guild.voiceConnection.disconnect();
-                    	}
-                    	break;
-                }
-            }
-        }
+	                switch(cmd) {
+	                    case 'doki':
+	                        commands.doki(message, args);
+	                        break;
+	                    case 'waifu':
+	                        commands.waifu(message, args);
+	                        break;
+	                    case 'moniquote':
+	                        commands.moniquote(message, args);
+	                        break;
+	                    case 'nep':
+	                        commands.nep(message, args);
+	                        break;
+	                    case 'poem':
+	                        if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
+	                            commands.poem(message, args);
+	                        } else {
+	                            message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
+	                                + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
+	                        }
+	                        break;
+	                    case "help":
+	                        commands.help(message, args);
+	                        break;
+	                    case "ost":
+	                        commands.ost(message, args);
+	                        break;
+	                    case 'prefix':
+	                        commands.prefix(message, args);
+	                        break;
+	                    case 'anime':
+	                        commands.anime(message, args);
+	                        break;
+	                    case 'disconnect':
+	                    	if (message.guild.voiceConnection) {
+	                    		message.guild.voiceConnection.disconnect();
+	                    	}
+	                    	break;
+	                }
+	            }
+	        }
 
-        poemUpdate(message, client);
+	        poemUpdate(message, client);
 
-        var dokiReactChance = Math.floor(Math.random() * 3) + 1;
-        if (dokiReactChance == 3) {
-            dokiReact(message, client);
-        }
-    });
+	        var dokiReactChance = Math.floor(Math.random() * 3) + 1;
+	        if (dokiReactChance == 3) {
+	            dokiReact(message, client);
+	        }
+	    });
+	}
 });
 
 client.login(auth.token);
