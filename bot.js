@@ -12,6 +12,7 @@ const Discord = require('discord.js');
 
 const fs = require('fs');
 const path = require('path');
+const DBL = require("dblapi.js");
 
 const auth = require('./data/auth');
 const utils = require('./utils/utils');
@@ -23,14 +24,21 @@ const poemUpdate = require('./etc/poem-update');
 const insult = require('./etc/insult.js');
 
 const client = new Discord.Client();
+const dbl = new DBL(auth.dbltoken, client);
 
 process.on('unhandledRejection', (reason, p) => {
-	console.log('Unhandled Rejection:', p);
+	if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
+		console.log('Unhandled Rejection:', p);
+	}
 });
 
 client.on('error', (error) => {
-    console.log(error);
+	console.log('Client Error: ', error);
 });
+
+dbl.on('error', e => {
+	console.log('Discord Bots List Error: ', e);
+})
 
 process.on('SIGINT', (code) => {
     for (var id in voice.servers) {
@@ -46,14 +54,27 @@ process.on('SIGINT', (code) => {
 });
 
 client.on('ready', () => {
-    setInterval(() => insult(client), 60000);
+    setInterval(() => {
+    	insult(client);
+    }, 60000);
+
     console.log('I am ready!');
 });
 
 client.on('guildCreate', (guild) => {
     db.addGuild(guild.id, () => {
-        guild.systemChannel.send('Square up! Your true love has joined the server.'
-            + 'You can use \`-help\` to get started. Best of luck, dummies!');
+    	var message = ('Square up! Your true love has joined the server.'
+	            + ' You can make a channel called `doki-poems` to track poems, and'
+	            + ' use \`-help\` for more commands. Best of luck, dummies!');
+    	
+    	if (guild.systemChannel) {
+	        guild.systemChannel.send(message);
+    	} else {
+    		var channel = utils.getMostPermissibleChannel(client, guild);
+    		if (channel) {
+    			channel.send(message);
+    		}
+    	}
     });
 });
 
@@ -114,8 +135,8 @@ client.on('message', (message) => {
 
 	        poemUpdate(message, client);
 
-	        var dokiReactChance = Math.floor(Math.random() * 3) + 1;
-	        if (dokiReactChance == 3) {
+	        var dokiReactChance = Math.floor(Math.random() * 2);
+	        if (dokiReactChance == 1) {
 	            dokiReact(message, client);
 	        }
 	    });
