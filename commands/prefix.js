@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const db = require(__basedir + '/utils/db');
+const utils = require(__basedir + '/utils/utils');
 
 var prefix = function(message, args) {
     if (args.length == 1) {
