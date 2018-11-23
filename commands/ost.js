@@ -32,18 +32,7 @@ var ost = function(message, args) {
         return;
     }
 
-    // Sets up serverwide voice chat management
-    if (!voice.servers[id]) {
-        voice.servers[id] = {
-            task: {
-            	name: null,
-            	dispatcher: null
-            },
-            timeout: null
-        };
-    }
-
-    const server = voice.servers[id];
+    const server = voice.getServer(id);
     const task = server.task;
 
     if (task.name && task.name != 'ost') {
@@ -92,7 +81,7 @@ var ost = function(message, args) {
                     channel.send('Invalid OST number. Use `ost list` for a list of all songs.');
                 }
             } else {
-                channel.send('Invalid usage. Use \`help ost\` to see proper usage.');
+                channel.send('Invalid usage. Use `help ost` to see proper usage.');
             }
             break;
         case 'playall':
@@ -168,12 +157,17 @@ var ost = function(message, args) {
             if (task.dispatcher) {
                 if (task.queue[1]) {
                     channel.send(':fast_forward: Skipping...');
-                    channel.send('Now playing \`' + task.queue[1].name + '\`');
+                    channel.send('Now playing \`' + task.queue[1].name + '\`')
+                    .then(() => {
+                        task.dispatcher.end();
+                    });
                 } else {
                     channel.send(':fast_forward: Skipping...');
-                    channel.send('End of queue!');
+                    channel.send('End of queue!')
+                    .then(() => {
+                        task.dispatcher.end();
+                    });
                 }
-                task.dispatcher.end();
             } else {
             	channel.send('Nothing to skip!');
             }
@@ -221,7 +215,9 @@ var ost = function(message, args) {
         case 'clear':
         	if (task.dispatcher) {
         		channel.send('Cleared the queue!');
-        		task.queue = [task.queue[0]];
+        		if (task.queue[0]) {
+        			task.queue = [task.queue[0]];
+        		}
         	} else {
         		channel.send('Nothing to clear!');
         	}
@@ -233,7 +229,7 @@ var ost = function(message, args) {
 
 var playMusic = function(message, connection) {
     var id = message.guild.id;
-    const server = voice.servers[id];
+    const server = voice.getServer(id);
     const task = server.task;
 
     task.name = 'ost';
@@ -242,7 +238,6 @@ var playMusic = function(message, connection) {
 
     task.dispatcher.once('start', () => {
         connection.player.streamingData.pausedTime = 0;
-
         if (server.timeout) {
             clearTimeout(server.timeout);
             server.timeout = null;
@@ -261,7 +256,7 @@ var playMusic = function(message, connection) {
             };
 
             server.timeout = setTimeout(() => {
-                delete voice.servers[id];
+                voice.removeServer(id);
                 connection.disconnect();
             }, voice.leaveTime);
         }

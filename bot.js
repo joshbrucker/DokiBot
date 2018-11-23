@@ -5,10 +5,10 @@
 global.__basedir = __dirname;
 
 const Discord = require('discord.js');
+const DBL = require("dblapi.js");
 
 const fs = require('fs');
 const path = require('path');
-const DBL = require("dblapi.js");
 
 const auth = require('./data/auth');
 const utils = require('./utils/utils');
@@ -37,8 +37,8 @@ dbl.on('error', e => {
 })
 
 process.on('SIGINT', (code) => {
-    for (var id in voice.servers) {
-        if (voice.servers.hasOwnProperty(id)) {
+    for (var id in voice.getServers()) {
+        if (voice.getServers().hasOwnProperty(id)) {
         	var vc = client.guilds.get(id).voiceConnection;
         	if (vc) {
         		vc.disconnect();
@@ -112,10 +112,10 @@ client.on('message', (message) => {
 	                                + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
 	                        }
 	                        break;
-	                    case "help":
+	                    case 'help':
 	                        commands.help(message, args);
 	                        break;
-	                    case "ost":
+	                    case 'ost':
 	                        commands.ost(message, args);
 	                        break;
 	                    case 'prefix':

@@ -14,18 +14,7 @@ var nep = function(message, args) {
     	return;
 	}
 
-	// Sets up serverwide voice chat management
-	if (!voice.servers[id]) {
-		voice.servers[id] = {
-			task: {
-				name: null,
-				dispatcher: null
-			},
-			timeout: null
-		};
-	}
-
-	const server = voice.servers[id];
+	const server = voice.getServer(id);
 	const task = server.task;
 
     if (task.name) {
@@ -33,40 +22,44 @@ var nep = function(message, args) {
         return;
     }
 
+    var path = './assets/nep_audio/';
     var character;
     if (args.length == 0) {
-	    folders = fs.readdirSync('./assets/nep_audio/');
+	    folders = fs.readdirSync(path);
 	    character = folders[Math.floor(Math.random() * folders.length)];
     } else {
     	character = args[0];
     }
 
-	fs.readdir(('./assets/nep_audio/' + character), (err, files) => {
+	path += character;
+
+	fs.readdir(path, (err, files) => {
 		if (err) {
 	    	channel.send('Can\'t find character ' + character + '!');
 	    } else {
+			var random = Math.floor(Math.random() * files.length);
+			path += '/' + files[random];
+
 	    	if (!message.guild.voiceConnection) {
        			message.member.voiceChannel.join()
        				.then((connection) => {
-		    			playSound(message, connection, files, character);
+		    			playSound(message, connection, path);
        				});
        		} else {
-       			playSound(message, message.guild.voiceConnection, files, character);
+       			playSound(message, message.guild.voiceConnection, path);
        		}
 	    }
 	});
 };
 
-var playSound = function(message, connection, files, character) {
+var playSound = function(message, connection, path) {
 	var id = message.guild.id;
-	const server = voice.servers[id];
+    const server = voice.getServer(id);
     const task = server.task;
-    
-	var randomInt = Math.floor(Math.random() * files.length);
 
 	task.name = 'nep';
 
-	task.dispatcher = connection.playFile('./assets/nep_audio/' + character + '/' + files[randomInt]);
+	task.dispatcher = connection.playFile(path);
 
 	task.dispatcher.once('start', () => {
 	    if (server.timeout) {
@@ -82,7 +75,7 @@ var playSound = function(message, connection, files, character) {
 		};
 
 	    server.timeout = setTimeout(() => {
-	        delete voice.servers[id];
+	        voice.removeServer(id);
 	        connection.disconnect();
 	    }, voice.leaveTime);
 	});

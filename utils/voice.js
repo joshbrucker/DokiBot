@@ -1,20 +1,34 @@
 var servers = {}; 
-/*
-	server_id: {
-		task: {
-			name,
-			dispatcher,
-			[task-specific property],
-			...
-			[task-specific property]
-		},
-		timeout
-	}
-*/
 
 var leaveTime = 300000;
 
+var getServers = function() {
+	return servers;
+};
+
+var getServer = function(id) {
+	if (!servers[id]) {
+        servers[id] = {
+            task: {
+            	name: null,
+            	dispatcher: null
+            },
+            timeout: null
+        };
+	}
+
+	return servers[id];
+};
+
+var removeServer = function(id) {
+	if (servers[id]) {
+		delete servers[id];
+	}
+};
+
 module.exports = {
-	servers,
+	getServers,
+	getServer,
+	removeServer,
 	leaveTime
 };
