@@ -22,6 +22,9 @@ Grabs a random Doki picture with the specified tags.
 ### -moniquote
 Posts one of Monika's many quotes from the end of Doki Doki Literature Club.
 
+### -neko \[nsfw\]
+Posts a beautiful picture of a neko girl.
+
 ### -nep \[\<character\>\]
 Plays a Hypderdimension Neptunia soundclip.
 <dl>
@@ -43,7 +46,7 @@ Access commands related to the poem feature. A channel called doki-poems is need
  <dd>end | frequency [minute | hour | day]</dd>
 </dl>
 
-### -prefix <new_prefix>
+### -prefix \<new_prefix\>
 Allows you to change the prefix that DokiBot uses for commands. All prefixes must be 3 or less characters.
 
 ### -waifu \[nsfw\]
