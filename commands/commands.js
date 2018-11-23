@@ -7,6 +7,7 @@ const animeCmd = require('./anime');
 const dokiCmd = require('./doki');
 const helpCmd = require('./help');
 const moniquoteCmd = require('./moniquote');
+const nekoCmd = require('./neko');
 const nepCmd = require('./nep');
 const ostCmd = require('./ost');
 const poemCmd = require('./poem');
@@ -18,6 +19,7 @@ var commands = {
 	doki: dokiCmd,
 	help: helpCmd,
 	moniquote: moniquoteCmd,
+	neko: nekoCmd,
 	nep: nepCmd,
 	ost: ostCmd,
 	poem: poemCmd,

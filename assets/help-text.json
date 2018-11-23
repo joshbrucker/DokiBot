@@ -1,5 +1,5 @@
 {
-	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `doki` | `moniquote` | `ost` | `poem` | `prefix` | `waifu` | `nep`\n\n",
+	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `doki` | `moniquote` | `ost` | `poem` | `prefix` | `waifu` | `nep` | `neko`\n\n",
 	"invalidArg": ":x: That's not a valid command to look up!\nUse `help` for a list of all commands.",
 	"commands": [
 			{
@@ -20,7 +20,7 @@
 			},
 			{
 				"name": "poem",
-				"text": "`poem` | Uses commands related to the doki-poems feature\n\n**Usage**: `poem <arguments>`\n\n__Arguments__: `end` | `frequency [minute | hour | day]`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
+				"text": "`poem` | Uses commands related to the doki-poems feature\n\n**Usage**: `poem <arguments>`\n\n__Arguments__: `end` | `frequency (minute | hour | day)`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
 			},
 			{
 				"name": "prefix",
@@ -28,11 +28,15 @@
 			},
 			{
 				"name": "waifu",
-				"text": "`waifu` | Posts a picture of a waifu\n\n**Usage**: `waifu [nsfw]`\n\n"
+				"text": "`waifu` | Posts a picture of a waifu\n\n**Usage**: `waifu [nsfw]`"
 			},
 			{
 				"name": "nep",
-				"text": "`nep` | Nepu nepu!\n\n"
+				"text": "`nep` | Nepu nepu!"
+			},
+			{
+				"name": "neko",
+				"text": "`neko` | Posts beautiful neko girls\n\n**Usage**: `neko [nsfw]`"
 			}
 	]
 }

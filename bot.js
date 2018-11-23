@@ -1,9 +1,5 @@
 /*
-    Created by Joshua Brucker.
-
-    What started out as a small gag to record
-    so-called 'poems' has turned into a
-    full-fledged Discord bot!
+    Created by Joshua Brucker
 */
 
 global.__basedir = __dirname;
@@ -85,7 +81,6 @@ client.on('guildDelete', (guild) => {
 client.on('message', (message) => {
 	if (message.guild) {
 	    db.getGuild(message.guild.id, (guild) => {
-
 	        var prefix = guild.prefix;
 
 	        var content = message.content.toLowerCase();
@@ -129,6 +124,9 @@ client.on('message', (message) => {
 	                    case 'anime':
 	                        commands.anime(message, args);
 	                        break;
+	                    case 'neko':
+	                    	commands.neko(message, args);
+	                    	break;
 	                }
 	            }
 	        }
