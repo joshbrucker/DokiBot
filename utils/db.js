@@ -56,14 +56,16 @@ var getGuild = async function(id, func) {
 		conn = await pool.getConnection();
 
 		var res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
-		if (!res) {
+		var guild = _findGuildData(res);
+		if (!guild) {
 			await conn.query(`INSERT INTO guild (id) VALUES (?);`, [id]);
 			res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
+			guild = _findGuildData(res);
 		}
 
 		conn.end();
 		if (func) {
-			func(res.pop());
+			func(guild);
 		}
 	} catch(err) {
 		conn.end();
@@ -115,12 +117,24 @@ var savePoemFreq = async function(id, freq, func) {
 
 		conn.end();
 		if (func) {
-			func(res.pop());
+			func();
 		}
 	} catch(err) {
 		conn.end();
 		throw err;
 	}
+};
+
+var _findGuildData = function(res) {
+	var guild;
+	for (var i = 0; i < res.length; i++) {
+		guild = res[i];
+		if (guild.id) {
+			return guild;
+		}
+	}
+
+	return null;
 };
 
 module.exports = {
