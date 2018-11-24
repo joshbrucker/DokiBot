@@ -40,6 +40,8 @@ var poemUpdate = function(message, client) {
 		            db.savePoemId(guild.id, msg.id);
 		        });
 	    } else {
+	    	var filepath = '';
+
 	        poemChannel.fetchMessage(guild.poem_id)
 		        .then((msg) => {
 		        	// Check time to see if it's time to grab a word
@@ -70,7 +72,6 @@ var poemUpdate = function(message, client) {
 			                        poemChannel.send('You wrote a full poem. Nice!');
 
 			                        // Creates file name
-			                        var filepath = '';
 			                        for (let i = 0; (i < words.length) && (i < 3); i++) {
 			                            if (utils.isLegalFileName(words[i])) {
 			                                filepath += words[i] + ' ';
@@ -106,19 +107,20 @@ var poemUpdate = function(message, client) {
 
 		                poemChannel.send(firstWord)
 			                .then((msg) => {
-			                    fs.stat(filepath, (err, stat) => {
-			                        if (!err) {
-			                            fs.unlink(filepath, (err) => {
-			                                if (err) console.log(err);
-			                            });
-			                        }
-			                    });
-
 			                    db.savePoemId(guild.id, msg.id);
 			                });
 		            } else {
 		                console.log(err);
 		            }
+
+		            // Remove .txt file if one still exists
+                    fs.stat(filepath, (err, stat) => {
+                        if (!err) {
+                            fs.unlink(filepath, (err) => {
+                                if (err) console.log(err);
+                            });
+                        }
+                    });
 		        });
 	    }
     });
