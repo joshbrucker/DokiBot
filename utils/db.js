@@ -58,7 +58,8 @@ var getGuild = async function(id, func) {
 		var res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
 		var guild = _findGuildData(res);
 		if (!guild) {
-			await conn.query(`INSERT INTO guild (id) VALUES (?);`, [id]);
+			await conn.query(`INSERT INTO guild (id) VALUES (?)
+							  ON DUPLICATE KEY UPDATE id=id;`, [id]);
 			res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
 			guild = _findGuildData(res);
 		}
