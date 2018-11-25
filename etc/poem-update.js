@@ -9,11 +9,14 @@ const db = require(__basedir + '/utils/db');
 var poemUpdate = function(message, client) {
 
 	// Allows only DokiBot to send messages in doki-poems
-	var test = message.guild;
     if (message.channel.name == 'doki-poems') {
     	if (message.author != client.user) {
     		message.delete()
-    		.catch((err) => console.log(test.id));
+    		.catch((err) => {
+    			if (err.message != 'Unknown Message') {
+    				console.log(err);
+    			}
+    		});
     		return;
     	}
     }

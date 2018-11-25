@@ -106,7 +106,12 @@ var anime = function(message, args) {
 	}
 	
 	function handleError(error) {
-	    console.error(error);
+		var data = error.errors[0];
+		if (data) {
+			if (data.status != 404) {
+		    	console.log(error);
+			}
+		}
 	}
 }
 
