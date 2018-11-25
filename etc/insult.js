@@ -28,11 +28,6 @@ var insult = function(client) {
 				if (guild.available) {
 					var message = lines[Math.floor(Math.random() * lines.length)];
 
-					var channel = utils.getGeneralChat(guild);
-					if (!channel) {
-						channel = utils.getMostPermissibleChannel(client, guild);
-					}
-
 					var members = utils.getMembers(guild);
 					var occurrences = message.match(/%user%/g).length;
 					for (let i = 0; i < occurrences; i++) {
@@ -44,7 +39,15 @@ var insult = function(client) {
 							members.splice(index, 1);
 						}
 					}
-					channel.send(message);
+
+					var channel = utils.getGeneralChat(guild);
+					if (!channel) {
+						channel = utils.getMostPermissibleChannel(client, guild);
+					}
+
+					if (channel.type == 'text') {
+						channel.send(message);
+					}
 				} else {
 					console.log('Guild not available!');
 				}

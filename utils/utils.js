@@ -97,7 +97,9 @@ var getMostPermissibleChannel = function(client, guild) {
         if (textChannel.type == 'text') {
             if (channel.type != 'text') {
                 channel = textChannel;
-            } else if (textChannel.permissionsFor(client.user).bitfield > channel.permissionsFor(client.user).bitfield) {
+            } else if (textChannel.permissionsFor(client.user).bitfield > channel.permissionsFor(client.user).bitfield
+                        && textChannel.permissionsFor(client.user).has('SEND_MESSAGES')
+                        && textChannel.permissionsFor(client.user).has('VIEW_CHANNEL')) {
                 channel = textChannel;
             }
         }
