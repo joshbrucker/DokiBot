@@ -22,7 +22,7 @@ var moniquote = function(message, args) {
 
             var i = 1;
             var currLine = lines[startIndices[quoteNum] + i];
-            while (currLine.replace(/[\r\n]/g, '') != '') {
+            while (currLine && currLine.replace(/[\r\n]/g, '') != '') {
                 msg += currLine.replace(/["]/g, '').replace(/[\r\n]/g, ' ').replace('[player]', message.member.displayName);
                 currLine = lines[startIndices[quoteNum] + ++i];
             }
