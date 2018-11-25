@@ -5,6 +5,10 @@ const db = require(__basedir + '/utils/db');
 const utils = require(__basedir + '/utils/utils');
 
 var prefix = function(message, args) {
+    if (!message.member.hasPermission('ADMINISTRATOR')) {
+        return;
+    }
+
     if (args.length == 1) {
         if (args[0].length <= 3) {
             db.savePrefix(message.guild.id, args[0], () => {
