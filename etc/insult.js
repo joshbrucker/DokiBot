@@ -46,7 +46,17 @@ var insult = function(client) {
 					}
 
 					if (channel.type == 'text') {
-						channel.send(message);
+						channel.send(message).then((msg) => {
+							// 1/20 chance of sending advertisement on weekends
+							var rand = Math.floor(Math.rand() * 20);
+							if (rand == 0) {
+								var date = new Date();
+								if (date.getDay() == 6 || date.getDay() == 0) {
+									channel.send(`Enjoying my beautiful presence? Please drop a like on my page: https://discordbots.org/bot/412824514414510080.
+												  It would make me a very happy Doki <3`);
+								}
+							}
+						});
 					}
 				} else {
 					console.log('Guild not available!');
