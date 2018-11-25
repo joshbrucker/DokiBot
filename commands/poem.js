@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const validFilename = require('valid-filename');
 
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
@@ -27,7 +28,7 @@ var poem = function(message, args) {
                         poemChannel.fetchMessage(guild.poem_id).then((msg) => {
                             var words = msg.content.split(' ');
                             for (let i = 0; (i < words.length) && (i < 3); i++) {
-                                if (utils.isLegalFileName(words[i])) {
+                                if (validFilename(words[i])) {
                                     filepath += words[i] + ' ';
                                 }
                             }
@@ -51,10 +52,10 @@ var poem = function(message, args) {
                                         fs.unlink(filepath, (err) => {
                                             if (err) console.log(err);
                                         });
-
-                                        db.savePoemId(guild.id, null);
                                     });
                             });
+
+                            db.savePoemId(guild.id, null);
                         })
                         .catch((err) => {
                             if (err.message == 'Unknown Message') {

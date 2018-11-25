@@ -108,14 +108,6 @@ var getMostPermissibleChannel = function(client, guild) {
     return channel;
 };
 
-var isLegalFileName = function(str) {
-    if (str.search(/["\*:<>\?\/\\|]/g) == -1) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 var getMembers = function(guild) {
     var members = guild.members.array();
     var humans = [];
@@ -135,7 +127,6 @@ module.exports = {
     getGeneralChat,
     dateFormat,
     timeFormat,
-    isLegalFileName,
     secondsConverter,
     getMonthName
 };

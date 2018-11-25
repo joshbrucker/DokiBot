@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const isUrl = require('is-url');
+const validFilename = require('valid-filename');
 
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
@@ -8,9 +9,11 @@ const db = require(__basedir + '/utils/db');
 var poemUpdate = function(message, client) {
 
 	// Allows only DokiBot to send messages in doki-poems
+	var test = message.guild;
     if (message.channel.name == 'doki-poems') {
     	if (message.author != client.user) {
-    		message.delete();
+    		message.delete()
+    		.catch((err) => console.log(test.id));
     		return;
     	}
     }
@@ -30,7 +33,7 @@ var poemUpdate = function(message, client) {
     db.getGuild(message.guild.id, (guild) => {
     	
 	    // Prevents bot from grabbing commands used to call it
-	    if (firstWord.charAt(0) == guild.prefix) {
+	    if (firstWord.charAt(0) == guild.prefix || firstWord.includes('@everyone')) {
 	        return;
 	    }
 	    
@@ -73,7 +76,7 @@ var poemUpdate = function(message, client) {
 
 			                        // Creates file name
 			                        for (let i = 0; (i < words.length) && (i < 3); i++) {
-			                            if (utils.isLegalFileName(words[i])) {
+			                            if (validFilename(words[i])) {
 			                                filepath += words[i] + ' ';
 			                            }
 			                        }
@@ -86,24 +89,24 @@ var poemUpdate = function(message, client) {
 
 			                        // Create and send .txt file
 			                        fs.writeFile(filepath, newMsg.content, (err) => {
-			                            if (err) utils.errorLog(err);
+			                            if (err) console.log(err);
 
 			                            poemChannel.send({files: [filepath]})
 				                            .then((attachment) => {
 				                                fs.unlink(filepath, (err) => {
 				                                    if (err) console.log(err);
 				                                });
-
-				                                db.savePoemId(guild.id, null);
 				                            });
 			                        });
+
+			                        db.savePoemId(guild.id, null);
 			                    }
 			                });
 		            }
 		        })
 		        .catch((err) => {
 		            if (err.message == 'Unknown Message') {
-		                message.channel.send('Hmm... I can\'t seem to find your old poem. Starting a new one!');
+		                message.channel.send('Hmm... I can\'t seem to find your old poem. Starting a new one...!');
 
 		                poemChannel.send(firstWord)
 			                .then((msg) => {
