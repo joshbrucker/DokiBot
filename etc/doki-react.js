@@ -7,22 +7,28 @@ var dokiReact = function(message, client) {
 
     if (dokiHub.available) {
         if (content.search('monika') > -1) {
-            const monika_head = dokiHub.emojis.find((emoji) => emoji.name === 'monika_head');
-            message.react(monika_head);
+            react(message, dokiHub, 'monika_head');
         }
         if (content.search('natsuki') > -1) {
-            const natsuki_head = dokiHub.emojis.find((emoji) => emoji.name === 'natsuki_head');
-            message.react(natsuki_head);
+            react(message, dokiHub, 'natsuki_head');
         }
         if (content.search('sayori') > -1) {
-            const sayori_head = dokiHub.emojis.find((emoji) => emoji.name === 'sayori_head');
-            message.react(sayori_head);
+            react(message, dokiHub, 'sayori_head');
         }
         if (content.search('yuri') > -1) {
-            const yuri_head = dokiHub.emojis.find((emoji) => emoji.name === 'yuri_head');
-            message.react(yuri_head);
+            react(message, dokiHub, 'yuri_head');
         }
     }
-}
+};
+
+var react = function(message, emojiHub, emojiName) {
+    const emoji = emojiHub.emojis.find((emoji) => emoji.name === emojiName);
+    message.react(emoji)
+        .catch((err) => {
+            if (err.message != 'Unknown Message') {
+                console.log(err);
+            }
+        });
+};
 
 module.exports = dokiReact;
