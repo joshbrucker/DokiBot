@@ -46,19 +46,23 @@ var sendWaifu = function(channel, rating, waifuName) {
 		.then((posts) => {
 			const index = Math.floor(Math.random() * posts.length);
 		  	const post = posts[index];
-		  	const url = booru.url(post.file_url);
-		  	const name = `${post.md5}.${post.file_ext}`;
+		  	if (post) {
+			  	const url = booru.url(post.file_url);
+			  	const name = `${post.md5}.${post.file_ext}`;
 
-		  	if (post.tag_string.includes('loli') || post.tag_string.includes('shota')) {
-		  		channel.send("I can't post this picture of " + waifuName + " because it's tagged with loli/shota.");
+			  	if (post.tag_string.includes('loli') || post.tag_string.includes('shota')) {
+			  		channel.send('I can\'t post this picture of ' + waifuName + ' because it\'s tagged with loli/shota.');
+			  	} else {
+				  	channel.send('Waifu: **' + utils.toTitleCase(waifuName) + '**\n\n'
+				  		+ 'From: **' + utils.toTitleCase(post.tag_string_copyright) + '**\n'
+				  		+ url.href);
+			  	}
 		  	} else {
-			  	channel.send("Waifu: **" + utils.toTitleCase(waifuName) + "**\n\n"
-			  		+ "From: **" + utils.toTitleCase(post.tag_string_copyright) + "**\n"
-			  		+ url.href);
+		  		channel.send('Hmmm... I am having trouble grabbing a picture. Please try again.');
 		  	}
 		})
 		.catch((err) => {
-			channel.send("Can't find any " + rating + " pictures of " + utils.toTitleCase(waifuName) + "! :(");
+			channel.send('Can\'t find any ' + rating + ' pictures of ' + utils.toTitleCase(waifuName) + '! :(');
 		});
 };
 
