@@ -48,7 +48,7 @@ var insult = function(client) {
 					if (channel.type == 'text') {
 						channel.send(message).then((msg) => {
 							// 1/20 chance of sending advertisement on weekends
-							var rand = Math.floor(Math.rand() * 20);
+							var rand = Math.floor(Math.random() * 20);
 							if (rand == 0) {
 								var date = new Date();
 								if (date.getDay() == 6 || date.getDay() == 0) {
