@@ -1,6 +1,6 @@
 /*
-	This file compiles all the commands to avoid 
-	excessive require statements in bot.js
+    This file compiles all the commands to avoid 
+    excessive require statements in bot.js
 */
 
 const animeCmd = require('./anime');
@@ -16,17 +16,17 @@ const prefixCmd = require('./prefix');
 const waifuCmd = require('./waifu');
 
 var commands = {
-	anime: animeCmd,
-	broadcast: broadcastCmd,
-	doki: dokiCmd,
-	help: helpCmd,
-	moniquote: moniquoteCmd,
-	neko: nekoCmd,
-	nep: nepCmd,
-	ost: ostCmd,
-	dokipoem: dokipoemCmd,
-	prefix: prefixCmd,
-	waifu: waifuCmd
+    anime: animeCmd,
+    broadcast: broadcastCmd,
+    doki: dokiCmd,
+    help: helpCmd,
+    moniquote: moniquoteCmd,
+    neko: nekoCmd,
+    nep: nepCmd,
+    ost: ostCmd,
+    dokipoem: dokipoemCmd,
+    prefix: prefixCmd,
+    waifu: waifuCmd
 };
 
 module.exports = commands;

@@ -6,16 +6,16 @@ const Discord = require('discord.js');
 const voice = require(__basedir + '/utils/voice');
 
 var nep = function(message, args) {
-	var id = message.guild.id;
-	var channel = message.channel;
+    var id = message.guild.id;
+    var channel = message.channel;
 
-	if (!message.member.voiceChannel) {
-    	message.channel.send('You need to be in a voice channel to use `nep`');
-    	return;
-	}
+    if (!message.member.voiceChannel) {
+        message.channel.send('You need to be in a voice channel to use `nep`');
+        return;
+    }
 
-	const server = voice.getServer(id);
-	const task = server.task;
+    const server = voice.getServer(id);
+    const task = server.task;
 
     if (task.name) {
         channel.send('Voice chat already in use through the `' + task.name + '` command!');
@@ -25,60 +25,60 @@ var nep = function(message, args) {
     var path = './assets/nep_audio/';
     var character;
     if (args.length == 0) {
-	    folders = fs.readdirSync(path);
-	    character = folders[Math.floor(Math.random() * folders.length)];
+        folders = fs.readdirSync(path);
+        character = folders[Math.floor(Math.random() * folders.length)];
     } else {
-    	character = args[0];
+        character = args[0];
     }
 
-	path += character;
+    path += character;
 
-	fs.readdir(path, (err, files) => {
-		if (err) {
-	    	channel.send('Can\'t find character ' + character + '!');
-	    } else {
-			var random = Math.floor(Math.random() * files.length);
-			path += '/' + files[random];
+    fs.readdir(path, (err, files) => {
+        if (err) {
+            channel.send('Can\'t find character ' + character + '!');
+        } else {
+            var random = Math.floor(Math.random() * files.length);
+            path += '/' + files[random];
 
-	    	if (!message.guild.voiceConnection) {
-       			message.member.voiceChannel.join()
-       				.then((connection) => {
-		    			playSound(message, connection, path);
-       				});
-       		} else {
-       			playSound(message, message.guild.voiceConnection, path);
-       		}
-	    }
-	});
+            if (!message.guild.voiceConnection) {
+                message.member.voiceChannel.join()
+                    .then((connection) => {
+                        playSound(message, connection, path);
+                    });
+            } else {
+                playSound(message, message.guild.voiceConnection, path);
+            }
+        }
+    });
 };
 
 var playSound = function(message, connection, path) {
-	var id = message.guild.id;
+    var id = message.guild.id;
     const server = voice.getServer(id);
     const task = server.task;
 
-	task.name = 'nep';
+    task.name = 'nep';
 
-	task.dispatcher = connection.playFile(path);
+    task.dispatcher = connection.playFile(path);
 
-	task.dispatcher.once('start', () => {
-	    if (server.timeout) {
-	        clearTimeout(server.timeout);
-	        server.timeout = null;
-	    }
-	});
+    task.dispatcher.once('start', () => {
+        if (server.timeout) {
+            clearTimeout(server.timeout);
+            server.timeout = null;
+        }
+    });
 
-	task.dispatcher.once('end', () => {
-		server.task = {
-			name: null,
-			dispatcher: null
-		};
+    task.dispatcher.once('end', () => {
+        server.task = {
+            name: null,
+            dispatcher: null
+        };
 
-	    server.timeout = setTimeout(() => {
-	        voice.removeServer(id);
-	        connection.disconnect();
-	    }, voice.leaveTime);
-	});
+        server.timeout = setTimeout(() => {
+            voice.removeServer(id);
+            connection.disconnect();
+        }, voice.leaveTime);
+    });
 
 
 };
