@@ -53,14 +53,18 @@ var doki = function(message, args) {
 			const index = Math.floor(Math.random() * posts.length);
 		  	const post = posts[index];
 
-		  	const url = booru.url(post.file_url);
-		  	const name = `${post.md5}.${post.file_ext}`;
+            if (post) {
+                const url = booru.url(post.file_url);
+                const name = `${post.md5}.${post.file_ext}`;
 
-		  	channel.send(url.href);
-		})
-		.catch((err) => {
-			console.log(err);
-		});
+                channel.send(url.href);
+            } else {
+                channel.send('Hmmm... I am having trouble grabbing a picture. Please try again.');
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 };
 
 var getRandomDoki = function() {
