@@ -16,42 +16,42 @@ const db = require('./utils/db');
 const voice = require('./utils/voice');
 const commands = require('./commands/commands');
 const dokiReact = require('./etc/doki-react');
-const poemUpdate = require('./etc/poem-update');
+const dokipoemUpdate = require('./etc/dokipoem-update');
 const insult = require('./etc/insult.js');
 
 const client = new Discord.Client();
 const dbl = new DBL(auth.dbltoken, client);
 
 process.on('unhandledRejection', (reason, p) => {
-	if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
-		console.log('Unhandled Rejection:', p);
-	}
+    if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
+        console.log('Unhandled Rejection:', reason);
+    }
 });
 
 client.on('error', (error) => {
-	console.log('Client Error: ', error);
+    console.log('Client Error: ', error);
 });
 
 dbl.on('error', e => {
-	console.log('Discord Bots List Error: ', e);
+    console.log('Discord Bots List Error: ', e);
 })
 
 process.on('SIGINT', (code) => {
     for (var id in voice.getServers()) {
         if (voice.getServers().hasOwnProperty(id)) {
-        	var vc = client.guilds.get(id).voiceConnection;
-        	if (vc) {
-        		vc.disconnect();
-        	}
+            var vc = client.guilds.get(id).voiceConnection;
+            if (vc) {
+                vc.disconnect();
+            }
         }
     }
 
-	process.exit();
+    process.exit();
 });
 
 client.on('ready', () => {
     setInterval(() => {
-    	insult(client);
+        insult(client);
     }, 60000);
 
     console.log('I am ready!');
@@ -59,87 +59,95 @@ client.on('ready', () => {
 
 client.on('guildCreate', (guild) => {
     db.addGuild(guild.id, () => {
-    	var message = ('Square up! Your true love has joined the server.'
-	            + ' You can make a channel called `doki-poems` to track poems, and'
-	            + ' use \`-help\` for more commands. Best of luck, dummies!');
-    	
-    	if (guild.systemChannel) {
-	        guild.systemChannel.send(message);
-    	} else {
-    		var channel = utils.getMostPermissibleChannel(client, guild);
-    		if (channel) {
-    			channel.send(message);
-    		}
-    	}
+        var message = ('Square up! Your true love has joined the server.'
+                + ' You can make a channel called `doki-poems` to track poems, and'
+                + ' use \`-help\` for more commands. Best of luck, dummies!');
+        
+        if (guild.systemChannel) {
+            guild.systemChannel.send(message);
+        } else {
+            var channel = utils.getMostPermissibleChannel(client, guild);
+            if (channel) {
+                channel.send(message);
+            }
+        }
     });
 });
 
 client.on('guildDelete', (guild) => {
-	db.removeGuild(guild.id);
-	voice.removeServer(guild.id);
+    db.removeGuild(guild.id);
+    voice.removeServer(guild.id);
 });
 
 client.on('message', (message) => {
-	if (message.guild) {
-	    db.getGuild(message.guild.id, (guild) => {
-	        var prefix = guild.prefix;
+    if (message.guild) {
+        db.getGuild(message.guild.id, (guild) => {
+            var prefix = guild.prefix;
 
-	        var content = message.content.toLowerCase();
+            var content = message.content.toLowerCase();
 
-	        if (content.substring(0, prefix.length) == prefix && content.length > 1) {
-	            if (message.channel.name != 'doki-poems') {
-	                var args = content.substring(prefix.length).split(' ');
-	                var cmd = args[0].toLowerCase();
-	                args = args.splice(1);
+            if (content.substring(0, prefix.length) == prefix && content.length > 1) {
+                if (message.channel.name != 'doki-poems') {
+                    var args = content.substring(prefix.length).split(' ');
+                    var cmd = args[0].toLowerCase();
+                    args = args.splice(1);
 
-	                switch(cmd) {
-	                    case 'doki':
-	                        commands.doki(message, args);
-	                        break;
-	                    case 'waifu':
-	                        commands.waifu(message, args);
-	                        break;
-	                    case 'moniquote':
-	                        commands.moniquote(message, args);
-	                        break;
-	                    case 'nep':
-	                        commands.nep(message, args);
-	                        break;
-	                    case 'poem':
-	                        if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
-	                            commands.poem(message, args);
-	                        } else {
-	                            message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
-	                                + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
-	                        }
-	                        break;
-	                    case 'help':
-	                        commands.help(message, args);
-	                        break;
-	                    case 'ost':
-	                        commands.ost(message, args);
-	                        break;
-	                    case 'prefix':
-	                        commands.prefix(message, args);
-	                        break;
-	                    case 'anime':
-	                        commands.anime(message, args);
-	                        break;
-	                    case 'neko':
-	                    	commands.neko(message, args);
-	                    	break;
-	                }
-	            }
-	        }
+                    switch(cmd) {
+                        case 'doki':
+                            commands.doki(message, args);
+                            break;
+                        case 'waifu':
+                            commands.waifu(message, args);
+                            break;
+                        case 'moniquote':
+                            commands.moniquote(message, args);
+                            break;
+                        case 'nep':
+                            commands.nep(message, args);
+                            break;
+                        case 'dp':
+                        case 'dokipoem':
+                            if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
+                                commands.dokipoem(message, args);
+                            } else {
+                                message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
+                                    + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
+                            }
+                            break;
+                        case 'help':
+                            commands.help(message, args);
+                            break;
+                        case 'ost':
+                            commands.ost(message, args);
+                            break;
+                        case 'prefix':
+                            commands.prefix(message, args);
+                            break;
+                        case 'anime':
+                            commands.anime(message, args);
+                            break;
+                        case 'neko':
+                            commands.neko(message, args);
+                            break;
+                    }
 
-	        poemUpdate(message, client);
+                    // Use if statement to avoid potential missed break statement
+                    if (cmd == 'broadcast') {
+                        args = message.content.substring(prefix.length).split(' ');
+                        args = args.splice(1);
+                        commands.broadcast(message, args, client);
+                    }
+                }
+            }
 
-	        var dokiReactChance = Math.floor(Math.random() * 2);
-	        if (dokiReactChance == 1) {
-	            dokiReact(message, client);
-	        }
-	    });
-	}
+            dokipoemUpdate(message, client);
+
+            var dokiReactChance = Math.floor(Math.random() * 2);
+            if (dokiReactChance == 1) {
+                dokiReact(message, client);
+            }
+        });
+    }
 });
 
 client.login(auth.token);
