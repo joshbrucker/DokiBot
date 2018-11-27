@@ -16,6 +16,9 @@ There are a bunch of other small Easter eggs that will be implemented as DokiBot
 ### -help \[\<command\>\]
 Lists all commands or info about a specific command.
 
+### -anime \<title\>
+Grabs information about the given anime.
+
 ### -doki \[nsfw\] \[monika | sayori | yuri | natsuki\]
 Grabs a random Doki picture with the specified tags.
 
@@ -39,7 +42,7 @@ Plays songs from the official Doki Doki Literature Club soundtrack.
  <dd>play [1-5] | playall | stop | pause | resume | skip | queue | clear | list</dd>
 </dl>
 
-### -poem \<arguments\>
+### -dokipoem \<arguments\>
 Access commands related to the poem feature. A channel called doki-poems is needed to use this.
 <dl>
  <dt>Arguments:</dt>
