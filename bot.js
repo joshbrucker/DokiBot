@@ -157,7 +157,7 @@ client.on('message', (message) => {
     }
 });
 
-let setActivity(client) {
+let setActivity = function(client) {
     let game;
     let num = Math.floor(Math.random() * 8);
     switch(num) {

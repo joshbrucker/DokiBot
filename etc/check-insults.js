@@ -17,7 +17,7 @@ let checkInsults = async function(client) {
         for (let i = 0; i < guildIds.length; i++) {
             // Contingency plan in case bot is down for too long
             if (guildIds.length > 200) {
-                db.setInsultTime(guildIds[i].id, utils.generateNewTime(date));
+                db.setInsultTime(guildIds[i].id, generateNewTime(date));
                 continue;
             }
 
@@ -56,7 +56,7 @@ let checkInsults = async function(client) {
                     });
                 }
 
-                db.setInsultTime(guild.id, utils.generateNewTime(date));
+                db.setInsultTime(guild.id, generateNewTime(date));
             }
         }
     });
