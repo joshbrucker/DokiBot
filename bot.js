@@ -50,9 +50,13 @@ process.on('SIGINT', (code) => {
 });
 
 client.on('ready', () => {
+    db.verifyGuilds(client, () => {
+        setInterval(() => {
+            insult(client);
+        }, 60000);
+    });
+
     setInterval(() => {
-        insult(client);
-    }, 60000);
 
     console.log('I am ready!');
 });

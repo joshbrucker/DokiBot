@@ -1,16 +1,24 @@
-const auth = require(__basedir + '/data/auth');
 const mariadb = require('mariadb');
+
+const auth = require(__basedir + '/data/auth');
 
 global.pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser, 
     password: auth.dbPass, database: auth.dbName, connectionLimit: 50});
 
-var addGuild = async function(id, func) {
+let verifyGuilds = async function(client, func) {
+    let guilds = client.guilds;
     let conn;
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`INSERT INTO guild (id) VALUES (?)
-                                    ON DUPLICATE KEY UPDATE id=id;`, [id]);
+        let res = await conn.query(`SELECT id FROM guild;`);
+        await delete res['meta'];
+
+        for (let i = 0; i < res.length; i++) {
+            if (!guilds.get(res[i].id)) {
+                await conn.query(`DELETE FROM guild WHERE id = ?;`, [res[i].id]);
+            }
+        }
 
         conn.end();
         if (func) {
@@ -139,6 +147,7 @@ var _findGuildData = function(res) {
 };
 
 module.exports = {
+    verifyGuilds,
     addGuild,
     removeGuild,
     getGuild,
