@@ -28,15 +28,15 @@ let verifyGuilds = async function(client, func) {
         conn.end();
         throw err;
     }
-
 };
 
-var removeGuild = async function(id, func) {
+let addGuild = async function(id, func) {
     let conn;
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`DELETE FROM guild WHERE id = ?;`, [id]);
+        let res = await conn.query(`INSERT INTO guild (id) VALUES (?)
+                                    ON DUPLICATE KEY UPDATE id=id;`, [id]);
 
         conn.end();
         if (func) {
@@ -48,14 +48,31 @@ var removeGuild = async function(id, func) {
     }
 };
 
+let removeGuild = async function(id, func) {
+    let conn;
+    try {
+        conn = await pool.getConnection();
 
-var getGuild = async function(id, func) {
+        let res = await conn.query(`DELETE FROM guild WHERE id = ?;`, [id]);
+
+        conn.end();
+        if (func) {
+            func();
+        }
+    } catch(err) {
+        conn.end();
+        throw err;
+    }
+};
+
+let getGuild = async function(id, func) {
     /*
         guild = {
             id,
             prefix,
             poem_id,
-            poem_frequency
+            poem_frequency,
+            insult_time
         }
     */
 
@@ -63,31 +80,73 @@ var getGuild = async function(id, func) {
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
-        var guild = _findGuildData(res);
-        if (!guild) {
+        let res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
+        if (!res || res.length == 0) {
             await conn.query(`INSERT INTO guild (id) VALUES (?)
                               ON DUPLICATE KEY UPDATE id=id;`, [id]);
             res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
-            guild = _findGuildData(res);
         }
+
+        await delete res['meta'];
 
         conn.end();
         if (func) {
-            func(guild);
+            func(res[0]);
         }
     } catch(err) {
         conn.end();
         throw err;
     }
-}
+};
 
-var savePrefix = async function(id, prefix, func) {
+let getInsultGuildIds = async function(date, func) {
+    /*
+        guild = {
+            id
+        }
+    */
+
     let conn;
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`UPDATE guild SET prefix = ? WHERE id = ?;`, [prefix, id]);
+        let res = await conn.query(`SELECT id FROM guild WHERE (insult_time <= ?);`, [date]);
+
+        await delete res['meta'];
+
+        conn.end();
+        if (func) {
+            func(res);
+        }
+    } catch(err) {
+        conn.end();
+        throw err;
+    }
+};
+
+let setInsultTime = async function(id, date, func) {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+
+        let res = await conn.query(`UPDATE guild SET insult_time = ? WHERE id = ?;`, [date, id]);
+
+        conn.end();
+        if (func) {
+            func();
+        }
+    } catch(err) {
+        conn.end();
+        throw err;
+    }
+};
+
+let savePrefix = async function(id, prefix, func) {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+
+        let res = await conn.query(`UPDATE guild SET prefix = ? WHERE id = ?;`, [prefix, id]);
 
         conn.end();
         if (func) {
@@ -100,12 +159,12 @@ var savePrefix = async function(id, prefix, func) {
 };
 
 
-var savePoemId = async function(id, pId, func) {
+let savePoemId = async function(id, pId, func) {
     let conn;
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`UPDATE guild SET poem_id = ? WHERE id = ?;`, [pId, id]);
+        let res = await conn.query(`UPDATE guild SET poem_id = ? WHERE id = ?;`, [pId, id]);
 
         conn.end();
         if (func) {
@@ -117,12 +176,12 @@ var savePoemId = async function(id, pId, func) {
     }
 };
 
-var savePoemFreq = async function(id, freq, func) {
+let savePoemFreq = async function(id, freq, func) {
     let conn;
     try {
         conn = await pool.getConnection();
 
-        var res = await conn.query(`UPDATE guild SET poem_freq = ? WHERE id = ?;`, [freq, id]);
+        let res = await conn.query(`UPDATE guild SET poem_freq = ? WHERE id = ?;`, [freq, id]);
 
         conn.end();
         if (func) {
@@ -132,18 +191,6 @@ var savePoemFreq = async function(id, freq, func) {
         conn.end();
         throw err;
     }
-};
-
-var _findGuildData = function(res) {
-    var guild;
-    for (var i = 0; i < res.length; i++) {
-        guild = res[i];
-        if (guild.id) {
-            return guild;
-        }
-    }
-
-    return null;
 };
 
 module.exports = {
@@ -151,6 +198,8 @@ module.exports = {
     addGuild,
     removeGuild,
     getGuild,
+    getInsultGuildIds,
+    setInsultTime,
     savePrefix,
     savePoemFreq,
     savePoemId

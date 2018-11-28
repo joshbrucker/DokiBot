@@ -17,7 +17,7 @@ const voice = require('./utils/voice');
 const commands = require('./commands/commands');
 const dokiReact = require('./etc/doki-react');
 const dokipoemUpdate = require('./etc/dokipoem-update');
-const insult = require('./etc/insult.js');
+const checkInsults = require('./etc/check-insults.js');
 
 const client = new Discord.Client();
 const dbl = new DBL(auth.dbltoken, client);
@@ -37,9 +37,9 @@ dbl.on('error', e => {
 })
 
 process.on('SIGINT', (code) => {
-    for (var id in voice.getServers()) {
+    for (let id in voice.getServers()) {
         if (voice.getServers().hasOwnProperty(id)) {
-            var vc = client.guilds.get(id).voiceConnection;
+            let vc = client.guilds.get(id).voiceConnection;
             if (vc) {
                 vc.disconnect();
             }
@@ -52,7 +52,7 @@ process.on('SIGINT', (code) => {
 client.on('ready', () => {
     db.verifyGuilds(client, () => {
         setInterval(() => {
-            insult(client);
+            checkInsults(client);
         }, 60000);
     });
 
@@ -66,14 +66,14 @@ client.on('ready', () => {
 
 client.on('guildCreate', (guild) => {
     db.addGuild(guild.id, () => {
-        var message = ('Square up! Your true love has joined the server.'
+        let message = ('Square up! Your true love has joined the server.'
                 + ' You can make a channel called `doki-poems` to track poems, and'
                 + ' use \`-help\` for more commands. Best of luck, dummies!');
-        
+
         if (guild.systemChannel) {
             guild.systemChannel.send(message);
         } else {
-            var channel = utils.getMostPermissibleChannel(client, guild);
+            let channel = utils.getMostPermissibleChannel(client, guild);
             if (channel) {
                 channel.send(message);
             }
@@ -89,14 +89,14 @@ client.on('guildDelete', (guild) => {
 client.on('message', (message) => {
     if (message.guild) {
         db.getGuild(message.guild.id, (guild) => {
-            var prefix = guild.prefix;
+            let prefix = guild.prefix;
 
-            var content = message.content.toLowerCase();
+            let content = message.content.toLowerCase();
 
             if (content.substring(0, prefix.length) == prefix && content.length > 1) {
                 if (message.channel.name != 'doki-poems') {
-                    var args = content.substring(prefix.length).split(' ');
-                    var cmd = args[0].toLowerCase();
+                    let args = content.substring(prefix.length).split(' ');
+                    let cmd = args[0].toLowerCase();
                     args = args.splice(1);
 
                     switch(cmd) {
@@ -149,7 +149,7 @@ client.on('message', (message) => {
 
             dokipoemUpdate(message, client);
 
-            var dokiReactChance = Math.floor(Math.random() * 2);
+            let dokiReactChance = Math.floor(Math.random() * 2);
             if (dokiReactChance == 1) {
                 dokiReact(message, client);
             }
