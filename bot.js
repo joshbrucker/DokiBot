@@ -56,7 +56,10 @@ client.on('ready', () => {
         }, 60000);
     });
 
+    setActivity(client);
     setInterval(() => {
+        setActivity(client);
+    }, 3600000);
 
     console.log('I am ready!');
 });
@@ -153,5 +156,37 @@ client.on('message', (message) => {
         });
     }
 });
+
+let setActivity(client) {
+    let game;
+    let num = Math.floor(Math.random() * 8);
+    switch(num) {
+        case 0:
+            game = 'Natsuki <3';
+            break;
+        case 1:
+            game = 'Sayori <3';
+            break;
+        case 2:
+            game = 'Yuri <3';
+            break;
+        case 3:
+            game = '<3 Monika Monika Monika <3';
+            break;
+        case 4:
+            game = 'You';
+            break;
+        case 5:
+            game = 'Doki Doki Literature Club';
+            break;
+        case 6:
+            game = 'with your heart';
+            break;
+        case 7:
+            game = 'Just Monika';
+            break;
+    }
+    client.user.setActivity(game);
+}
 
 client.login(auth.token);
