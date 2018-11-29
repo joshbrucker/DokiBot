@@ -4,7 +4,7 @@ const isUrl = require('is-url');
 const validFilename = require('valid-filename');
 
 const utils = require(__basedir + '/utils/utils');
-const db = require(__basedir + '/utils/db');
+const dbGuild = require(__basedir + '/utils/db/dbGuild');
 
 var dokipoemUpdate = function(message, client) {
 
@@ -28,7 +28,7 @@ var dokipoemUpdate = function(message, client) {
 
     if (firstWord.length > 99) return;
 
-    db.getGuild(message.guild.id, (guild) => {
+    dbGuild.getGuild(message.guild.id, (guild) => {
         
         // Prevents bot from grabbing commands used to call it
         if (firstWord.charAt(0) == guild.prefix || firstWord.includes('@everyone')) {
@@ -38,7 +38,7 @@ var dokipoemUpdate = function(message, client) {
         if (!guild.poem_id) {
             poemChannel.send(firstWord)
                 .then((msg) => {
-                    db.savePoemId(guild.id, msg.id);
+                    dbGuild.savePoemId(guild.id, msg.id);
                 });
         } else {
             var filepath = '';
@@ -90,14 +90,18 @@ var dokipoemUpdate = function(message, client) {
                                         if (err) console.log(err);
 
                                         poemChannel.send({files: [filepath]})
-                                            .then((attachment) => {
-                                                fs.unlink(filepath, (err) => {
-                                                    if (err) console.log(err);
+                                            .finally(() => {
+                                                fs.stat(filepath, (err, stat) => {
+                                                    if (!err) {
+                                                        fs.unlink(filepath, (err) => {
+                                                            if (err) console.log(err);
+                                                        });
+                                                    }
                                                 });
                                             });
                                     });
 
-                                    db.savePoemId(guild.id, null);
+                                    dbGuild.savePoemId(guild.id, null);
                                 }
                             });
                     }
@@ -105,23 +109,13 @@ var dokipoemUpdate = function(message, client) {
                 .catch((err) => {
                     if (err.message == 'Unknown Message') {
                         message.channel.send('Hmm... I can\'t seem to find your old doki-poem. Starting a new one...!');
-
                         poemChannel.send(firstWord)
                             .then((msg) => {
-                                db.savePoemId(guild.id, msg.id);
+                                dbGuild.savePoemId(guild.id, msg.id);
                             });
                     } else {
-                        console.log(err);
+                        throw err;
                     }
-
-                    // Remove .txt file if one still exists
-                    fs.stat(filepath, (err, stat) => {
-                        if (!err) {
-                            fs.unlink(filepath, (err) => {
-                                if (err) console.log(err);
-                            });
-                        }
-                    });
                 });
         }
     });

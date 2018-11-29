@@ -12,9 +12,10 @@ const path = require('path');
 
 const auth = require('./data/auth');
 const utils = require('./utils/utils');
-const db = require('./utils/db');
+const dbGuild = require('./utils/db/dbGuild');
 const voice = require('./utils/voice');
 const commands = require('./commands/commands');
+
 const dokiReact = require('./etc/doki-react');
 const dokipoemUpdate = require('./etc/dokipoem-update');
 const checkInsults = require('./etc/check-insults.js');
@@ -50,7 +51,7 @@ process.on('SIGINT', (code) => {
 });
 
 client.on('ready', () => {
-    db.verifyGuilds(client, () => {
+    dbGuild.verifyGuilds(client, () => {
         setInterval(() => {
             checkInsults(client);
         }, 60000);
@@ -65,7 +66,7 @@ client.on('ready', () => {
 });
 
 client.on('guildCreate', (guild) => {
-    db.addGuild(guild.id, () => {
+    dbGuild.addGuild(guild.id, () => {
         let message = ('Square up! Your true love has joined the server.'
                 + ' You can make a channel called `doki-poems` to track poems, and'
                 + ' use \`-help\` for more commands. Best of luck, dummies!');
@@ -82,13 +83,13 @@ client.on('guildCreate', (guild) => {
 });
 
 client.on('guildDelete', (guild) => {
-    db.removeGuild(guild.id);
+    dbGuild.removeGuild(guild.id);
     voice.removeServer(guild.id);
 });
 
 client.on('message', (message) => {
     if (message.guild) {
-        db.getGuild(message.guild.id, (guild) => {
+        dbGuild.getGuild(message.guild.id, (guild) => {
             let prefix = guild.prefix;
 
             let content = message.content.toLowerCase();

@@ -2,12 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 const utils = require(__basedir + '/utils/utils');
-const db = require(__basedir + '/utils/db');
+const dbGuild = require(__basedir + '/utils/db/dbGuild');
 
 let checkInsults = async function(client) {
 
     let date = new Date();
-    db.getInsultGuildIds(date, (guildIds) => {
+    dbGuild.getInsultGuildIds(date, (guildIds) => {
         if (guildIds.length == 0) {
             return;
         }
@@ -17,7 +17,7 @@ let checkInsults = async function(client) {
         for (let i = 0; i < guildIds.length; i++) {
             // Contingency plan in case bot is down for too long
             if (guildIds.length > 200) {
-                db.setInsultTime(guildIds[i].id, generateNewTime(date));
+                dbGuild.setInsultTime(guildIds[i].id, utils.generateNewTime(date));
                 continue;
             }
 
@@ -56,27 +56,10 @@ let checkInsults = async function(client) {
                     });
                 }
 
-                db.setInsultTime(guild.id, generateNewTime(date));
+                dbGuild.setInsultTime(guild.id, utils.generateNewTime(date));
             }
         }
     });
-};
-
-
-let generateNewTime = function(date) {
-    let newDate = new Date(date);
-    let hours = Math.floor(Math.random() * 24);
-    let minutes = Math.floor(Math.random() * 64);
-
-    newDate.setHours(hours);
-    newDate.setMinutes(minutes);
-    newDate.setSeconds(0);
-
-    if (newDate < date) {
-        newDate.setDate(newDate.getDate() + 1);
-    }
-
-    return newDate;
 };
 
 module.exports = checkInsults;

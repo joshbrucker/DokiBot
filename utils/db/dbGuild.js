@@ -1,8 +1,9 @@
 const mariadb = require('mariadb');
 
 const auth = require(__basedir + '/data/auth');
+const utils = require(__basedir + '/utils/utils');
 
-global.pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser, 
+const pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser, 
     password: auth.dbPass, database: auth.dbName, connectionLimit: 50});
 
 let verifyGuilds = async function(client, func) {
@@ -31,12 +32,14 @@ let verifyGuilds = async function(client, func) {
 };
 
 let addGuild = async function(id, func) {
+    var date = utils.generateNewTime(new Date());
+
     let conn;
     try {
         conn = await pool.getConnection();
 
-        let res = await conn.query(`INSERT INTO guild (id) VALUES (?)
-                                    ON DUPLICATE KEY UPDATE id=id;`, [id]);
+        let res = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
+                                    ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
 
         conn.end();
         if (func) {
@@ -82,8 +85,9 @@ let getGuild = async function(id, func) {
 
         let res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
         if (!res || res.length == 0) {
-            await conn.query(`INSERT INTO guild (id) VALUES (?)
-                              ON DUPLICATE KEY UPDATE id=id;`, [id]);
+            var date = utils.generateNewTime(new Date());
+            await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
+                              ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
             res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
         }
 

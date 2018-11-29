@@ -3,7 +3,7 @@ const path = require('path');
 const validFilename = require('valid-filename');
 
 const utils = require(__basedir + '/utils/utils');
-const db = require(__basedir + '/utils/db');
+const dbGuild = require(__basedir + '/utils/db/dbGuild');
 
 var dokipoem = function(message, args) {
     if (!message.member.hasPermission('ADMINISTRATOR')) {
@@ -17,7 +17,7 @@ var dokipoem = function(message, args) {
     }
 
     if (args.length >= 1) {
-        db.getGuild(message.guild.id, (guild) => {
+        dbGuild.getGuild(message.guild.id, (guild) => {
             switch (args[0].toLowerCase()) {
                 case 'end':
                     if (!guild.poem_id) {
@@ -48,30 +48,26 @@ var dokipoem = function(message, args) {
 
                                 // Sends the .txt file
                                 poemChannel.send({files: [filepath]})
-                                    .then((attachment) => {
-                                        fs.unlink(filepath, (err) => {
-                                            if (err) console.log(err);
+                                    .finally(() => {
+                                        fs.stat(filepath, (err, stat) => {
+                                            if (!err) {
+                                                fs.unlink(filepath, (err) => {
+                                                    if (err) console.log(err);
+                                                });
+                                            }
                                         });
                                     });
                             });
 
-                            db.savePoemId(guild.id, null);
+                            dbGuild.savePoemId(guild.id, null);
                         })
                         .catch((err) => {
                             if (err.message == 'Unknown Message') {
                                 message.channel.send('Hmm... I can\'t seem to find my old doki-poem. Let\'s start a new one!');
-                                db.savePoemId(guild.id, null);
+                                dbGuild.savePoemId(guild.id, null);
                             } else {
-                                console.log(err);
+                                throw err;
                             }
-
-                            fs.stat(filepath, (err, stat) => {
-                                if (!err) {
-                                    fs.unlink(filepath, (err) => {
-                                        if (err) console.log(err);
-                                    });
-                                }
-                            });
                         });
                     }
                     break;
@@ -96,7 +92,7 @@ var dokipoem = function(message, args) {
                                 return;
                         }
 
-                        db.savePoemFreq(guild.id, freq);
+                        dbGuild.savePoemFreq(guild.id, freq);
                     } else {
                         utils.invalidArgsMsg(message, 'dokipoem');
                     }
