@@ -14,6 +14,7 @@ const ostCmd = require('./ost');
 const dokipoemCmd = require('./dokipoem');
 const prefixCmd = require('./prefix');
 const waifuCmd = require('./waifu');
+const insultCmd = require('./insult');
 
 var commands = {
     anime: animeCmd,
@@ -26,7 +27,8 @@ var commands = {
     ost: ostCmd,
     dokipoem: dokipoemCmd,
     prefix: prefixCmd,
-    waifu: waifuCmd
+    waifu: waifuCmd,
+    insult: insultCmd
 };
 
 module.exports = commands;

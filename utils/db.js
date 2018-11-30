@@ -123,6 +123,27 @@ let member = {
 	}
 };
 
+let insult = {
+	addInsult: async function(message, user, then) {
+	    _query(async (conn) => {
+	        let res = await conn.query(`INSERT INTO insult (id, message, user) VALUES (UUID(), ?, ?);`, [message, user]);
+	        return res;
+	    }, then);
+	},
+
+	getInsults: async function(number, then) {
+		_query(async (conn) => {
+	        let res = await conn.query(`SELECT * FROM insult
+	                                        JOIN (SELECT id FROM insult
+	                                            WHERE RAND() < (SELECT ((? / COUNT(*)) * 10)
+	                                                FROM insult)
+	                                            ORDER BY RAND() LIMIT ?) AS z ON z.id = insult.id;`, [number, number]);
+	      	await delete res['meta'];
+	      	return res;
+		}, then);
+	}
+};
+
 let _query = async function(query, then) {
 	let conn;
     try {
@@ -141,4 +162,5 @@ let _query = async function(query, then) {
 module.exports = {
 	guild,
 	member,
+	insult
 };

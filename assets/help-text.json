@@ -1,10 +1,14 @@
 {
-	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `anime` | `doki` | `moniquote` | `ost` | `poem` | `prefix` | `waifu` | `nep` | `neko`\n\n",
+	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `anime` | `doki` | `insult` | `moniquote` | `ost` | `dokipoem` | `prefix` | `waifu` | `nep` | `neko`\n\n",
 	"invalidArg": ":x: That's not a valid command to look up!\nUse `help` for a list of all commands.",
 	"commands": [
 		{
 			"name": "anime",
 			"text": "`anime` | Finds info about an anime.\n\n**Usage**: `anime <title>`"
+		},
+		{
+			"name": "insult",
+			"text": "`insult` | Submit an insult for us to review and possibly add to DokiBot! Your insult must include at least one placeholder %user%\n\n**Usage**: `insult submit <insult>`"
 		},
 		{
 			"name": "help",
@@ -23,8 +27,8 @@
 			"text": "`moniquote` | Posts one of Monika's quotes from the end of the game\n\n**Usage**: `moniquote`"
 		},
 		{
-			"name": "poem",
-			"text": "`poem` | Uses commands related to the doki-poems feature\n\n**Usage**: `poem <arguments>`\n\n__Arguments__: `end` | `frequency (minute | hour | day)`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
+			"name": "dokipoem",
+			"text": "`dokipoem` | Uses commands related to the doki-poems feature\n\n**Usage**: `dokipoem <arguments>`\n\n__Arguments__: `end` | `frequency (minute | hour | day)`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
 		},
 		{
 			"name": "prefix",
