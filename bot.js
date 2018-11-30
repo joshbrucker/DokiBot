@@ -12,13 +12,13 @@ const path = require('path');
 
 const auth = require('./data/auth');
 const utils = require('./utils/utils');
-const dbGuild = require('./utils/db/dbGuild');
+const db = require('./utils/db');
 const voice = require('./utils/voice');
 const commands = require('./commands/commands');
 
 const dokiReact = require('./etc/doki-react');
 const dokipoemUpdate = require('./etc/dokipoem-update');
-const checkInsults = require('./etc/check-insults.js');
+const checkInsults = require('./etc/check-insults');
 
 const client = new Discord.Client();
 const dbl = new DBL(auth.dbltoken, client);
@@ -51,22 +51,22 @@ process.on('SIGINT', (code) => {
 });
 
 client.on('ready', () => {
-    dbGuild.verifyGuilds(client, () => {
+    db.guild.verifyGuilds(client, () => {
         setInterval(() => {
             checkInsults(client);
         }, 60000);
     });
 
-    setActivity(client);
+    utils.setActivity(client);
     setInterval(() => {
-        setActivity(client);
+        utils.setActivity(client);
     }, 3600000);
 
     console.log('I am ready!');
 });
 
 client.on('guildCreate', (guild) => {
-    dbGuild.addGuild(guild.id, () => {
+    db.guild.addGuild(guild.id, () => {
         let message = ('Square up! Your true love has joined the server.'
                 + ' You can make a channel called `doki-poems` to track poems, and'
                 + ' use \`-help\` for more commands. Best of luck, dummies!');
@@ -83,13 +83,14 @@ client.on('guildCreate', (guild) => {
 });
 
 client.on('guildDelete', (guild) => {
-    dbGuild.removeGuild(guild.id);
+    db.guild.removeGuild(guild.id);
     voice.removeServer(guild.id);
 });
 
 client.on('message', (message) => {
     if (message.guild) {
-        dbGuild.getGuild(message.guild.id, (guild) => {
+        db.guild.getGuild(message.guild.id, (guild) => {
+            guild = guild[0];
             let prefix = guild.prefix;
 
             let content = message.content.toLowerCase();
@@ -116,7 +117,7 @@ client.on('message', (message) => {
                         case 'dp':
                         case 'dokipoem':
                             if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
-                                commands.dokipoem(message, args);
+                                commands.dokipoem(guild, message, args);
                             } else {
                                 message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
                                     + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
@@ -148,7 +149,7 @@ client.on('message', (message) => {
                 }
             }
 
-            dokipoemUpdate(message, client);
+            dokipoemUpdate(guild, message, client);
 
             let dokiReactChance = Math.floor(Math.random() * 2);
             if (dokiReactChance == 1) {
@@ -158,36 +159,6 @@ client.on('message', (message) => {
     }
 });
 
-let setActivity = function(client) {
-    let game;
-    let num = Math.floor(Math.random() * 8);
-    switch(num) {
-        case 0:
-            game = 'Natsuki <3';
-            break;
-        case 1:
-            game = 'Sayori <3';
-            break;
-        case 2:
-            game = 'Yuri <3';
-            break;
-        case 3:
-            game = '<3 Monika Monika Monika <3';
-            break;
-        case 4:
-            game = 'You';
-            break;
-        case 5:
-            game = 'Doki Doki Literature Club';
-            break;
-        case 6:
-            game = 'with your heart';
-            break;
-        case 7:
-            game = 'Just Monika';
-            break;
     }
-    client.user.setActivity(game);
-}
 
 client.login(auth.token);
