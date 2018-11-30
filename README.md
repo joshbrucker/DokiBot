@@ -22,6 +22,9 @@ Grabs information about the given anime.
 ### -doki \[nsfw\] \[monika | sayori | yuri | natsuki\]
 Grabs a random Doki picture with the specified tags.
 
+### -insult submit \<insult\>
+Submits an insult for us to review and possibly add to DokiBot! Your insult must include at least one placeholder %user%. Explicitly inappropriate insults will be rejected.
+
 ### -moniquote
 Posts one of Monika's many quotes from the end of Doki Doki Literature Club.
 
