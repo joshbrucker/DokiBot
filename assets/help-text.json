@@ -1,50 +1,54 @@
 {
-	"default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `anime` | `doki` | `insult` | `moniquote` | `ost` | `dokipoem` | `prefix` | `waifu` | `nep` | `neko`\n\n",
-	"invalidArg": ":x: That's not a valid command to look up!\nUse `help` for a list of all commands.",
-	"commands": [
-		{
-			"name": "anime",
-			"text": "`anime` | Finds info about an anime.\n\n**Usage**: `anime <title>`"
-		},
-		{
-			"name": "insult",
-			"text": "`insult` | Submit an insult for us to review and possibly add to DokiBot! Your insult must include at least one placeholder %user%\n\n**Usage**: `insult submit <insult>`"
-		},
-		{
-			"name": "help",
-			"text": "Lists info about commands. B-Baka!\n\n**Usage**: `help <command>`"
-		},
-		{
-			"name": "doki",
-			"text": "`doki` | Posts a random Doki Doki picture.\n\n**Usage**: `doki [nsfw] [monika | sayori | yuri | natsuki]`"
-		},
-		{
-			"name": "ost",
-			"text": "`ost` | Plays songs from the official Doki Doki OST\n\n**Usage**: `ost <arguments>`\n\n__Arguments__: `play [1-15]` | `playall` | `stop` | `pause` | `resume` | `skip` | `queue` | `clear` | `list`"
-		},
-		{
-			"name": "moniquote",
-			"text": "`moniquote` | Posts one of Monika's quotes from the end of the game\n\n**Usage**: `moniquote`"
-		},
-		{
-			"name": "dokipoem",
-			"text": "`dokipoem` | Uses commands related to the doki-poems feature\n\n**Usage**: `dokipoem <arguments>`\n\n__Arguments__: `end` | `frequency (minute | hour | day)`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
-		},
-		{
-			"name": "prefix",
-			"text": "`prefix` | Set the prefix of the bot on your server! (Max of 3 characters)\n\n**Usage**: `prefix <new_prefix>`"
-		},
-		{
-			"name": "waifu",
-			"text": "`waifu` | Posts a picture of a waifu\n\n**Usage**: `waifu [nsfw]`"
-		},
-		{
-			"name": "nep",
-			"text": "`nep` | Nepu nepu!"
-		},
-		{
-			"name": "neko",
-			"text": "`neko` | Posts beautiful neko girls\n\n**Usage**: `neko [nsfw]`"
-		}
-	]
+    "default": "```xl\n'Master Command List'```\nUse `help [<command>]` for more info about a command.\n\n**Commands:** `help` | `anime` | `doki` | `insult` | `moniquote` | `ost` | `dokipoem` | `prefix` | `waifu` | `nep` | `neko` | `vote`\n\n",
+    "invalidArg": ":x: That's not a valid command to look up!\nUse `help` for a list of all commands.",
+    "commands": [
+        {
+            "name": "anime",
+            "text": "`anime` | Finds info about an anime.\n\n**Usage**: `anime <title>`"
+        },
+        {
+            "name": "insult",
+            "text": "`insult` | Submit an insult for us to review and possibly add to DokiBot! Your insult must include at least one placeholder %user%\n\n**Usage**: `insult submit <insult>`\n(Don't include the brackets)\n\n**E.g.** `insult submit %user% submitted a really stupid insult!`"
+        },
+        {
+            "name": "help",
+            "text": "Lists info about commands. B-Baka!\n\n**Usage**: `help <command>`"
+        },
+        {
+            "name": "doki",
+            "text": "`doki` | Posts a random Doki Doki picture.\n\n**Usage**: `doki [nsfw] [monika | sayori | yuri | natsuki]`"
+        },
+        {
+            "name": "ost",
+            "text": "`ost` | Plays songs from the official Doki Doki OST\n\n**Usage**: `ost <arguments>`\n\n__Arguments__: `play [1-15]` | `playall` | `stop` | `pause` | `resume` | `skip` | `queue` | `clear` | `list`"
+        },
+        {
+            "name": "moniquote",
+            "text": "`moniquote` | Posts one of Monika's quotes from the end of the game\n\n**Usage**: `moniquote`"
+        },
+        {
+            "name": "dokipoem",
+            "text": "`dokipoem` | Uses commands related to the doki-poems feature\n\n**Usage**: `dokipoem <arguments>`\n\n__Arguments__: `end` | `frequency (minute | hour | day)`\n\n```# To use the doki-poems feature, your server needs a text channel named \"doki-poems\"```"
+        },
+        {
+            "name": "prefix",
+            "text": "`prefix` | Set the prefix of the bot on your server! (Max of 3 characters)\n\n**Usage**: `prefix <new_prefix>`"
+        },
+        {
+            "name": "waifu",
+            "text": "`waifu` | Posts a picture of a waifu\n\n**Usage**: `waifu [nsfw]`"
+        },
+        {
+            "name": "nep",
+            "text": "`nep` | Nepu nepu!"
+        },
+        {
+            "name": "neko",
+            "text": "`neko` | Posts beautiful neko girls\n\n**Usage**: `neko [nsfw]`"
+        },
+        {
+            "name": "vote",
+            "text": "`vote` | Sends a link to the voting site! Voting resets all active cooldowns.\n\n**Usage**: `vote`"
+        }
+    ]
 }

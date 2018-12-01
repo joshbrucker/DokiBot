@@ -72,6 +72,7 @@ client.on('ready', () => {
         utils.setActivity(client);
     }, 3600000);
 
+    client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).fetchMessages();
     setInterval(() => {
         client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).fetchMessages();
     }, 600000);
@@ -133,8 +134,8 @@ client.on('message', (message) => {
                             if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
                                 commands.dokipoem(guild, message, args);
                             } else {
-                                message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled'
-                                    + ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
+                                message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled' +
+                                                     ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
                             }
                             break;
                         case 'help':
@@ -156,6 +157,9 @@ client.on('message', (message) => {
                             break;
                         case 'neko':
                             commands.neko(message, args);
+                            break;
+                        case 'vote':
+                            commands.vote(message);
                             break;
                     }
 

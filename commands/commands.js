@@ -1,34 +1,17 @@
-/*
-    This file compiles all the commands to avoid 
-    excessive require statements in bot.js
-*/
-
-const animeCmd = require('./anime');
-const broadcastCmd = require('./broadcast');
-const dokiCmd = require('./doki');
-const helpCmd = require('./help');
-const moniquoteCmd = require('./moniquote');
-const nekoCmd = require('./neko');
-const nepCmd = require('./nep');
-const ostCmd = require('./ost');
-const dokipoemCmd = require('./dokipoem');
-const prefixCmd = require('./prefix');
-const waifuCmd = require('./waifu');
-const insultCmd = require('./insult');
-
-var commands = {
-    anime: animeCmd,
-    broadcast: broadcastCmd,
-    doki: dokiCmd,
-    help: helpCmd,
-    moniquote: moniquoteCmd,
-    neko: nekoCmd,
-    nep: nepCmd,
-    ost: ostCmd,
-    dokipoem: dokipoemCmd,
-    prefix: prefixCmd,
-    waifu: waifuCmd,
-    insult: insultCmd
+let commands = {
+    anime: require('./anime'),
+    broadcast: require('./broadcast'),
+    doki: require('./doki'),
+    help: require('./help'),
+    moniquote: require('./moniquote'),
+    neko: require('./neko'),
+    nep: require('./nep'),
+    ost: require('./ost'),
+    dokipoem: require('./dokipoem'),
+    prefix: require('./prefix'),
+    waifu: require('./waifu'),
+    insult: require('./insult'),
+    vote: require('./vote')
 };
 
 module.exports = commands;
