@@ -4,11 +4,11 @@
     "commands": [
         {
             "name": "anime",
-            "text": "`anime` | Finds info about an anime.\n\n**Usage**: `anime <title>`"
+            "text": "`anime` | Finds info about an anime.\n\n**Usage**\n`anime <title>`"
         },
         {
             "name": "insult",
-            "text": "`insult` | Submit an insult for us to review and possibly add to DokiBot! Your insult must include at least one placeholder %user%\n\n**Usage**: `insult submit <insult>`\n(Don't include the brackets)\n\n**E.g.** `insult submit %user% submitted a really stupid insult!`"
+            "text": "`insult` | Commands related to the insult functionality. Submit an insult or toggle them on your server!\n\n**Usages**\n`insult submit <insult>` - Submit an insult every 24 hours! Include %user% where you want DokiBot to tag a user (Don't include brackets in <insult>)\n`insult toggle` - Turns off/on the random insult functionality on your server"
         },
         {
             "name": "help",
