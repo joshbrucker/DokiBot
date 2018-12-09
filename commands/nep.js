@@ -44,6 +44,13 @@ var nep = function(message, args) {
                 message.member.voiceChannel.join()
                     .then((connection) => {
                         playSound(message, connection, path);
+                    })
+                    .catch((err) => {
+                        if (err.toString() == "Error: You do not have permission to join this voice channel.") {
+                            channel.send("I don't have access to your voice channel! :frowning:");
+                        } else {
+                            console.log(err);
+                        }
                     });
             } else {
                 playSound(message, message.guild.voiceConnection, path);

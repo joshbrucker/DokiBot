@@ -59,16 +59,22 @@ var ost = function(message, args) {
                     var queueLength = task.queue.length;
 
                     if (queueLength + 1 <= 30) {
-                        task.queue.push(song);
-
                         if (queueLength > 0) {
                             channel.send('Adding `' + song.name + '` to the queue!');
                         } else {
-                            channel.send('Now playing `' + song.name + '`');
                             if (!message.guild.voiceConnection) {
                                 message.member.voiceChannel.join()
                                     .then((connection) => {
+                                        channel.send('Now playing `' + song.name + '`');
+                                        task.queue.push(song);
                                         playMusic(message, connection);
+                                    })
+                                    .catch((err) => {
+                                        if (err.toString() == "Error: You do not have permission to join this voice channel.") {
+                                            channel.send("I don't have access to your voice channel! :frowning:");
+                                        } else {
+                                            console.log(err);
+                                        }
                                     });
                             } else {
                                 playMusic(message, message.guild.voiceConnection);
@@ -85,27 +91,44 @@ var ost = function(message, args) {
             }
             break;
         case 'playall':
-            channel.send('Adding all OST songs to the queue!');
-
             var queueLength = task.queue.length;
-
-            for (var i = 0; i < soundtrack.length; i++) {
-                if (task.queue.length + 1 <= 30) {
-                    task.queue.push(soundtrack[i]);
-                } else {
-                    channel.send('The queue is maxed-out at 30! Calm down!');
-                    break;
-                }
-            }
 
             if (queueLength == 0) {
                 if (!message.guild.voiceConnection) {
                     message.member.voiceChannel.join()
                         .then((connection) => {
+                            channel.send('Adding all OST songs to the queue!');
+
+                            for (var i = 0; i < soundtrack.length; i++) {
+                                if (task.queue.length + 1 <= 30) {
+                                    task.queue.push(soundtrack[i]);
+                                } else {
+                                    channel.send('The queue is maxed-out at 30! Calm down!');
+                                    break;
+                                }
+                            }
                             playMusic(message, connection);
+                        })
+                        .catch((err) => {
+                            if (err.toString() == "Error: You do not have permission to join this voice channel.") {
+                                channel.send("I don't have access to your voice channel! :frowning:");
+                            } else {
+                                console.log(err);
+                            }
                         });
                 } else {
                     playMusic(message, message.guild.voiceConnection);
+                }
+            } else {
+                channel.send('Adding all OST songs to the queue!');
+
+                for (var i = 0; i < soundtrack.length; i++) {
+                    if (task.queue.length + 1 <= 30) {
+                        task.queue.push(soundtrack[i]);
+                    } else {
+                        channel.send('The queue is maxed-out at 30! Calm down!');
+                        break;
+                    }
                 }
             }
             break;
@@ -232,7 +255,7 @@ var playMusic = function(message, connection) {
     const server = voice.getServer(id);
     const task = server.task;
 
-    if (task.queue[0]) {
+    if (task.queue) {
         task.name = 'ost';
         task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
     }
