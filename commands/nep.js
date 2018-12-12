@@ -5,25 +5,32 @@ const Discord = require('discord.js');
 
 const voice = require(__basedir + '/utils/voice');
 
-var nep = function(message, args) {
-    var id = message.guild.id;
-    var channel = message.channel;
+let nep = function(client, message, args) {
+    const id = message.guild.id;
+    const channel = message.channel;
 
     if (!message.member.voiceChannel) {
         message.channel.send('You need to be in a voice channel to use `nep`');
         return;
     }
 
+    // Voice setup
+    if (!voice.getServer(id)) {
+        voice.addServer(id);
+    }
+
     const server = voice.getServer(id);
     const task = server.task;
 
     if (task.name) {
-        channel.send('Voice chat already in use through the `' + task.name + '` command!');
+        channel.send('Voice chat already in use!');
         return;
+    } else {
+        createTask(task);
     }
 
-    var path = './assets/nep_audio/';
-    var character;
+    let path = './assets/nep_audio/';
+    let character;
     if (args.length == 0) {
         folders = fs.readdirSync(path);
         character = folders[Math.floor(Math.random() * folders.length)];
@@ -37,34 +44,38 @@ var nep = function(message, args) {
         if (err) {
             channel.send('Can\'t find character ' + character + '!');
         } else {
-            var random = Math.floor(Math.random() * files.length);
+            let random = Math.floor(Math.random() * files.length);
             path += '/' + files[random];
 
-            if (!message.guild.voiceConnection) {
+            let emoji = client.emojis.get('522202578818301970');
+
+            if (message.guild.voiceConnection) {
+                channel.send('Nepu nepu! ' + emoji);
+                playSound(message, message.guild.voiceConnection, path);
+            } else {
                 message.member.voiceChannel.join()
                     .then((connection) => {
+                        channel.send('Nepu nepu! ' + emoji);
                         playSound(message, connection, path);
                     })
                     .catch((err) => {
                         if (err.toString() == "Error: You do not have permission to join this voice channel.") {
                             channel.send("I don't have access to your voice channel! :frowning:");
+                            voice.removeServer(id);
                         } else {
                             console.log(err);
                         }
                     });
-            } else {
-                playSound(message, message.guild.voiceConnection, path);
             }
         }
     });
 };
 
-var playSound = function(message, connection, path) {
-    var id = message.guild.id;
+let playSound = function(message, connection, path) {
+    const id = message.guild.id;
+
     const server = voice.getServer(id);
     const task = server.task;
-
-    task.name = 'nep';
 
     task.dispatcher = connection.playFile(path);
 
@@ -76,10 +87,7 @@ var playSound = function(message, connection, path) {
     });
 
     task.dispatcher.once('end', () => {
-        server.task = {
-            name: null,
-            dispatcher: null
-        };
+        voice.resetTask(id);
 
         server.timeout = setTimeout(() => {
             voice.removeServer(id);
@@ -88,6 +96,10 @@ var playSound = function(message, connection, path) {
     });
 
 
+};
+
+let createTask = function(task) {
+    task.name = voice.TASK.NEP;
 };
 
 module.exports = nep;

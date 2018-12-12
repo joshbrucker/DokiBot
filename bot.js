@@ -127,7 +127,7 @@ client.on('message', (message) => {
                             commands.moniquote(message, args);
                             break;
                         case 'nep':
-                            commands.nep(message, args);
+                            commands.nep(client, message, args);
                             break;
                         case 'dp':
                         case 'dokipoem':

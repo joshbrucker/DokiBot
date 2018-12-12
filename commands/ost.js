@@ -6,10 +6,10 @@ const soundtrack = require(__basedir + '/assets/soundtrack.json');
 const utils = require(__basedir + '/utils/utils');
 const voice = require(__basedir + '/utils/voice');
 
-var ost = function(message, args) {
+let ost = function(message, args) {
 
-    var id = message.guild.id
-    var channel = message.channel;
+    const id = message.guild.id
+    const channel = message.channel;
 
     if (args.length < 1) {
         utils.invalidArgsMsg(message, 'ost');
@@ -18,8 +18,8 @@ var ost = function(message, args) {
 
     // List does not use voice chat and should be run apart from the others
     if (args[0] == 'list') {
-        var msg = '```ml\nDoki Doki Literature Club OST\n';
-        for (var i = 0; i < soundtrack.length; i++) {
+        let msg = '```ml\nDoki Doki Literature Club OST\n';
+        for (let i = 0; i < soundtrack.length; i++) {
             msg += '\n\"' + (i + 1) + '. ' + soundtrack[i].name + '\"';
         }
         msg += '\`\`\`';
@@ -32,167 +32,169 @@ var ost = function(message, args) {
         return;
     }
 
+    // Voice setup
+    if (!voice.getServer(id)) {
+        voice.addServer(id);
+    }
+
     const server = voice.getServer(id);
     const task = server.task;
 
-    if (task.name && task.name != 'ost') {
-        channel.send('Voice chat already in use through the `' + task.name + '` command!');
-        return;
-    } else {
-        if (task.queue == undefined) {
-            task.queue = [];
-        }
-        if (task.pauseTimeout == undefined) {
-            task.pauseTimeout = null;
-        }
+    if (!task.name) {
+        createTask(task);
     }
 
-    var cmd = args[0].toLowerCase();
+    if (task.name != voice.TASK.OST) {
+        channel.send('Voice chat already in use!');
+        return;
+    }
+
+    let cmd = args[0].toLowerCase();
     args.splice(0, 1);
 
     switch (cmd) {
         case 'play':
-            if (args.length == 1) {
-                var songNum = args[0] - 1;
-                if (songNum >= 0 && songNum < soundtrack.length) {
-                    var song = soundtrack[songNum];
-                    var queueLength = task.queue.length;
+            if (args.length != 1) {
+                utils.invalidArgsMsg(message, 'ost');
+                return;
+            }
 
-                    if (queueLength + 1 <= 30) {
-                        if (queueLength > 0) {
-                            channel.send('Adding `' + song.name + '` to the queue!');
-                        } else {
-                            if (!message.guild.voiceConnection) {
-                                message.member.voiceChannel.join()
-                                    .then((connection) => {
-                                        channel.send('Now playing `' + song.name + '`');
-                                        task.queue.push(song);
-                                        playMusic(message, connection);
-                                    })
-                                    .catch((err) => {
-                                        if (err.toString() == "Error: You do not have permission to join this voice channel.") {
-                                            channel.send("I don't have access to your voice channel! :frowning:");
-                                        } else {
-                                            console.log(err);
-                                        }
-                                    });
-                            } else {
-                                playMusic(message, message.guild.voiceConnection);
-                            }
-                        }
-                    } else {
-                        channel.send('The queue is maxed-out at 30! Calm down!');
-                    }
-                } else {
-                    channel.send('Invalid OST number. Use `ost list` for a list of all songs.');
-                }
+            let songNum = args[0] - 1;
+
+            if (songNum < 0 || songNum > soundtrack.length) {
+                channel.send('Invalid OST number!');
+                return;
+            }
+
+            let song = soundtrack[songNum];
+            let queueLength = task.queue.length;
+
+            if (queueLength + 1 > 30) {
+                channel.send('The queue is maxed-out at 30! Calm down!');
+                return
+            }
+
+            if (queueLength > 0) {
+                channel.send('Adding `' + song.name + '` to the queue!');
+                task.queue.push(song); 
             } else {
-                channel.send('Invalid usage. Use `help ost` to see proper usage.');
+                if (message.guild.voiceConnection) {
+                    channel.send('Now playing `' + song.name + '`');
+                    task.queue.push(song);
+                    playMusic(message, message.guild.voiceConnection);
+                } else {
+                    message.member.voiceChannel.join()
+                        .then((connection) => {
+                            channel.send('Now playing `' + song.name + '`');
+                            task.queue.push(song);
+                            playMusic(message, connection);
+                        })
+                        .catch((err) => {
+                            if (err.toString() == 'Error: You do not have permission to join this voice channel.') {
+                                channel.send('I don\'t have access to your voice channel! :frowning:');
+                                voice.removeServer(id);
+                            } else {
+                                throw err;
+                            }
+                        });
+                }
             }
             break;
         case 'playall':
-            var queueLength = task.queue.length;
+            channel.send('Adding all OST songs to the queue!');
 
-            if (queueLength == 0) {
+            let initialQueue = task.queue.length;
+
+            for (let i = 0; i < soundtrack.length; i++) {
+                if (task.queue.length + 1 <= 30) {
+                    task.queue.push(soundtrack[i]);
+                } else {
+                    channel.send('The queue is maxed-out at 30! Calm down!');
+                    break;
+                }
+            }
+
+            if (initialQueue == 0) {
                 if (!message.guild.voiceConnection) {
                     message.member.voiceChannel.join()
                         .then((connection) => {
-                            channel.send('Adding all OST songs to the queue!');
-
-                            for (var i = 0; i < soundtrack.length; i++) {
-                                if (task.queue.length + 1 <= 30) {
-                                    task.queue.push(soundtrack[i]);
-                                } else {
-                                    channel.send('The queue is maxed-out at 30! Calm down!');
-                                    break;
-                                }
-                            }
                             playMusic(message, connection);
                         })
                         .catch((err) => {
                             if (err.toString() == "Error: You do not have permission to join this voice channel.") {
                                 channel.send("I don't have access to your voice channel! :frowning:");
+                                voice.removeServer(id);
                             } else {
-                                console.log(err);
+                                throw err;
                             }
                         });
                 } else {
                     playMusic(message, message.guild.voiceConnection);
                 }
-            } else {
-                channel.send('Adding all OST songs to the queue!');
-
-                for (var i = 0; i < soundtrack.length; i++) {
-                    if (task.queue.length + 1 <= 30) {
-                        task.queue.push(soundtrack[i]);
-                    } else {
-                        channel.send('The queue is maxed-out at 30! Calm down!');
-                        break;
-                    }
-                }
             }
             break;
         case 'stop':
-            if (task.dispatcher) {
-                channel.send(':stop_button: Stopping playback...');
-                task.queue = [];
-                task.dispatcher.end();
-            } else {
+            if (!task.dispatcher) {
                 channel.send('Nothing to stop!');
+                return;
             }
+
+            channel.send(':stop_button: Stopping playback...');
+            task.queue = [];
+            task.dispatcher.end();
             break;
         case 'pause':
-            if (task.dispatcher) {
-                 if (!task.dispatcher.paused) {
-                     channel.send(':pause_button: Pausing...');
-                     task.dispatcher.pause();
-
-                     task.pauseTimeout = setTimeout(() => {
-                        channel.send('Pause timed out, moving to next song!');
-                        task.pauseTimeout = null;
-                        task.dispatcher.end();
-                     }, 300000);
-                     return;
-                 } else {
-                    channel.send('Playback is already paused!');
-                 }
-            } else {
+            if (!task.dispatcher) {
                 channel.send('Nothing to pause!');
+                return;
             }
+
+            if (task.dispatcher.paused) {
+                channel.send('Playback is already paused!');
+                return;
+            }
+
+            channel.send(':pause_button: Pausing...');
+            task.dispatcher.pause();
+
+            task.pauseTimeout = setTimeout(() => {
+                channel.send('Pause timed out, moving to next song!');
+                task.pauseTimeout = null;
+                task.dispatcher.end();
+            }, 300000);
             break;
         case 'resume':
-            if (task.dispatcher) {
-                if (task.dispatcher.paused) {
-                    channel.send(':arrow_forward: Resuming...');
-                    task.dispatcher.resume();
-
-                    clearTimeout(task.pauseTimeout);
-                    task.pauseTimeout = null;
-                    return;
-                } else {
-                    channel.send('Can\'t resume because playback isn\'t paused!');
-                }
-            } else {
+            if (!task.dispatcher) {
                 channel.send('Nothing to resume!');
+                return;
             }
+
+            if (!task.dispatcher.paused) {
+                channel.send('Can\'t resume because playback isn\'t paused!');
+                return;
+            }
+
+            channel.send(':arrow_forward: Resuming...');
+            task.dispatcher.resume();
+
+            clearTimeout(task.pauseTimeout);
+            task.pauseTimeout = null;
             break;
         case 'skip':
-            if (task.dispatcher) {
-                if (task.queue[1]) {
-                    channel.send(':fast_forward: Skipping...');
-                    channel.send('Now playing \`' + task.queue[1].name + '\`')
-                    .then(() => {
-                        task.dispatcher.end();
-                    });
-                } else {
-                    channel.send(':fast_forward: Skipping...');
-                    channel.send('End of queue!')
-                    .then(() => {
-                        task.dispatcher.end();
-                    });
-                }
-            } else {
+            if (!task.dispatcher) {
                 channel.send('Nothing to skip!');
+                return;
+            }
+
+            if (task.queue[1]) {
+                let nextSong = task.queue[1].name;
+                channel.send(':fast_forward: Skipping...');
+                channel.send('Now playing \`' + nextSong + '\`');
+                task.dispatcher.end();
+            } else {
+                channel.send(':fast_forward: Skipping...');
+                channel.send('End of queue!');
+                task.dispatcher.end();
             }
             break;
         case 'queue':
@@ -200,27 +202,27 @@ var ost = function(message, args) {
             //TODO: Tidy this up and make it more readable
 
             const pageLength = 10;
-            var maxPage = Math.ceil(task.queue.length / pageLength);
-            var msg;
+            let maxPage = Math.ceil(task.queue.length / pageLength);
+            let msg;
 
             if (args.length == 1) {
-                var page = args[0];
+                let page = args[0];
 
                 if (page > maxPage) {
                     channel.send('Invalid queue page.');
                 } else {
                     msg = '\`\`\`ml\nCurrent Queue (Page ' + page + ' Of ' + maxPage + ')\n';
 
-                    var startIndex = pageLength * (page - 1);
+                    let startIndex = pageLength * (page - 1);
 
-                    var endIndex;
+                    let endIndex;
                     if (page == maxPage && task.queue.length % pageLength != 0) {
                         endIndex = task.queue.length % pageLength + (maxPage - 1) * pageLength;
                     } else {
                         endIndex = page * pageLength;
                     }
 
-                    for (var i = startIndex; i < endIndex; i++) {
+                    for (let i = startIndex; i < endIndex; i++) {
                         msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
                     }
                     msg += '\`\`\`';
@@ -228,7 +230,7 @@ var ost = function(message, args) {
                 }
             } else {
                 msg = '\`\`\`ml\nCurrent Queue (Page 1 Of ' + maxPage + ')\n';
-                for (var i = 0; (i < pageLength) && (i < task.queue.length); i++) {
+                for (let i = 0; (i < pageLength) && (i < task.queue.length); i++) {
                     msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
                 }
                 msg += '\`\`\`';
@@ -236,13 +238,14 @@ var ost = function(message, args) {
             }
             break;
         case 'clear':
-            if (task.dispatcher) {
-                channel.send('Cleared the queue!');
-                if (task.queue[0]) {
-                    task.queue = [task.queue[0]];
-                }
-            } else {
+            if (!task.dispatcher) {
                 channel.send('Nothing to clear!');
+                return;
+            }
+
+            channel.send('Cleared the queue!');
+            if (task.queue[0]) {
+                task.queue = [task.queue[0]];
             }
             break;
         default:
@@ -250,15 +253,13 @@ var ost = function(message, args) {
     }
 };
 
-var playMusic = function(message, connection) {
-    var id = message.guild.id;
+let playMusic = function(message, connection) {
+    const id = message.guild.id;
+
     const server = voice.getServer(id);
     const task = server.task;
 
-    if (task.queue) {
-        task.name = 'ost';
-        task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
-    }
+    task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
 
     task.dispatcher.once('start', () => {
         connection.player.streamingData.pausedTime = 0;
@@ -274,10 +275,7 @@ var playMusic = function(message, connection) {
         if (task.queue[0]) {
             playMusic(message, connection);
         } else {
-            server.task = {
-                name: null,
-                dispatcher: null
-            };
+            voice.resetTask(id);
 
             server.timeout = setTimeout(() => {
                 voice.removeServer(id);
@@ -285,6 +283,16 @@ var playMusic = function(message, connection) {
             }, voice.leaveTime);
         }
     });
+};
+
+let createTask = function(task) {
+    task.name = voice.TASK.OST;
+    if (task.queue == undefined) {
+        task.queue = [];
+    }
+    if (task.pauseTimeout == undefined) {
+        task.pauseTimeout = null;
+    }
 };
 
 module.exports = ost;
