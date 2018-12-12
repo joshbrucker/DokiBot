@@ -5,7 +5,7 @@ const Discord = require('discord.js');
 
 const voice = require(__basedir + '/utils/voice');
 
-let nep = function(client, message, args) {
+let nep = async function(client, message, args) {
     const id = message.guild.id;
     const channel = message.channel;
 
@@ -22,8 +22,15 @@ let nep = function(client, message, args) {
     const server = voice.getServer(id);
     const task = server.task;
 
+    if (server.locked) {
+        return;
+    }
+
+    voice.lock(id);  // Locks server data
+
     if (task.name) {
         channel.send('Voice chat already in use!');
+        voice.unlock(id);
         return;
     } else {
         createTask(task);
@@ -40,35 +47,40 @@ let nep = function(client, message, args) {
 
     path += character;
 
-    fs.readdir(path, (err, files) => {
-        if (err) {
-            channel.send('Can\'t find character ' + character + '!');
-        } else {
-            let random = Math.floor(Math.random() * files.length);
-            path += '/' + files[random];
-
-            let emoji = client.emojis.get('522202578818301970');
-
-            if (message.guild.voiceConnection) {
-                channel.send('Nepu nepu! ' + emoji);
-                playSound(message, message.guild.voiceConnection, path);
+    await new Promise((resolve, reject) => {
+        fs.readdir(path, async (err, files) => {
+            if (err) {
+                channel.send('Can\'t find character ' + character + '!');
             } else {
-                message.member.voiceChannel.join()
-                    .then((connection) => {
+                let random = Math.floor(Math.random() * files.length);
+                path += '/' + files[random];
+
+                let emoji = client.emojis.get('522202578818301970');
+
+                if (message.guild.voiceConnection) {
+                    channel.send('Nepu nepu! ' + emoji);
+                    playSound(message, message.guild.voiceConnection, path);
+                } else {
+                    try {
+                        var conn = await message.member.voiceChannel.join();
                         channel.send('Nepu nepu! ' + emoji);
-                        playSound(message, connection, path);
-                    })
-                    .catch((err) => {
+                        playSound(message, conn, path);
+                    } catch(err) {
                         if (err.toString() == "Error: You do not have permission to join this voice channel.") {
                             channel.send("I don't have access to your voice channel! :frowning:");
-                            voice.removeServer(id);
                         } else {
-                            console.log(err);
+                            throw err;
                         }
-                    });
+                    }
+                }
             }
-        }
+
+            resolve();
+        });
     });
+
+    voice.cleanup(id);
+    voice.unlock(id); // Unlocks server data
 };
 
 let playSound = function(message, connection, path) {

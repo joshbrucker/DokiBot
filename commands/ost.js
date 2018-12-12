@@ -6,7 +6,7 @@ const soundtrack = require(__basedir + '/assets/soundtrack.json');
 const utils = require(__basedir + '/utils/utils');
 const voice = require(__basedir + '/utils/voice');
 
-let ost = function(message, args) {
+let ost = async function(message, args) {
 
     const id = message.guild.id
     const channel = message.channel;
@@ -40,12 +40,19 @@ let ost = function(message, args) {
     const server = voice.getServer(id);
     const task = server.task;
 
+    if (server.locked) {
+        return;
+    }
+
+    voice.lock(id); // Locks server data
+
     if (!task.name) {
-        createTask(task);
+    	createTask(task);
     }
 
     if (task.name != voice.TASK.OST) {
         channel.send('Voice chat already in use!');
+        voice.unlock(id);
         return;
     }
 
@@ -56,14 +63,14 @@ let ost = function(message, args) {
         case 'play':
             if (args.length != 1) {
                 utils.invalidArgsMsg(message, 'ost');
-                return;
+                break;
             }
 
             let songNum = args[0] - 1;
 
-            if (songNum < 0 || songNum > soundtrack.length) {
+            if (isNaN(args[0]) || (songNum < 0 || songNum > soundtrack.length)) {
                 channel.send('Invalid OST number!');
-                return;
+                break;
             }
 
             let song = soundtrack[songNum];
@@ -71,7 +78,7 @@ let ost = function(message, args) {
 
             if (queueLength + 1 > 30) {
                 channel.send('The queue is maxed-out at 30! Calm down!');
-                return
+                break;
             }
 
             if (queueLength > 0) {
@@ -83,20 +90,18 @@ let ost = function(message, args) {
                     task.queue.push(song);
                     playMusic(message, message.guild.voiceConnection);
                 } else {
-                    message.member.voiceChannel.join()
-                        .then((connection) => {
-                            channel.send('Now playing `' + song.name + '`');
-                            task.queue.push(song);
-                            playMusic(message, connection);
-                        })
-                        .catch((err) => {
-                            if (err.toString() == 'Error: You do not have permission to join this voice channel.') {
-                                channel.send('I don\'t have access to your voice channel! :frowning:');
-                                voice.removeServer(id);
-                            } else {
-                                throw err;
-                            }
-                        });
+                	try {
+	                	var conn = await message.member.voiceChannel.join();
+	                	channel.send('Now playing `' + song.name + '`');
+                        task.queue.push(song);
+                        playMusic(message, conn);
+                	} catch(err) {
+                		if (err.toString() == 'Error: You do not have permission to join this voice channel.') {
+	                        channel.send('I don\'t have access to your voice channel! :frowning:');
+                        } else {
+                            throw err;
+                        }
+                	}
                 }
             }
             break;
@@ -116,18 +121,16 @@ let ost = function(message, args) {
 
             if (initialQueue == 0) {
                 if (!message.guild.voiceConnection) {
-                    message.member.voiceChannel.join()
-                        .then((connection) => {
-                            playMusic(message, connection);
-                        })
-                        .catch((err) => {
-                            if (err.toString() == "Error: You do not have permission to join this voice channel.") {
-                                channel.send("I don't have access to your voice channel! :frowning:");
-                                voice.removeServer(id);
-                            } else {
-                                throw err;
-                            }
-                        });
+                	try {
+	                	var conn = await message.member.voiceChannel.join();
+                        playMusic(message, conn);
+                	} catch(err) {
+                		if (err.toString() == 'Error: You do not have permission to join this voice channel.') {
+	                        channel.send('I don\'t have access to your voice channel! :frowning:');
+                        } else {
+                            throw err;
+                        }
+                	}
                 } else {
                     playMusic(message, message.guild.voiceConnection);
                 }
@@ -136,7 +139,7 @@ let ost = function(message, args) {
         case 'stop':
             if (!task.dispatcher) {
                 channel.send('Nothing to stop!');
-                return;
+                break;
             }
 
             channel.send(':stop_button: Stopping playback...');
@@ -146,12 +149,12 @@ let ost = function(message, args) {
         case 'pause':
             if (!task.dispatcher) {
                 channel.send('Nothing to pause!');
-                return;
+                break;
             }
 
             if (task.dispatcher.paused) {
                 channel.send('Playback is already paused!');
-                return;
+                break;
             }
 
             channel.send(':pause_button: Pausing...');
@@ -166,12 +169,12 @@ let ost = function(message, args) {
         case 'resume':
             if (!task.dispatcher) {
                 channel.send('Nothing to resume!');
-                return;
+                break;
             }
 
             if (!task.dispatcher.paused) {
                 channel.send('Can\'t resume because playback isn\'t paused!');
-                return;
+                break;
             }
 
             channel.send(':arrow_forward: Resuming...');
@@ -183,7 +186,7 @@ let ost = function(message, args) {
         case 'skip':
             if (!task.dispatcher) {
                 channel.send('Nothing to skip!');
-                return;
+                break;
             }
 
             if (task.queue[1]) {
@@ -240,7 +243,7 @@ let ost = function(message, args) {
         case 'clear':
             if (!task.dispatcher) {
                 channel.send('Nothing to clear!');
-                return;
+                break;;
             }
 
             channel.send('Cleared the queue!');
@@ -251,6 +254,9 @@ let ost = function(message, args) {
         default:
             utils.invalidArgsMsg(message, 'ost');
     }
+
+    voice.cleanup(id);
+    voice.unlock(id); // Unlocks server data
 };
 
 let playMusic = function(message, connection) {

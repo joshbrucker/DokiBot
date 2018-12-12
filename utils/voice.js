@@ -1,7 +1,5 @@
 const servers = {}; 
-
 const leaveTime = 300000;
-
 const TASK = Object.freeze({ OST: Symbol('OST'), NEP: Symbol('NEP') });
 
 let getServers = function() {
@@ -14,6 +12,7 @@ let getServer = function(id) {
 
 let addServer = function(id) {
     servers[id] = {
+        locked: false,
         task: {
             name: null,
             dispatcher: null
@@ -35,12 +34,29 @@ let resetTask = function(id) {
     };
 };
 
+let lock = function(id) {
+    servers[id].locked = true;
+};
+
+let unlock = function(id) {
+    servers[id].locked = false;
+};
+
+let cleanup = function(id) {
+    if (!servers[id].task.dispatcher && servers[id].task.name) {
+        resetTask(id);
+    }
+};
+
 module.exports = {
     getServers,
     getServer,
     addServer,
     removeServer,
     resetTask,
+    lock,
+    unlock,
+    cleanup,
     leaveTime,
     TASK
 };
