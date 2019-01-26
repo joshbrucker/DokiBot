@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-
 const db = require(__basedir + '/utils/db');
 const utils = require(__basedir + '/utils/utils');
 

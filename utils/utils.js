@@ -2,12 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 // Outputs a message with the given commands
-var invalidArgsMsg = function(message, command) {
+let invalidArgsMsg = function(message, command) {
     message.channel.send(':x: **' + message.member.displayName + '**, that\'s not a valid use of \`' + command + '\`!\n'
         + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
-var toTitleCase = function(str) {
+let toTitleCase = function(str) {
     str = str.replace(/_/g, " ").replace(/ *\([^)]*\) */g, "").replace(/[\n\r]/, "");
     str = str.replace(/ *\([^)]*\) */g, "");
 
@@ -20,15 +20,15 @@ var toTitleCase = function(str) {
     );
 };
 
-var dateFormat = function(date) {
+let dateFormat = function(date) {
     return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
 };
 
-var timeFormat = function(date) {
+let timeFormat = function(date) {
     return date.getHours() + ':' + ((date.getMinutes() >= 10) ? ':' : ':0') + date.getMinutes();
 };
 
-var getMonthName = function(int) {
+let getMonthName = function(int) {
     switch(int) {
         case 1:
             return 'January';
@@ -57,22 +57,22 @@ var getMonthName = function(int) {
     }
 };
 
-var secondsConverter = function(int) {
-    var remaining = int;
+let secondsConverter = function(int) {
+    let remaining = int;
 
-    var days = Math.floor(remaining / 86400);
+    let days = Math.floor(remaining / 86400);
     if (days < 10) {
         days = '0' + days;
     }
     remaining = remaining % 86400;
 
-    var hours = Math.floor(remaining / 3600);
+    let hours = Math.floor(remaining / 3600);
     if (hours < 10) {
         hours = '0' + hours;
     }
     remaining = remaining % 3600;
 
-    var minutes = Math.floor(remaining / 60);
+    let minutes = Math.floor(remaining / 60);
     if (minutes < 10) {
         minutes = '0' + minutes;
     }
@@ -85,13 +85,13 @@ var secondsConverter = function(int) {
     return (days + ':' + hours + ':' + minutes + ':' + remaining);
 };
 
-var getGeneralChat = function(guild) {
+let getGeneralChat = function(guild) {
     return guild.channels.find((channel) => channel.name === 'general');
 };
 
-var getMostPermissibleChannel = function(client, guild) {
+let getMostPermissibleChannel = function(client, guild) {
 
-    var channel = guild.channels.array()[0];
+    let channel = guild.channels.array()[0];
 
     for (let textChannel of guild.channels.array()) {
         if (textChannel.type == 'text') {
@@ -108,16 +108,29 @@ var getMostPermissibleChannel = function(client, guild) {
     return channel;
 };
 
-var getMembers = function(guild) {
-    var members = guild.members.array();
-    var humans = [];
+let getMembers = function(guild) {
+    let members = guild.members.array();
+    let humans = [];
     for (let i = 0; i < members.length; i++) {
         if (!members[i].user.bot) {
             humans.push(members[i]);
         }
     }
     return humans;
-}
+};
+
+let generateNewTime = function(date) {
+    let newDate = new Date(date);
+    let hours = Math.floor(Math.random() * 24);
+    let minutes = Math.floor(Math.random() * 64);
+
+    newDate.setHours(hours);
+    newDate.setMinutes(minutes);
+    newDate.setSeconds(0);
+    newDate.setDate(newDate.getDate() + 1);
+
+    return newDate;
+};
 
 module.exports = {
     invalidArgsMsg,
@@ -128,5 +141,6 @@ module.exports = {
     dateFormat,
     timeFormat,
     secondsConverter,
-    getMonthName
+    getMonthName,
+    generateNewTime
 };

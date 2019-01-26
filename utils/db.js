@@ -164,7 +164,9 @@ let _query = async function(query, then) {
             then(res);
         }
     } catch(err) {
-        conn.end();
+        if (conn) {
+            conn.end();
+        }
         throw err;
     }
 };

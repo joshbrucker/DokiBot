@@ -5,6 +5,7 @@ let onVote = function(vote) {
 
     let date = new Date();
     db.member.getMember(id, (member) => {
+    	member = member[0];
         if (member.submit_cooldown == null || member.submit_cooldown <= date) {
             return;
         }

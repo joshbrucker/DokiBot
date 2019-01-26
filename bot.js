@@ -11,18 +11,27 @@ const fs = require('fs');
 const path = require('path');
 
 const auth = require('./data/auth');
-const utils = require('./utils/utils');
 const db = require('./utils/db');
-const voice = require('./utils/voice');
-const commands = require('./commands/commands');
+const utils = require('./utils/utils');
+const voice = require('./utils/audio/voice');
 
-const dokiReact = require('./etc/doki-react');
-const dokipoemUpdate = require('./etc/dokipoem-update');
-const checkInsults = require('./etc/check-insults');
-const confirmInsult = require('./etc/confirm-insult');
-const onVote = require('./webhook/on-vote');
+// Client Ready
+const checkInsults = require('./event_utils/client_ready/check-insults');
+const setActivity = require('./event_utils/client_ready/set-activity');
+
+// Message
+const dokiReact = require('./event_utils/message/doki-react');
+const executeCmd = require('./event_utils/message/execute-cmd');
+const poemUpdate = require('./event_utils/message/poem-update');
+
+// React
+const confirmInsult = require('./event_utils/react/confirm-insult');
+
+// Webhook Vote
+const onVote = require('./event_utils/webhook_vote/on-vote');
 
 const client = new Discord.Client();
+
 const dbl = new DBL(auth.dbltoken, { webhookPort: auth.webhookPort, webhookAuth: auth.webhookAuth }, client);
 
 dbl.webhook.on('ready', (hook) => {
@@ -67,9 +76,9 @@ client.on('ready', () => {
         }, 60000);
     });
 
-    utils.setActivity(client);
+    setActivity(client);
     setInterval(() => {
-        utils.setActivity(client);
+        setActivity(client);
     }, 3600000);
 
     client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).fetchMessages();
@@ -107,7 +116,6 @@ client.on('message', (message) => {
         db.guild.getGuild(message.guild.id, (guild) => {
             guild = guild[0];
             let prefix = guild.prefix;
-
             let content = message.content.toLowerCase();
 
             if (content.substring(0, prefix.length) == prefix && content.length > 1) {
@@ -116,63 +124,11 @@ client.on('message', (message) => {
                     let cmd = args[0].toLowerCase();
                     args = args.splice(1);
 
-                    switch(cmd) {
-                        case 'doki':
-                            commands.doki(message, args);
-                            break;
-                        case 'waifu':
-                            commands.waifu(message, args);
-                            break;
-                        case 'moniquote':
-                            commands.moniquote(message, args);
-                            break;
-                        case 'nep':
-                            commands.nep(client, message, args);
-                            break;
-                        case 'dp':
-                        case 'dokipoem':
-                            if (message.guild.channels.find((channel) => channel.name === 'doki-poems')) {
-                                commands.dokipoem(guild, message, args);
-                            } else {
-                                message.channel.send('Your server can make its own Doki Doki poems! All you have to do is create a channel titled' +
-                                                     ' \`doki-poems\` and DokiBot will add the first word posted each day to a poem.');
-                            }
-                            break;
-                        case 'help':
-                            commands.help(message, args);
-                            break;
-                        case 'ost':
-                            commands.ost(message, args);
-                            break;
-                        case 'prefix':
-                            commands.prefix(message, args);
-                            break;
-                        case 'insult':
-                            args = message.content.substring(prefix.length).split(' ');
-                            args = args.splice(1);
-                            commands.insult(client, message, args);
-                            break;
-                        case 'anime':
-                            commands.anime(message, args);
-                            break;
-                        case 'neko':
-                            commands.neko(message, args);
-                            break;
-                        case 'vote':
-                            commands.vote(message);
-                            break;
-                    }
-
-                    // Use if statement to avoid potential missed break statement
-                    if (cmd == 'broadcast') {
-                        args = message.content.substring(prefix.length).split(' ');
-                        args = args.splice(1);
-                        commands.broadcast(message, args, client);
-                    }
+                    executeCmd(client, guild, message, args, cmd);
                 }
             }
 
-            dokipoemUpdate(guild, message, client);
+            poemUpdate(guild, message, client);
 
             let dokiReactChance = Math.floor(Math.random() * 2);
             if (dokiReactChance == 1) {
