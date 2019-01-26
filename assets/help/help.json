@@ -1,0 +1,41 @@
+{
+    "description": ":sparkles: __**DokiBot Help**__ :sparkles:\n\n\u200b",
+    "color": 16734190,
+    "footer": {
+        "text": "*Needs \"Manage Server\" Permission"
+    },
+    "fields": [
+        {
+            "name": ":pencil: Formatting Tips",
+            "value": "**<argument>**: You need to include these\n**[argument]**: These are optional\n\n(Do not include the brackets in commands)\n\n\u200b"
+        },
+        {
+            "name": ":scroll: Poems",
+            "value": "**%pend**: Ends a current poem*\n**%pfrequency <time>**: Changes the frequency DokiBot grabs words*\n\n\u200b"
+        },
+        {
+            "name": ":smiling_imp: Insults",
+            "value": "**%psubmit <insult>**: Submits an insult to DokiBot; include `%user%` where you want DokiBot to mention someone\n**%ptoggle**: Turns off/on random insults*\n\n\u200b"
+        },
+        {
+            "name": ":tada: Fun",
+            "value": "**%panime <title>**: Finds info on a given anime\n**%pmoniquote**: Posts a random Monika quote from the end of DDLC\n\n\u200b"
+        },
+        {
+            "name": ":frame_photo: Images",
+            "value": "**%pdoki [nsfw] [character]**: Posts an image of a doki\n**%pneko [nsfw]**: Posts an image of a beautiful neko girl\n**%pwaifu [nsfw]**: Posts an image of a random waifu\n\n\u200b"
+        },
+        {
+            "name": ":sound: Sounds",
+            "value": "**%pnep [character]**: Plays a soundclip from Hyperdimension Neptunia\n\n\u200b"
+        },
+        {
+            "name": ":cd: OST",
+            "value": "**%pplay <number>**: Plays a track from the DDLC OST #1-15\n**%pplayall**: Queues all tracks from the DDLC OST\n**%plist**: Lists all songs from the DDLC OST and their numbers\n**%pstop**: Stops the current song and clears the queue\n**%ppause**: Pauses the current song\n**%presume**: Resumes a paused song\n**%pskip**: Skips the current song\n**%pqueue**: Displays the song queue\n**%pclear**: Wipes the entire queue\n\n\u200b"
+        },
+        {
+            "name": ":gear: Miscellaneous",
+            "value": "**%phelp** [command]: Lists all commands or info about a specific command\n**%pprefix <new prefix>**: Changes the prefix used for DokiBot commands*\n**%pvote**: Posts a voting link for DokiBot; voting resets cooldowns\n\n\u200b"
+        }
+    ]
+}
