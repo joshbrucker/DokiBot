@@ -2,30 +2,37 @@ const db = require(__basedir + '/utils/db');
 const utils = require(__basedir + '/utils/utils');
 
 let setchannel = function(client, message, args) {
-	if (args.length == 0) {
-		utils.invalidArgsMsg(message, 'setchannel');
-		return;
-	}
+    let channel = message.channel;
 
-	args = args.join(' ');
+    if (!message.member.hasPermission('MANAGE_GUILD')) {
+        channel.send('You need the **Manage Server** permission to use this command!');
+        return;
+    }
 
-	let channel = message.guild.channels.find((channel) => channel.id === utils.stripToNums(args));
-	if (!channel) {
-		channel = message.guild.channels.find((channel) => channel.name === args);
-	}
+    if (args.length == 0) {
+        utils.invalidArgsMsg(message, 'setchannel');
+        return;
+    }
 
-	if (channel) {
-		db.guild.setDefaultChannel(message.guild.id, channel.id);
-		message.channel.send('Default channel changed to <#' + channel.id + '>');
-		if (!channel.permissionsFor(client.user).has('SEND_MESSAGES')
-				|| !channel.permissionsFor(client.user).has('VIEW_CHANNEL')) {
-			message.channel.send('But I am missing perms to:\n'
-					+ (!channel.permissionsFor(client.user).has('SEND_MESSAGES') ? '-**Send Messages**\n' : '')
-					+ (!channel.permissionsFor(client.user).has('VIEW_CHANNEL') ? '-**Read Messages**' : ''));
-		}
-	} else {
-		message.channel.send('Hmmm... I can\'t find that channel. Make sure I have perms to see it!');
-	}
+    args = args.join(' ');
+
+    let newChannel = message.guild.channels.find((channel) => channel.id === utils.stripToNums(args));
+    if (!newChannel) {
+        newChannel = message.guild.channels.find((channel) => channel.name === args);
+    }
+
+    if (newChannel) {
+        db.guild.setDefaultChannel(message.guild.id, newChannel.id);
+        channel.send('Default channel changed to <#' + newChannel.id + '>');
+        if (!newChannel.permissionsFor(client.user).has('SEND_MESSAGES')
+                || !newChannel.permissionsFor(client.user).has('VIEW_CHANNEL')) {
+            channel.send('But I am still missing perms to:\n'
+                    + (!newChannel.permissionsFor(client.user).has('SEND_MESSAGES') ? '-**Send Messages**\n' : '')
+                    + (!newChannel.permissionsFor(client.user).has('VIEW_CHANNEL') ? '-**Read Messages**' : ''));
+        }
+    } else {
+        channel.send('Hmmm... I can\'t find that channel. Make sure I have perms to see it!');
+    }
 };
 
 module.exports = setchannel;

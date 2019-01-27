@@ -2,14 +2,17 @@ const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
 let frequency = function(guild, message, args) {
-    if (!message.member.hasPermission('ADMINISTRATOR')) {
+    let channel = message.channel;
+
+    if (!message.member.hasPermission('MANAGE_GUILD')) {
+        channel.send('You need the **Manage Server** permission to use this command!');
         return;
     }
 
     let poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
     
     if (!poemChannel) {
-        message.channel.send('Hey dummy, if you want to use poem commands, you need a `doki-poems` channel!');
+        channel.send('Hey dummy, if you want to use poem commands, you need a `doki-poems` channel!');
         return;
     }
 
@@ -18,16 +21,16 @@ let frequency = function(guild, message, args) {
         switch (args[0].toLowerCase()) {
             case 'day':
                 freq = 'day';
-                message.channel.send('Interval changed! I\'ll grab the first word of each `day`.');
+                channel.send('Interval changed! I\'ll grab the first word of each `day`.');
                 break;
             case 'hour':
                 freq = 'hour';
-                message.channel.send('Interval changed! I\'ll grab the first word of each `hour`.');
+                channel.send('Interval changed! I\'ll grab the first word of each `hour`.');
                 break;
             case 'min':
             case 'minute':
                 freq = 'minute';
-                message.channel.send('Interval changed! I\'ll grab the first word of each `minute`.');
+                channel.send('Interval changed! I\'ll grab the first word of each `minute`.');
                 break;
             default:
                 utils.invalidArgsMsg(message, 'frequency');

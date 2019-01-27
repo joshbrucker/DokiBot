@@ -4,7 +4,7 @@ let toggle = function(guild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {
-        channel.send('You need the MANAGE GUILD permission to use this command!');
+        channel.send('You need the **Manage Server** permission to use this command!');
         return;
     }
 

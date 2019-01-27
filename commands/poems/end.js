@@ -6,19 +6,22 @@ const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
 let end = function(guild, message, args) {
-    if (!message.member.hasPermission('ADMINISTRATOR')) {
+    let channel = message.channel;
+
+    if (!message.member.hasPermission('MANAGE_GUILD')) {
+        channel.send('You need the **Manage Server** permission to use this command!');
         return;
     }
 
     let poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
 
     if (!poemChannel) {
-        message.channel.send('Hey dummy, if you want to use dokipoem commands, you need a `doki-poems` channel!');
+        channel.send('Hey dummy, if you want to use dokipoem commands, you need a `doki-poems` channel!');
         return;
     }
 
     if (!guild.poem_id) {
-        message.channel.send('You can\'t end a doki-poem you didn\'t start...');
+        channel.send('You can\'t end a doki-poem you didn\'t start...');
         return;
     }
 
@@ -38,7 +41,7 @@ let end = function(guild, message, args) {
             filepath = filepath.slice(0, filepath.length - 1) + '.txt';
         }
 
-        message.channel.send('Ending your doki-poem early? I didn\'t expect much more from you...');
+        channel.send('Ending your doki-poem early? I didn\'t expect much more from you...');
         poemChannel.send('<@' + message.member.id + '> decided to end the doki-poem early :frowning:');
 
         // Creates the .txt file
@@ -62,7 +65,7 @@ let end = function(guild, message, args) {
     })
     .catch((err) => {
         if (err.message == 'Unknown Message') {
-            message.channel.send('Hmm... I can\'t seem to find my old doki-poem. Let\'s start a new one!');
+            channel.send('Hmm... I can\'t seem to find my old doki-poem. Let\'s start a new one!');
             db.guild.setPoemId(guild.id, null);
         } else {
             throw err;
