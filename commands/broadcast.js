@@ -1,4 +1,5 @@
 // Very powerful function. Bug test thoroughly when adding changes here.
+const db = require(__basedir + '/utils/db');
 const utils = require(__basedir + '/utils/utils');
 
 let broadcast = function(client, message, args) {
@@ -17,14 +18,16 @@ let broadcast = function(client, message, args) {
                     if (confirm.content == 'Confirm') {
                         for (let guild of client.guilds.array()) {
                             if (guild.available) {
-                                let channel = utils.getGeneralChat(guild);
-                                if (!channel) {
-                                    channel = utils.getMostPermissibleChannel(client, guild);
-                                }
+                                db.guild.getGuild(guild.id, (guildData) => {
+                                    let channel = guild.channels.get(guildData.default_guild);
+                                    if (!channel) {
+                                        channel = utils.getJoinChannel(client, guild);
+                                    }
 
-                                if (channel.type == 'text') {
-                                    channel.send(msg);
-                                }
+                                    if (channel) {
+                                        channel.send(msg);
+                                    }
+                                });
                             }
                         }
                     } else {
@@ -33,7 +36,8 @@ let broadcast = function(client, message, args) {
                     return;
                 })
                 .catch((err) => {
-                    message.channel.send('You did not say **Confirm**. For safety reasons, cancelling...');
+                    console.log(err);
+                    message.channel.send('I encountered an error. For safety reasons, cancelling...');
                 });
             });
     }
