@@ -54,7 +54,7 @@ client.on('error', (error) => {
 
 dbl.on('error', e => {
     console.log('Discord Bots List Error: ', e);
-})
+});
 
 process.on('SIGINT', (code) => {
     for (let id in voice.getServers()) {
