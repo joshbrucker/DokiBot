@@ -98,16 +98,18 @@ let getJoinChannel = function(client, guild) {
 };
 
 let sendWelcomeMsg = function(client, guild) {
+    let emoji = client.emojis.get('539122262347874334');
+
     let message = ('Square up! Your true love has joined the server. '
-            + 'Here are a few helpful tips for using me! :wink:\n\n'
+            + 'Here are a few helpful tips for using me! ' + emoji + '\n\n'
             + '```AsciiDoc\n'
             + 'Welcome to the Club!\n'
             + '====================\n\n'
-            + '* [1] You may not want me posting in this channel... Use `-setchannel [channel]\' to set the default channel for posting insults, etc.\n\n'
-            + '* [2] Random insults are disabled by default. Use `-toggle\' to turn them on. '
-            + 'They may not be appropriate for all audiences, so enable them at your own discretion.\n\n'
-            + '* [3] You can make a channel called `doki-poems\' where I can create poems.\n\n'
-            + '* [4] Use `-help\' to see more commands. Best of luck, dummies!"```');
+            + '* [1] You may not want me posting in this channel. Use `-setchannel [channel]\' to set the default channel for me to post insults, etc.\n\n'
+            + '* [2] Random insults are *disabled* by default. Use `-toggle\' to turn them on. '
+            + 'They may not be appropriate for all club members, so enable them at your own discretion.\n\n'
+            + '* [3] You can make a channel called `doki-poems\' where I can create my poems for you.\n\n'
+            + '* [4] Use `-help\' to see more commands. Best of luck, dummies!```');
 
     let channel = getJoinChannel(client, guild);
 
