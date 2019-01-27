@@ -47,7 +47,7 @@ let checkInsults = async function(client) {
                     let channel = guild.channels.get(readyGuilds[i].default_channel);
 
                     if (!channel) {
-                        channel = utils.getJoinChannel(clienit, guild);
+                        channel = utils.getJoinChannel(client, guild);
                     }
 
                     if (channel) {
