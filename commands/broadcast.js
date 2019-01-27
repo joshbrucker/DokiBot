@@ -16,20 +16,19 @@ let broadcast = function(client, message, args) {
                 .then((collected) => {
                     let confirm = collected.first();
                     if (confirm.content == 'Confirm') {
-                        for (let guild of client.guilds.array()) {
-                            if (guild.available) {
-                                db.guild.getGuild(guild.id, (guildData) => {
-                                    let channel = guild.channels.get(guildData.default_guild);
-                                    if (!channel) {
-                                        channel = utils.getJoinChannel(client, guild);
-                                    }
+                        db.guild.getAllGuildChannels((res) => {
+                            for (let response of res) {
+                                let guild = client.guilds.get(response.id);
+                                let channel = guild.channels.get(response.default_channel);
+                                if (!channel) {
+                                    channel = utils.getJoinChannel(client, guild);
+                                }
 
-                                    if (channel) {
-                                        channel.send(msg);
-                                    }
-                                });
+                                if (channel) {
+                                    channel.send(msg);
+                                }
                             }
-                        }
+                        });
                     } else {
                         message.channel.send('You did not say **Confirm**. For safety reasons, cancelling...');
                     }
@@ -37,7 +36,8 @@ let broadcast = function(client, message, args) {
                 })
                 .catch((err) => {
                     console.log(err);
-                    message.channel.send('I encountered an error. For safety reasons, cancelling...');
+                    message.channel.send('You did not say **Confirm** in time, or I encountered an error. For safety reasons, cancelling...');
+                    return;
                 });
             });
     }

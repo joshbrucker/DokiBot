@@ -50,6 +50,15 @@ let guild = {
         }, then);
     },
 
+    // [{ default_channel }]
+    getAllGuildChannels: async function(then) {
+        _query(async (conn) => {
+            let res = await conn.query(`SELECT id, default_channel FROM guild;`);
+            await delete res['meta'];
+            return res;
+        }, then);
+    },
+
     // [{ id, prefix, poem_id, poem_frequency, default_channel, insult_time, allow_insults }, ...]
     getInsultReadyGuilds: async function(date, then) {
         _query(async (conn) => {
