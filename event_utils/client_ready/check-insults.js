@@ -7,20 +7,20 @@ const db = require(__basedir + '/utils/db');
 let checkInsults = async function(client) {
 
     let date = new Date();
-    db.guild.getInsultReadyGuilds(date, (guildIds) => {
-        if (guildIds.length == 0) {
+    db.guild.getInsultReadyGuilds(date, (readyGuilds) => {
+        if (readyGuilds.length == 0) {
             return;
         }
 
-        db.insult.getInsults(guildIds.length, async (insults) => {
-            for (let i = 0; i < guildIds.length; i++) {
+        db.insult.getInsults(readyGuilds.length, async (insults) => {
+            for (let i = 0; i < readyGuilds.length; i++) {
                 // Contingency plan in case bot is down for too long
-                if (guildIds.length > 200) {
-                    db.guild.setInsultTime(guildIds[i].id, utils.generateNewTime(date));
+                if (readyGuilds.length > 200) {
+                    db.guild.setInsultTime(readyGuilds[i].id, utils.generateNewTime(date));
                     continue;
                 }
 
-                let guild = client.guilds.get(guildIds[i].id);
+                let guild = client.guilds.get(readyGuilds[i].id);
 
                 if (guild.available) {
                     let insult = insults[i].message;
@@ -44,12 +44,13 @@ let checkInsults = async function(client) {
                         }
                     }
 
-                    let channel = utils.getGeneralChat(guild);
+                    let channel = guild.channels.find((channel) => channel.id === readyGuilds[i].default_channel);
+                    console.log(channel);
                     if (!channel) {
-                        channel = utils.getMostPermissibleChannel(client, guild);
+                        channel = utils.getJoinChannel(clienit, guild);
                     }
 
-                    if (channel.type == 'text') {
+                    if (channel) {
                         channel.send(insult).then((msg) => {
                             // 1/30 chance of sending advertisement on weekends
                             if (date.getDay() == 6 || date.getDay() == 0) {

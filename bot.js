@@ -70,7 +70,12 @@ process.on('SIGINT', (code) => {
 });
 
 client.on('ready', () => {
-    db.guild.verifyGuilds(client, () => {
+    db.guild.verifyGuilds(client, (addedGuilds) => {
+        for (let i = 0; i < addedGuilds.length; i++) {
+            utils.sendWelcomeMsg(client, addedGuilds[i]);
+            db.guild.setDefaultChannel(addedGuilds[i].id, utils.getJoinChannel(client, addedGuilds[i]).id);
+        }
+
         setInterval(() => {
             checkInsults(client);
         }, 60000);
@@ -91,18 +96,8 @@ client.on('ready', () => {
 
 client.on('guildCreate', (guild) => {
     db.guild.addGuild(guild.id, () => {
-        let message = ('Square up! Your true love has joined the server.'
-                + ' You can make a channel called `doki-poems` to track poems, and'
-                + ' use \`-help\` for more commands. Best of luck, dummies!');
-
-        if (guild.systemChannel) {
-            guild.systemChannel.send(message);
-        } else {
-            let channel = utils.getMostPermissibleChannel(client, guild);
-            if (channel) {
-                channel.send(message);
-            }
-        }
+        utils.sendWelcomeMsg(client, guild);
+        db.guild.setDefaultChannel(guild.id, utils.getJoinChannel(client, guild).id);
     });
 });
 

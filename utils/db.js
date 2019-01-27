@@ -8,7 +8,8 @@ const pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser,
 
 let guild = {
     verifyGuilds: async function(client, then) {
-        let guilds = client.guilds;
+        let guilds = client.guilds.clone();
+
         _query(async (conn) => {
             let res = await conn.query(`SELECT id FROM guild;`);
             await delete res['meta'];
@@ -16,18 +17,29 @@ let guild = {
             for (let i = 0; i < res.length; i++) {
                 if (!guilds.get(res[i].id)) {
                     await conn.query(`DELETE FROM guild WHERE id = ?;`, [res[i].id]);
+                } else {
+                    guilds.delete(res[i].id);
                 }
             }
+
+            let guildsArray = guilds.array();
+            for (let i = 0; i < guildsArray.length; i++) {
+                let date = utils.generateNewTime(new Date());
+                await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
+                                  ON DUPLICATE KEY UPDATE id=id;`, [guildsArray[i].id, date]);
+            }
+
+            res = guildsArray;
             return res;
         }, then);
     },
 
-    // [{ id, prefix, poem_id, poem_frequency, insult_time }]
+    // [{ id, prefix, poem_id, poem_frequency, default_channel, insult_time, allow_insults }]
     getGuild: async function(id, then) {
         _query(async (conn) => {
             let res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
             if (!res || res.length == 0) {
-                var date = utils.generateNewTime(new Date());
+                let date = utils.generateNewTime(new Date());
                 await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
                                   ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
                 res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
@@ -38,17 +50,17 @@ let guild = {
         }, then);
     },
 
-    // [{ id }, { id }, ...]
+    // [{ id, prefix, poem_id, poem_frequency, default_channel, insult_time, allow_insults }, ...]
     getInsultReadyGuilds: async function(date, then) {
         _query(async (conn) => {
-            let res = await conn.query(`SELECT id FROM guild WHERE (insult_time <= ?) and (allow_insults);`, [date]);
+            let res = await conn.query(`SELECT * FROM guild WHERE (insult_time <= ?) and (allow_insults);`, [date]);
             await delete res['meta'];
             return res;
         }, then);
     },
 
     addGuild: async function(id, then) {
-        var date = utils.generateNewTime(new Date());
+        let date = utils.generateNewTime(new Date());
         _query(async (conn) => {
             let res = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
                                         ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
@@ -69,6 +81,13 @@ let guild = {
             await conn.query(`UPDATE guild SET allow_insults = not allow_insults WHERE id = ?;`, [id]);
             let res = await conn.query(`SELECT allow_insults FROM guild WHERE id = ?;`, [id]);
             await delete res['meta'];
+            return res;
+        }, then);
+    },
+
+    setDefaultChannel: async function(id, channelId, then) {
+        _query(async (conn) => {
+            let res = await conn.query(`UPDATE guild SET default_channel = ? WHERE id = ?;`, [channelId, id]);
             return res;
         }, then);
     },

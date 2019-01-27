@@ -35,7 +35,7 @@
         },
         {
             "name": ":gear: Miscellaneous",
-            "value": "**%phelp** [command]: Lists all commands or info about a specific command\n**%pprefix <new prefix>**: Changes the prefix used for DokiBot commands*\n**%pvote**: Posts a voting link for DokiBot; voting resets cooldowns\n\n\u200b"
+            "value": "**%phelp [command]**: Lists all commands or info about a specific command\n**%psetchannel [channel]**: Changes the channel DokiBot will post insults and other messages to*\n**%pprefix <new prefix>**: Changes the prefix used for DokiBot commands*\n**%pvote**: Posts a voting link for DokiBot; voting resets cooldowns\n\n\u200b"
         }
     ]
 }

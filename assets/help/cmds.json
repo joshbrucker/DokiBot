@@ -268,6 +268,21 @@
             }
         ]
     },
+    "setchannel": {
+        "footer": {
+            "text": "*Needs \"Manage Server\" Permission"
+        },
+        "fields": [
+            {
+                "name": "**%psetchannel***",
+                "value": "Changes the channel DokiBot will post insults and other messages to.\n\u200b"
+            },
+            {
+                "name": "**__Usage__**",
+                "value": "`%psetchannel [channel]`\n\u200b"
+            }
+        ]
+    },
     "prefix": {
     	"footer": {
             "text": "*Needs \"Manage Server\" Permission"

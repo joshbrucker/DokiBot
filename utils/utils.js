@@ -85,28 +85,36 @@ let secondsConverter = function(int) {
     return (days + ':' + hours + ':' + minutes + ':' + remaining);
 };
 
-let getGeneralChat = function(guild) {
-    return guild.channels.find((channel) => channel.name === 'general');
-};
+let getJoinChannel = function(client, guild) {
+    let channel;
+    let channels = guild.channels.filter((channel) => (channel.type === 'text' && channel.permissionsFor(client.user).has('SEND_MESSAGES')
+            && channel.permissionsFor(client.user).has('VIEW_CHANNEL')));
 
-let getMostPermissibleChannel = function(client, guild) {
-
-    let channel = guild.channels.array()[0];
-
-    for (let textChannel of guild.channels.array()) {
-        if (textChannel.type == 'text') {
-            if (channel.type != 'text') {
-                channel = textChannel;
-            } else if (textChannel.permissionsFor(client.user).bitfield > channel.permissionsFor(client.user).bitfield
-                        && textChannel.permissionsFor(client.user).has('SEND_MESSAGES')
-                        && textChannel.permissionsFor(client.user).has('VIEW_CHANNEL')) {
-                channel = textChannel;
-            }
-        }
+    if (channels.first()) {
+        channel = channels.first();
     }
 
     return channel;
 };
+
+let sendWelcomeMsg = function(client, guild) {
+    let message = ('Square up! Your true love has joined the server. '
+            + 'Here are a few helpful tips for using me! :wink:\n\n'
+            + '```AsciiDoc\n'
+            + 'Welcome to the Club!\n'
+            + '====================\n\n'
+            + '* [1] You may not want me posting in this channel... Use `-setchannel [channel]\' to set the default channel for posting insults, etc.\n\n'
+            + '* [2] Random insults are disabled by default. Use `-toggle\' to turn them on. '
+            + 'They may not be appropriate for all audiences, so enable them at your own discretion.\n\n'
+            + '* [3] You can make a channel called `doki-poems\' where I can create poems.\n\n'
+            + '* [4] Use `-help\' to see more commands. Best of luck, dummies!"```');
+
+    let channel = getJoinChannel(client, guild);
+
+    if (channel) {
+        channel.send(message);
+    }
+}
 
 let getMembers = function(guild) {
     let members = guild.members.array();
@@ -132,15 +140,20 @@ let generateNewTime = function(date) {
     return newDate;
 };
 
+let stripToNums = function(string) {
+    return string.replace(/\D/g,'')
+};
+
 module.exports = {
     invalidArgsMsg,
     toTitleCase,
-    getMostPermissibleChannel,
+    getJoinChannel,
+    sendWelcomeMsg,
     getMembers,
-    getGeneralChat,
     dateFormat,
     timeFormat,
     secondsConverter,
     getMonthName,
-    generateNewTime
+    generateNewTime,
+    stripToNums
 };

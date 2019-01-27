@@ -31,6 +31,7 @@ const clear = require(__basedir + '/commands/ost/clear');
 
 // Miscellaneous
 const help = require(__basedir + '/commands/misc/help');
+const setchannel = require(__basedir + '/commands/misc/setchannel');
 const prefix = require(__basedir + '/commands/misc/prefix');
 const vote = require(__basedir + '/commands/misc/vote');
 
@@ -114,6 +115,9 @@ let executeCmd = function(client, guild, message, args, cmd) {
         // Miscellaneous
         case 'help':
             help(client, guild, message, args);
+            break;
+        case 'setchannel':
+            setchannel(client, message, args);
             break;
         case 'prefix':
             prefix(message, args);
