@@ -18,7 +18,7 @@ let play = async function(message, args) {
 
         let songNum = args[0] - 1;
 
-        if (isNaN(args[0]) || (songNum < 0 || songNum > soundtrack.length)) {
+        if (isNaN(args[0]) || (songNum < 0 || songNum > soundtrack.length - 1)) {
             channel.send('Invalid OST number!');
             return;
         }
