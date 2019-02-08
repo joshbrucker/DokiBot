@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 const utils = require(__basedir + '/utils/utils');
 
-var query = `
+let query = `
     query ($search: String) {
       Media (search: $search, type: ANIME) {
         id
@@ -31,15 +31,15 @@ var query = `
     }
 `;
 
-var anime = function(message, args) {
+let anime = function(message, args) {
 
-    var title = args.join(' ');
+    let title = args.join(' ');
 
-    var variables = {
+    let variables = {
         search: title
     }
 
-    var url = 'https://graphql.anilist.co',
+    let url = 'https://graphql.anilist.co',
         options = {
             method: 'POST',
             headers: {
@@ -65,11 +65,11 @@ var anime = function(message, args) {
     }
     
     function handleData(data) {
-        var data = data.data.Media;
+        data = data.data.Media;
 
-        var nextEpisode = data.nextAiringEpisode;
+        let nextEpisode = data.nextAiringEpisode;
 
-        var embedData = {
+        let embedData = {
             title: data.title.romaji,
             url: 'https://anilist.co/anime/' + data.id + '/',
             description: data.description.replace("<br>", '\n').replace(/<br>|<\/br>/g, '')
@@ -100,17 +100,15 @@ var anime = function(message, args) {
                 }
             ]
         }
-        var embed = new Discord.RichEmbed(embedData);
+        let embed = new Discord.RichEmbed(embedData);
 
         message.channel.send('', embed);
     }
     
     function handleError(error) {
-        var data = error.errors[0];
-        if (data) {
-            if (data.status != 404) {
-                console.log(error);
-            }
+        error = (error.errors ? error.errors[0] : error);
+        if (error.status != 404) {
+            console.log(error);
         }
     }
 }
