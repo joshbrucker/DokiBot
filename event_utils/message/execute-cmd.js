@@ -39,6 +39,10 @@ const vote = require(__basedir + '/commands/misc/vote');
 const broadcast = require(__basedir + '/commands/broadcast');
 
 let executeCmd = function(client, guild, message, args, cmd) {
+    if (cmd != 'submit') {
+        args = args.map((arg) => arg.toLowerCase());
+    }
+
     switch(cmd) {
 
         //Poem
