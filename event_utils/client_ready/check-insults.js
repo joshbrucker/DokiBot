@@ -15,7 +15,7 @@ let checkInsults = async function(client) {
         db.insult.getInsults(readyGuilds.length, async (insults) => {
             for (let i = 0; i < readyGuilds.length; i++) {
                 // Contingency plan in case bot is down for too long
-                if (readyGuilds.length > 200) {
+                if (readyGuilds.length > 100) {
                     db.guild.setInsultTime(readyGuilds[i].id, utils.generateNewTime(date));
                     continue;
                 }
@@ -37,13 +37,6 @@ let checkInsults = async function(client) {
                         }
                     }
 
-                    if (insults[i].user) {
-                        var user = await client.fetchUser(insults[i].user);
-                        if (user) {
-                            insult += '\n\n**Submitted by:** ' + user.username;
-                        }
-                    }
-
                     let channel = guild.channels.get(readyGuilds[i].default_channel);
 
                     if (!channel) {
@@ -51,16 +44,7 @@ let checkInsults = async function(client) {
                     }
 
                     if (channel) {
-                        channel.send(insult).then((msg) => {
-                            // 1/30 chance of sending advertisement on weekends
-                            if (date.getDay() == 6 || date.getDay() == 0) {
-                                if (Math.floor(Math.random() * 30) == 0) {
-                                    channel.send('Enjoying my beautiful presence? Please drop a like on my page. ' +
-                                                  'It would make me a very happy Doki <3\n' +
-                                                  'https://discordbots.org/bot/412824514414510080.');
-                                }
-                            }
-                        });
+                        channel.send(insult);
                     }
 
                     db.guild.setInsultTime(guild.id, utils.generateNewTime(date));
