@@ -33,7 +33,7 @@ let doki = function(client, message, args) {
             case '1girl':
                 tags.add('1girl');
                 break;
-            case '2gils':
+            case '2girls':
                 tags.add('2girls');
                 break;
             case 'multiple':
