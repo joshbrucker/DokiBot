@@ -111,7 +111,7 @@ client.on('message', (message) => {
         db.guild.getGuild(message.guild.id, (guild) => {
             guild = guild[0];
             let prefix = guild.prefix;
-            let content = message.content.toLowerCase();
+            let content = message.content;
 
             if (content.substring(0, prefix.length) == prefix && content.length > 1) {
                 if (message.channel.name != 'doki-poems') {
