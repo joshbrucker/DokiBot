@@ -96,11 +96,11 @@
             },
             {
                 "name": "**__Usage__**",
-                "value": "`%pdoki [nsfw] [character]`\n\u200b"
+                "value": "`%pdoki [tags]`\n\u200b"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**[character]**: monika, sayori, yuri, natsuki"
+                "value": "**[tags]**: nsfw, 1girl, 2girls, multiple, monika, sayori, yuri, natsuki"
             }
         ]
     },
@@ -112,7 +112,11 @@
             },
             {
                 "name": "**__Usage__**",
-                "value": "`%pneko [nsfw]`"
+                "value": "`%pneko [tags]`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "**[tags]**: nsfw, gif"
             }
         ]
     },
@@ -124,7 +128,11 @@
             },
             {
                 "name": "**__Usage__**",
-                "value": "`%pwaifu [nsfw]`"
+                "value": "`%pwaifu [tags]`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "**[tags]**: nsfw, 1girl, 2girls, multiple"
             }
         ]
     },

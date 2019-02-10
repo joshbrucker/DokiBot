@@ -72,14 +72,14 @@ let executeCmd = function(client, guild, message, args, cmd) {
 
         // Images
         case 'doki':
-            doki(message, args);
+            doki(client, message, args);
             break;
         case 'catgirl':
         case 'neko':
-            neko(message, args);
+            neko(client, message, args);
             break;
         case 'waifu':
-            waifu(message, args);
+            waifu(client, message, args);
             break;
 
         // Sounds

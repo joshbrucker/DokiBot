@@ -23,7 +23,7 @@
         },
         {
             "name": ":frame_photo: Images",
-            "value": "**%pdoki [nsfw] [character]**: Posts an image of a doki\n**%pneko [nsfw]**: Posts an image of a beautiful neko girl\n**%pwaifu [nsfw]**: Posts an image of a random waifu\n\n\u200b"
+            "value": "**%pdoki [tags]**: Posts an image of a doki\n**%pneko [tags]**: Posts an image of a beautiful neko girl\n**%pwaifu [tags]**: Posts an image of a random waifu\n\n\u200b"
         },
         {
             "name": ":sound: Sounds",

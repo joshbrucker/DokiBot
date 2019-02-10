@@ -2,24 +2,34 @@ const https = require('https');
 
 const utils = require(__basedir + '/utils/utils');
 
-var neko = function(message, args) {
-    var id = message.guild.id;
-    var channel = message.channel;
+let neko = function(client, message, args) {
+    let id = message.guild.id;
+    let channel = message.channel;
 
-    var tag;
+    let tag = 'neko';
 
-    if (args == 0) {
-        tag = 'neko';
-    } else if (args.length == 1 && args[0] == 'nsfw') {
-        if (channel.nsfw) {
-            tag = 'lewd';
+    if (args.length > 2) {
+        channel.send('You can only use 2 possible tags with the -neko command (nsfw, gif)');
+        return;
+    }
+
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] == 'nsfw') {
+            tag = (tag == 'ngif' ? 'nsfw_neko_gif' : 'lewd');
+        } else if (args[i] == 'gif') {
+            tag = (tag == 'lewd' ? 'nsfw_neko_gif' : 'ngif');
         } else {
-            channel.send('I know you like lewd nekos, but you have to use a NSFW channel OwO');
+            channel.send(args[i] + ' is an invalid tag!');
             return;
         }
-    } else {
-        utils.invalidArgsMsg(message, 'neko');
-        return;
+    }
+
+    if (tag == 'nsfw_neko_gif' || tag == 'lewd') {
+        if (!channel.nsfw) {
+            let emoji = client.emojis.get('534525159676182539');
+            channel.send('I know you like lewd nekos, but you have to use a NSFW channel ' + emoji);
+            return;
+        }
     }
 
     https.get('https://nekos.life/api/v2/img/' + tag, (resp) => {
