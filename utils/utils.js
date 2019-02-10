@@ -146,6 +146,10 @@ let stripToNums = function(string) {
     return string.replace(/\D/g,'')
 };
 
+let random = function(num) {
+    return Math.floor(Math.random() * num);
+}
+
 module.exports = {
     invalidArgsMsg,
     toTitleCase,
@@ -157,5 +161,6 @@ module.exports = {
     secondsConverter,
     getMonthName,
     generateNewTime,
-    stripToNums
+    stripToNums,
+    random
 };
