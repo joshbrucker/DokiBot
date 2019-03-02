@@ -14,6 +14,7 @@ let play = async function(message, args) {
     ostUtils.runVoiceCmd(id, channel, async (server, task) => {
         if (args.length == 0) {
             utils.invalidArgsMsg(message, 'play');
+            return;
         }
 
         let songNum = args[0] - 1;
