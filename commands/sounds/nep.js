@@ -4,8 +4,9 @@ const path = require('path');
 const voice = require(__basedir + '/utils/audio/voice');
 const soundUtils = require(__basedir + '/utils/audio/sound-utils');
 
-let nep = async function(client, message, args) {
+let nep = async function(message, args) {
     const id = message.guild.id;
+    const client = message.client;
     const channel = message.channel;
 
     if (!message.member.voiceChannel) {

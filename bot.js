@@ -119,15 +119,15 @@ client.on('message', (message) => {
                     let cmd = args[0].toLowerCase();
                     args = args.splice(1);
 
-                    executeCmd(client, guild, message, args, cmd);
+                    executeCmd(guild, message, args, cmd);
                 }
             }
 
-            poemUpdate(guild, message, client);
+            poemUpdate(client, guild, message);
 
             let dokiReactChance = Math.floor(Math.random() * 2);
             if (dokiReactChance == 1) {
-                dokiReact(message, client);
+                dokiReact(client, message);
             }
         });
     }

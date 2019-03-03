@@ -5,8 +5,8 @@ const Danbooru = require('danbooru');
 const auth = require(__basedir + '/data/auth');
 const utils = require(__basedir + '/utils/utils');
 
-let waifu = function(client, message, args) {
-
+let waifu = function(message, args) {
+    const client = message.client;
     const channel = message.channel;
 
     fs.readFile('./assets/waifus.txt', (err, data) => {

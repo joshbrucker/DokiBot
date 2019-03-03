@@ -1,6 +1,6 @@
 const utils = require(__basedir + '/utils/utils');
 
-let dokiReact = function(message, client) {
+let dokiReact = function(client, message) {
     let content = message.content.toLowerCase();
 
     if (content.search('monika') > -1) {

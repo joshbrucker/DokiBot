@@ -6,7 +6,7 @@ const validFilename = require('valid-filename');
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
-var dokipoemUpdate = function(guild, message, client) {
+let dokipoemUpdate = function(client, guild, message) {
     // Allows only DokiBot to send messages in doki-poems
     if (message.channel.name == 'doki-poems') {
         if (message.author != client.user) {
@@ -15,12 +15,12 @@ var dokipoemUpdate = function(guild, message, client) {
         }
     }
 
-    var poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
+    let poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
     if (!poemChannel) return;
 
     if (message.author == client.user) return;
 
-    var firstWord = message.content.split(' ')[0];
+    let firstWord = message.content.split(' ')[0];
     if (!firstWord) return;
 
     if (isUrl(firstWord)) return;
@@ -37,21 +37,21 @@ var dokipoemUpdate = function(guild, message, client) {
                 db.guild.setPoemId(guild.id, msg.id);
             });
     } else {
-        var filepath = '';
+        let filepath = '';
 
         poemChannel.fetchMessage(guild.poem_id)
             .then((msg) => {
                 // Check time to see if it's time to grab a word
-                var messageDate = message.createdAt;
-                var poemDate;
+                let messageDate = message.createdAt;
+                let poemDate;
                 if (msg.editedAt) {
                     poemDate = msg.editedAt;
                 } else {
                     poemDate = msg.createdAt;
                 }
 
-                var messageTime = messageDate.getFullYear() + ' ' + messageDate.getMonth() + ' ' + messageDate.getDate();
-                var poemTime = poemDate.getFullYear() + ' ' + poemDate.getMonth() + ' ' + poemDate.getDate();
+                let messageTime = messageDate.getFullYear() + ' ' + messageDate.getMonth() + ' ' + messageDate.getDate();
+                let poemTime = poemDate.getFullYear() + ' ' + poemDate.getMonth() + ' ' + poemDate.getDate();
 
                 if (guild.poem_freq == 'hour') {
                     messageTime += ' ' + messageDate.getHours();
@@ -64,7 +64,7 @@ var dokipoemUpdate = function(guild, message, client) {
                 if (messageTime != poemTime) {
                     msg.edit(msg.content + ' ' + firstWord)
                         .then((newMsg) => {
-                            var words = newMsg.content.split(' ');
+                            let words = newMsg.content.split(' ');
                             if (words.length >= 20) {
                                 poemChannel.send('You wrote a full doki-poem. Nice!');
 
@@ -75,7 +75,7 @@ var dokipoemUpdate = function(guild, message, client) {
                                     }
                                 }
                                 if (filepath == '') {
-                                    var d = new Date();
+                                    let d = new Date();
                                     filepath = utils.dateFormat(d) + ' ' + utils.timeFormat(d) + '.txt';
                                 } else {
                                     filepath = filepath.slice(0, filepath.length - 1) + '.txt';

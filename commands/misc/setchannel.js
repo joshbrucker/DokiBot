@@ -1,8 +1,9 @@
 const db = require(__basedir + '/utils/db');
 const utils = require(__basedir + '/utils/utils');
 
-let setchannel = function(client, message, args) {
-    let channel = message.channel;
+let setchannel = function(message, args) {
+    const client = message.client;
+    const channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {
         channel.send('You need the **Manage Server** permission to use this command!');

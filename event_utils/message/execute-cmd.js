@@ -56,7 +56,7 @@ let executeCmd = function(client, guild, message, args, cmd) {
 
         // Insults
         case 'submit':
-            submit(client, guild, message, args);
+            submit(guild, message, args);
             break;
         case 'toggle':
             toggle(guild, message, args);
@@ -72,19 +72,19 @@ let executeCmd = function(client, guild, message, args, cmd) {
 
         // Images
         case 'doki':
-            doki(client, message, args);
+            doki(message, args);
             break;
         case 'catgirl':
         case 'neko':
-            neko(client, message, args);
+            neko(message, args);
             break;
         case 'waifu':
-            waifu(client, message, args);
+            waifu(message, args);
             break;
 
         // Sounds
         case 'nep':
-            nep(client, message, args);
+            nep(message, args);
             break;
 
         // Music
@@ -118,10 +118,10 @@ let executeCmd = function(client, guild, message, args, cmd) {
 
         // Miscellaneous
         case 'help':
-            help(client, guild, message, args);
+            help(guild, message, args);
             break;
         case 'setchannel':
-            setchannel(client, message, args);
+            setchannel(message, args);
             break;
         case 'prefix':
             prefix(message, args);
@@ -133,7 +133,7 @@ let executeCmd = function(client, guild, message, args, cmd) {
 
     if (cmd == 'broadcast') {
         args = message.content.split(' ').splice(1);
-        broadcast(client, message, args);
+        broadcast(message, args);
     }
 };
 

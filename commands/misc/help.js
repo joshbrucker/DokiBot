@@ -5,7 +5,8 @@ const helpEmbed = require(__basedir + '/assets/help/help.json');
 const cmdEmbed = require(__basedir + '/assets/help/cmds.json');
 const utils = require(__basedir + '/utils/utils');
 
-let help = function(client, guild, message, args) {
+let help = function(guild, message, args) {
+    const client = message.client;
 
     if (args.length == 0) {
         let embed = JSON.parse(JSON.stringify(helpEmbed));

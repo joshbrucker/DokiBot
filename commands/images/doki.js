@@ -5,8 +5,8 @@ const Danbooru = require('danbooru');
 const auth = require(__basedir + '/data/auth');
 const utils = require(__basedir + '/utils/utils');
 
-let doki = function(client, message, args) {
-
+let doki = function(message, args) {
+    const client = message.client;
     const channel = message.channel;
 
     if (args.length > 5) {

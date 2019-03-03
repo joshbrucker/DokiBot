@@ -2,9 +2,10 @@ const auth = require(__basedir + '/data/auth');
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
-let submit = function(client, guild, message, args) {
-    let channel = message.channel;
-    let user = message.author;
+let submit = function(guild, message, args) {
+    const client = message.client;
+    const channel = message.channel;
+    const user = message.author;
 
     if (args.length < 1) {
         utils.invalidArgsMsg(message, 'submit');
