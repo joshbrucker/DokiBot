@@ -38,7 +38,7 @@ const vote = require(__basedir + '/commands/misc/vote');
 // Special Commands
 const broadcast = require(__basedir + '/commands/broadcast');
 
-let executeCmd = function(client, guild, message, args, cmd) {
+let executeCmd = function(guild, message, args, cmd) {
     if (cmd != 'submit') {
         args = args.map((arg) => arg.toLowerCase());
     }
