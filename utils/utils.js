@@ -148,7 +148,27 @@ let stripToNums = function(string) {
 
 let random = function(num) {
     return Math.floor(Math.random() * num);
-}
+};
+
+// Takes in an array of emojis and reacts in order
+let react = function(message, reactions) {
+    let currEmoji = reactions.shift();
+    message.react(currEmoji)
+        .then(() => {
+            if (reactions.length > 0) {
+                react(message, reactions);
+            }
+        })
+        .catch((err) => {
+            if (err.message == 'Unknown Emoji' && currEmoji) {
+                if (reactions.length > 0) {
+                    react(message, reactions);
+                }
+            } else if (err.message != 'Unknown Message') {
+                throw err;
+            }
+        });
+};
 
 module.exports = {
     invalidArgsMsg,
@@ -162,5 +182,6 @@ module.exports = {
     getMonthName,
     generateNewTime,
     stripToNums,
-    random
+    random,
+    react
 };

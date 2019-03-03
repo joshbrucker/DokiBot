@@ -50,7 +50,6 @@ let submit = function(client, guild, message, args) {
                 remaining = Math.ceil(remaining / 1000);
                 remaining = '**' + remaining + '**' + ((remaining == 1) ? ' second!' : ' seconds!');
             }
-
             channel.send('You cannot submit an insult for another ' + remaining +
                          ' Vote for DokiBot to reset the timer.');
             return;
@@ -58,12 +57,8 @@ let submit = function(client, guild, message, args) {
 
         submissionChannel.send(insult + '\n\n' + '**ID:** ' + user.id + '\n' + '**NAME:** ' + user.username)
             .then((msg) => {
-                msg.react('✅')
-                    .then(() => {
-                        msg.react('❌');
-                    });
+                utils.react(msg, ['✅', '❌']);
             });
-
         channel.send('Your insult was submitted! You will be alerted if it is accepted.');
 
         date.setDate(date.getDate() + 1);
