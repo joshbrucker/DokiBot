@@ -72,8 +72,8 @@ let anime = function(message, args) {
         let embedData = {
             title: data.title.romaji,
             url: 'https://anilist.co/anime/' + data.id + '/',
-            description: data.description.replace("<br>", '\n').replace(/<br>|<\/br>/g, '')
-                .replace(/<i>|<\/i>/g, '*').replace(/<b>|<\/b>/g, '**'),
+            description: (data.description ? data.description.replace("<br>", '\n').replace(/<br>|<\/br>/g, '')
+                .replace(/<i>|<\/i>/g, '*').replace(/<b>|<\/b>/g, '**') : 'N/A'),
             thumbnail: {
                 url: data.coverImage.large
             },
