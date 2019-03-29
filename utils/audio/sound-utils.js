@@ -6,7 +6,7 @@ let playSound = function(message, connection, path) {
     const server = voice.getServer(id);
     const task = server.task;
 
-    task.dispatcher = connection.playFile(path);
+    task.dispatcher = connection.play(path);
 
     task.dispatcher.once('start', () => {
         if (server.timeout) {

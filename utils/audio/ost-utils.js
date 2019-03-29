@@ -8,7 +8,7 @@ let playMusic = function(message, connection) {
     const server = voice.getServer(id);
     const task = server.task;
 
-    task.dispatcher = connection.playStream(YTDL(task.queue[0].url, {filter: 'audioonly'}));
+    task.dispatcher = connection.play(YTDL(task.queue[0].url, {filter: 'audioonly'}));
 
     task.dispatcher.once('start', () => {
         connection.player.streamingData.pausedTime = 0;

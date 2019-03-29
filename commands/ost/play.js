@@ -6,7 +6,7 @@ let play = async function(message, args) {
     let id = message.guild.id;
     let channel = message.channel;
 
-    if (!message.member.voiceChannel) {
+    if (!message.member.voice.channel) {
         message.channel.send('You must be in a voice channel to use `play`');
         return;
     }
@@ -42,15 +42,15 @@ let play = async function(message, args) {
                 ostUtils.playMusic(message, message.guild.voiceConnection);
             } else {
                 try {
-                    var conn = await message.member.voiceChannel.join();
+                    let conn = await message.member.voice.channel.join();
                     channel.send('Now playing `' + song.name + '`');
                     task.queue.push(song);
                     ostUtils.playMusic(message, conn);
                 } catch(err) {
-                    if (err.toString() == 'Error: You do not have permission to join this voice channel.') {
+                    if (err.toString() == 'Error [VOICE_JOIN_CHANNEL]: You do not have permission to join this voice channel.') {
                         channel.send('I don\'t have access to your voice channel! :frowning:');
                     } else {
-                        throw new Error(err);
+                        throw err;
                     }
                 }
             }

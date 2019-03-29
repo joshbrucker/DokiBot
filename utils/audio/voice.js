@@ -1,6 +1,6 @@
 const servers = {}; 
 const leaveTime = 300000;
-const TASK = Object.freeze({ OST: Symbol('OST'), NEP: Symbol('SOUND') });
+const TASK = Object.freeze({ OST: Symbol('OST'), SOUND: Symbol('SOUND') });
 
 let getServers = function() {
     return servers;

@@ -27,41 +27,42 @@ let end = function(guild, message, args) {
 
     let filepath = '';
 
-    poemChannel.fetchMessage(guild.poem_id).then((msg) => {
-        let words = msg.content.split(' ');
-        for (let i = 0; (i < words.length) && (i < 3); i++) {
-            if (validFilename(words[i])) {
-                filepath += words[i] + ' ';
+    poemChannel.messages.fetch(guild.poem_id)
+        .then((msg) => {
+            let words = msg.content.split(' ');
+            for (let i = 0; (i < words.length) && (i < 3); i++) {
+                if (validFilename(words[i])) {
+                    filepath += words[i] + ' ';
+                }
             }
-        }
-        if (filepath == '') {
-            let d = new Date();
-            filepath = utils.dateFormat(d) + ' ' + utils.timeFormat(d) + '.txt';
-        } else {
-            filepath = filepath.slice(0, filepath.length - 1) + '.txt';
-        }
+            if (filepath == '') {
+                let d = new Date();
+                filepath = utils.dateFormat(d) + ' ' + utils.timeFormat(d) + '.txt';
+            } else {
+                filepath = filepath.slice(0, filepath.length - 1) + '.txt';
+            }
 
-        channel.send('Ending your doki-poem early? I didn\'t expect much more from you...');
-        poemChannel.send('<@' + message.member.id + '> decided to end the doki-poem early :frowning:');
+            channel.send('Ending your doki-poem early? I didn\'t expect much more from you...');
+            poemChannel.send('<@' + message.member.id + '> decided to end the doki-poem early :frowning:');
 
-        // Creates the .txt file
-        fs.writeFile(filepath, msg.content, (err) => {
-            if (err) console.log(err);
+            // Creates the .txt file
+            fs.writeFile(filepath, msg.content, (err) => {
+                if (err) console.log(err);
 
-            // Sends the .txt file
-            poemChannel.send({files: [filepath]})
-                .finally(() => {
-                    fs.stat(filepath, (err, stat) => {
-                        if (!err) {
-                            fs.unlink(filepath, (err) => {
-                                if (err) console.log(err);
-                            });
-                        }
+                // Sends the .txt file
+                poemChannel.send({files: [filepath]})
+                    .finally(() => {
+                        fs.stat(filepath, (err, stat) => {
+                            if (!err) {
+                                fs.unlink(filepath, (err) => {
+                                    if (err) console.log(err);
+                                });
+                            }
+                        });
                     });
-                });
-        });
+            });
 
-        db.guild.setPoemId(guild.id, null);
+            db.guild.setPoemId(guild.id, null);
     })
     .catch((err) => {
         if (err.message == 'Unknown Message') {

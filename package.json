@@ -1,7 +1,7 @@
 {
-  "name": "thotbot",
+  "name": "DokiBot",
   "version": "1.0.0",
-  "description": "A bot based on the hit game Doki Doki Literature Club.",
+  "description": "A bot based on the game Doki Doki Literature Club.",
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,11 +11,14 @@
   "dependencies": {
     "danbooru": "^3.0.8",
     "dblapi.js": "^2.3.0",
-    "discord.js": "^11.4.2",
+    "discord.js": "git+https://github.com/discordjs/discord.js.git",
+    "express": "^4.16.4",
     "is-url": "^1.2.4",
     "mariadb": "^2.0.0-alpha",
     "node-fetch": "^2.3.0",
     "node-opus": "^0.3.1",
+    "valid-filename": "^2.0.1",
+    "winston": "^3.2.1",
     "ytdl-core": "^0.28.0"
   }
 }

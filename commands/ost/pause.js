@@ -4,7 +4,7 @@ let pause = function(message, args) {
     let id = message.guild.id;
     let channel = message.channel;
 
-    if (!message.member.voiceChannel) {
+    if (!message.member.voice.channel) {
         message.channel.send('You must be in a voice channel to use `pause`');
         return;
     }

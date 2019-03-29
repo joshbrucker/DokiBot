@@ -31,7 +31,6 @@ const confirmInsult = require('./event_utils/react/confirm-insult');
 const onVote = require('./event_utils/webhook_vote/on-vote');
 
 const client = new Discord.Client();
-
 const dbl = new DBL(auth.dbltoken, { webhookPort: auth.webhookPort, webhookAuth: auth.webhookAuth }, client);
 
 dbl.webhook.on('ready', (hook) => {
@@ -44,16 +43,20 @@ dbl.webhook.on('vote', (vote) => {
 
 process.on('unhandledRejection', (reason, p) => {
     if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
-        console.log('Unhandled Rejection:', reason);
+        console.log(reason);
     }
 });
 
-client.on('error', (error) => {
-    console.log('Client Error: ', error);
+process.on('uncaughtException', (err) => {
+    console.log(err);
 });
 
-dbl.on('error', e => {
-    console.log('Discord Bots List Error: ', e);
+client.on('error', (err) => {
+    console.log(err);
+});
+
+dbl.on('error', (err) => {
+    console.log(err);
 });
 
 process.on('SIGINT', (code) => {
@@ -86,9 +89,9 @@ client.on('ready', () => {
         setActivity(client);
     }, 3600000);
 
-    client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).fetchMessages();
+    client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).messages.fetch();
     setInterval(() => {
-        client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).fetchMessages();
+        client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).messages.fetch();
     }, 600000);
 
     console.log('I am ready!');

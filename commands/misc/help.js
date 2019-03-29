@@ -14,10 +14,9 @@ let help = function(guild, message, args) {
         for (let i = 0; i < embed.fields.length; i++) {
             embed.fields[i].value = embed.fields[i].value.replace(/%p/g, guild.prefix);
         }
-        message.author.send(new Discord.RichEmbed(embed));
+        message.author.send(new Discord.MessageEmbed(embed));
     } else if (args.length == 1 && cmdEmbed[args[0]]) {
         let embed = JSON.parse(JSON.stringify(cmdEmbed[args[0]]));
-        let attachment = new Discord.Attachment('./assets/images/console.png', 'console.png');
 
         embed.description = ":keyboard: __**Command Help**__ :keyboard:";
         embed.color = 16734190;
@@ -25,7 +24,7 @@ let help = function(guild, message, args) {
             embed.fields[i].name = embed.fields[i].name.replace(/%p/g, guild.prefix);
             embed.fields[i].value = embed.fields[i].value.replace(/%p/g, guild.prefix);
         }
-        message.channel.send(new Discord.RichEmbed(embed));
+        message.channel.send(new Discord.MessageEmbed(embed));
     }
 }
 

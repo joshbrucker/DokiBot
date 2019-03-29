@@ -39,7 +39,7 @@ let dokipoemUpdate = function(client, guild, message) {
     } else {
         let filepath = '';
 
-        poemChannel.fetchMessage(guild.poem_id)
+        poemChannel.messages.fetch(guild.poem_id)
             .then((msg) => {
                 // Check time to see if it's time to grab a word
                 let messageDate = message.createdAt;

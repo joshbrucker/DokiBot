@@ -9,7 +9,7 @@ let nep = async function(message, args) {
     const client = message.client;
     const channel = message.channel;
 
-    if (!message.member.voiceChannel) {
+    if (!message.member.voice.channel) {
         message.channel.send('You need to be in a voice channel to use `nep`');
         return;
     }
@@ -41,14 +41,14 @@ let nep = async function(message, args) {
 	                    soundUtils.playSound(message, message.guild.voiceConnection, path);
 	                } else {
 	                    try {
-	                        var conn = await message.member.voiceChannel.join();
+	                        let conn = await message.member.voice.channel.join();
 	                        channel.send('Nepu nepu! ' + emoji);
 	                        soundUtils.playSound(message, conn, path);
-	                    } catch(err) {
-	                        if (err.toString() == "Error: You do not have permission to join this voice channel.") {
+	                    } catch (err) {
+	                        if (err.toString() == 'Error [VOICE_JOIN_CHANNEL]: You do not have permission to join this voice channel.') {
 	                            channel.send("I don't have access to your voice channel! :frowning:");
 	                        } else {
-	                            throw new Error(err);
+	                            throw err;
 	                        }
 	                    }
 	                }

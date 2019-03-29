@@ -100,7 +100,7 @@ let anime = function(message, args) {
                 }
             ]
         }
-        let embed = new Discord.RichEmbed(embedData);
+        let embed = new Discord.MessageEmbed(embedData);
 
         message.channel.send('', embed);
     }
