@@ -28,7 +28,7 @@ let neko = function(message, args) {
     if (tag == 'nsfw_neko_gif' || tag == 'lewd') {
         if (!channel.nsfw) {
             let emoji = client.emojis.get('534525159676182539');
-            channel.send('I know you like lewd nekos, but you have to use a NSFW channel ' + emoji);
+            channel.send('I know you like lewd nekos, but you have to use a NSFW channel ' + emoji.toString());
             return;
         }
     }

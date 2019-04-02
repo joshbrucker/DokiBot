@@ -63,7 +63,7 @@ let doki = function(message, args) {
 
     if (nsfw && !channel.nsfw) {
         let emoji = client.emojis.get('534525159676182539');
-        channel.send("Woah now! This text channel isn't marked NSFW. I probably shouldn't post the steamy stuff here " + emoji);
+        channel.send("Woah now! This text channel isn't marked NSFW. I probably shouldn't post the steamy stuff here " + emoji.toString());
         return;
     }
 
