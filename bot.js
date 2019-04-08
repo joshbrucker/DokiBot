@@ -110,7 +110,7 @@ client.on('guildDelete', (guild) => {
 });
 
 client.on('message', (message) => {
-    if (message.guild) {
+    if (message.guild && !message.author.bot) {
         db.guild.getGuild(message.guild.id, (guild) => {
             guild = guild[0];
             let prefix = guild.prefix;
