@@ -75,8 +75,11 @@ process.on('SIGINT', (code) => {
 client.on('ready', () => {
     db.guild.verifyGuilds(client, (addedGuilds) => {
         for (let i = 0; i < addedGuilds.length; i++) {
-            utils.sendWelcomeMsg(client, addedGuilds[i]);
-            db.guild.setDefaultChannel(addedGuilds[i].id, utils.getJoinChannel(client, addedGuilds[i]).id);
+            let defaultChannel = utils.getAvailableChannel(client, addedGuilds[i]);
+            if (defaultChannel) {
+                utils.sendWelcomeMsg(client, addedGuilds[i], defaultChannel);
+                db.guild.setDefaultChannel(addedGuilds[i].id, defaultChannel.id);
+            }
         }
 
         setInterval(() => {
@@ -99,8 +102,11 @@ client.on('ready', () => {
 
 client.on('guildCreate', (guild) => {
     db.guild.addGuild(guild.id, () => {
-        utils.sendWelcomeMsg(client, guild);
-        db.guild.setDefaultChannel(guild.id, utils.getJoinChannel(client, guild).id);
+        let defaultChannel = utils.getAvailableChannel(client, guild);
+        if (defaultChannel) {
+            utils.sendWelcomeMsg(client, guild, defaultChannel);
+            db.guild.setDefaultChannel(guild.id, defaultChannel.id);
+        }
     });
 });
 

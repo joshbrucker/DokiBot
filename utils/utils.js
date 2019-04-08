@@ -85,19 +85,18 @@ let secondsConverter = function(int) {
     return (days + ':' + hours + ':' + minutes + ':' + remaining);
 };
 
-let getJoinChannel = function(client, guild) {
-    let channel;
+let getAvailableChannel = function(client, guild) {
     let channels = guild.channels.filter((channel) => (channel.type === 'text' && channel.permissionsFor(client.user).has('SEND_MESSAGES')
             && channel.permissionsFor(client.user).has('VIEW_CHANNEL')));
 
     if (channels.first()) {
-        channel = channels.first();
+        return channels.first();
+    } else {
+        return null;
     }
-
-    return channel;
 };
 
-let sendWelcomeMsg = function(client, guild) {
+let sendWelcomeMsg = function(client, guild, channel) {
     let emoji = client.emojis.get('539122262347874334');
 
     let message = ('Square up! Your true love has joined the server. '
@@ -111,11 +110,7 @@ let sendWelcomeMsg = function(client, guild) {
             + '* [3] You can make a channel called `doki-poems\' where I can create my poems for you.\n\n'
             + '* [4] Use `-help\' to see more commands. Best of luck, dummies!```');
 
-    let channel = getJoinChannel(client, guild);
-
-    if (channel) {
-        channel.send(message);
-    }
+    channel.send(message);
 }
 
 let getMembers = function(guild) {
@@ -173,7 +168,7 @@ let react = function(message, reactions) {
 module.exports = {
     invalidArgsMsg,
     toTitleCase,
-    getJoinChannel,
+    getAvailableChannel,
     sendWelcomeMsg,
     getMembers,
     dateFormat,
