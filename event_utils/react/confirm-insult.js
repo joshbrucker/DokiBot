@@ -12,7 +12,7 @@ let confirmInsult = function(client, reaction) {
 
         content = content.join(' ');
 
-        client.fetchUser(id)
+        client.users.fetch(id)
             .then((user) => {
                 user.send('Your insult has been accepted!')
                     .then((msg) => {
