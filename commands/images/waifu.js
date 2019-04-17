@@ -1,68 +1,77 @@
 const fs = require('fs');
 const path = require('path');
 const Danbooru = require('danbooru');
+const winston = require('winston');
 
 const auth = require(__basedir + '/data/auth');
 const utils = require(__basedir + '/utils/utils');
+
+const characters = require(__basedir + '/assets/characters.json');
+const sample = utils.aliasSampler(characters.map((entry) => entry.girls.length));
+
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.File({ filename: 'logs/failedwaifus.log' })
+    ]
+});
 
 let waifu = function(message, args) {
     const client = message.client;
     const channel = message.channel;
 
-    fs.readFile('./assets/waifus.txt', (err, data) => {
-        let lines = data.toString().split('\n');
-        let lineNum = utils.random(lines.length);
-        let waifuName = lines[lineNum];
+    let series = characters[sample()];
+    let character = series.girls[utils.random(series.girls.length)];
 
-        if (args.length > 5) {
-            channel.send('You can only use up to 5 tags!');
-            return;
+    if (args.length > 2) {
+        channel.send('There are only 2 tags to choose from!');
+        return;
+    }
+
+    let invalid = false;
+    args = new Set(args);
+
+    let tags = new Set([]);
+    tags.add(character);
+    tags.add(series.title);
+    tags.add('1girl');
+    tags.add('-comic');
+
+    let multiple = false;
+    let nsfw = false;
+    tags.add('rating:safe');
+
+    args.forEach((arg) => {
+        switch(arg) {
+            case 'nsfw':
+                nsfw = true;
+                tags.delete('rating:safe');
+                tags.add('-rating:safe');
+                break;
+            case 'multiple':
+                multiple = true;
+                tags.delete('1girl');
+                tags.add('multiple_girls');
+                break;
+            default:
+                invalid = true;
         }
+    })
 
-        let invalid = false;
-        args = new Set(args);
+    if (invalid) {
+        channel.send('Invalid tag(s)!');
+        return;
+    }
 
-        let tags = new Set([]);
-        tags.add(waifuName);
+    if (nsfw && !channel.nsfw) {
+        let emoji = client.emojis.get('534525159676182539');
+        channel.send('Woah now! This text channel isn\'t marked NSFW. I probably shouldn\'t post the steamy stuff here ' + emoji.toString());
+        return;
+    }
 
-        let nsfw = false;
-        tags.add('rating:safe');
+    const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
 
-        args.forEach((arg) => {
-            switch(arg) {
-                case 'nsfw':
-                    nsfw = true;
-                    tags.delete('rating:safe');
-                    tags.add('-rating:safe');
-                    break;
-                case '1girl':
-                    tags.add('1girl');
-                    break;
-                case '2girls':
-                    tags.add('2girls');
-                    break;
-                case 'multiple':
-                    tags.add('multiple_girls');
-                    break;
-                default:
-                    invalid = true;
-            }
-        })
-
-        if (invalid) {
-            channel.send('Invalid tag(s)!');
-            return;
-        }
-
-        if (nsfw && !channel.nsfw) {
-            let emoji = client.emojis.get('534525159676182539');
-            channel.send("Woah now! This text channel isn't marked NSFW. I probably shouldn't post the steamy stuff here " + emoji.toString());
-            return;
-        }
-
-        const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
-
-        booru.posts({ random: true, limit: 50, tags: Array.from(tags).join(' ') })
+    (function postImage() {
+        booru.posts({ random: true, limit: 5, tags: Array.from(tags).join(' ') })
             .then((posts) => {
                 const post = posts[utils.random(posts.length)];
 
@@ -70,21 +79,42 @@ let waifu = function(message, args) {
                     const url = booru.url(post.file_url);
                     const name = `${post.md5}.${post.file_ext}`;
 
-                    if (post.tag_string.includes('loli') || post.tag_string.includes('shota')) {
-                        channel.send('I can\'t post this picture because it\'s tagged with loli/shota.');
+                    if (tags.has('-rating:safe') && (post.tag_string.includes('loli') || post.tag_string.includes('shota'))) {
+                        // Finds an image of a different character
+                        tags.delete(character);
+                        series = characters[sample()];
+                        character = series.girls[utils.random(series.girls.length)];
+                        tags.add(character);
+
+                        postImage();
                     } else {
-                        channel.send('Waifu: **' + utils.toTitleCase(waifuName) + '**\n'
-                            + 'From: **' + utils.toTitleCase(post.tag_string_copyright) + '**\n'
+                        if (multiple) {
+                            character = post.tag_string_character;
+                        }
+                        channel.send('Pictured' + ': **' + utils.tagToTitle(character) + '**\n'
+                            + 'From: **' + utils.tagToTitle(series.title) + '**\n'
                             + url.href);
                     }
                 } else {
-                    channel.send('Hmmm... I am having trouble grabbing a picture. Please try again.');
+                    // Logs characters who don't show up with just their names + series
+                    if (!tags.has('-rating:safe') && !tags.has('multiple_girls')) {
+                        logger.info('Couldn\'t post a safe pic of ' + character);
+                    }
+
+                    // Finds an image of a different character
+                    tags.delete(character);
+                    series = characters[sample()];
+                    character = series.girls[utils.random(series.girls.length)];
+                    tags.add(character);
+
+                    postImage();
                 }
             })
             .catch((err) => {
                 console.log(err);
             });
-    });
+    })();
+
 };
 
 module.exports = waifu;

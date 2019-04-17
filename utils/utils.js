@@ -7,10 +7,14 @@ let invalidArgsMsg = function(message, command) {
         + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
-let toTitleCase = function(str) {
-    str = str.replace(/_/g, " ").replace(/ *\([^)]*\) */g, "").replace(/[\n\r]/, "");
-    str = str.replace(/ *\([^)]*\) */g, "");
+let tagToTitle = function(str) {
+    str = str.split(' ');
 
+    if (str.length > 10) {
+        str = str.slice(0, 10);
+        str.push('...');
+    }
+    str = str.join(', ').replace(/_/g, ' ').replace(/ *\([^)]*\) */g, '');
 
     return str.replace(
         /\w\S*\W*/g,
@@ -145,6 +149,56 @@ let random = function(num) {
     return Math.floor(Math.random() * num);
 };
 
+// Generates a sampler function using the alias method
+let aliasSampler = function(probabilities) {
+    let probSum = probabilities.reduce((sum, p) => {
+        return sum + p;
+    }, 0);
+    
+    let probMultiplier = probabilities.length / probSum;
+    probabilities = probabilities.map((p) => {
+        return p * probMultiplier;
+    });
+    
+    let overFull = [], underFull = [];
+    probabilities.forEach((p, i) => {
+        if (p > 1) {
+            overFull.push(i);
+        } else if (p < 1) {
+            underFull.push(i);
+        }
+    });
+
+    let aliases = [];
+    while (overFull.length > 0 || underFull.length > 0) {
+        if (overFull.length > 0 && underFull.length > 0) {
+            aliases[underFull[0]] = overFull[0];
+            probabilities[overFull[0]] += probabilities[underFull[0]] - 1;
+            underFull.shift();
+            if (probabilities[overFull[0]] > 1) {
+                overFull.push(overFull.shift());
+            }
+            else if (probabilities[overFull[0]] < 1) {
+                underFull.push(overFull.shift());
+            }
+            else {
+                overFull.shift();
+            }
+        } else {
+            let notEmptyArray = overFull.length > 0 ? overFull : underFull;
+            notEmptyArray.forEach(index => {
+                probabilities[index] = 1;
+            });
+            notEmptyArray.length = 0;
+        }
+    }
+    
+    return function sample() {
+        let index = random(probabilities.length);
+        return Math.random() < probabilities[index] ? index : aliases[index];
+    };
+};
+
 // Takes in an array of emojis and reacts in order
 let react = function(message, reactions) {
     let currEmoji = reactions.shift();
@@ -167,7 +221,7 @@ let react = function(message, reactions) {
 
 module.exports = {
     invalidArgsMsg,
-    toTitleCase,
+    tagToTitle,
     getAvailableChannel,
     sendWelcomeMsg,
     getMembers,
@@ -178,5 +232,6 @@ module.exports = {
     generateNewTime,
     stripToNums,
     random,
+    aliasSampler,
     react
 };
