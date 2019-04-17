@@ -132,7 +132,7 @@
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**[tags]**: nsfw, multiple"
+                "value": "**[tags]**: nsfw, multiple,\nany valid Danbooru tags e.g., neptune_(neptune_series)"
             }
         ]
     },

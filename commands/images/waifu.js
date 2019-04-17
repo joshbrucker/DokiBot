@@ -19,27 +19,27 @@ let waifu = function(message, args) {
     const client = message.client;
     const channel = message.channel;
 
-    let series = characters[sample()];
-    let character = series.girls[utils.random(series.girls.length)];
-
-    if (args.length > 2) {
-        channel.send('There are only 2 tags to choose from!');
+    if (args.length > 4) {
+        channel.send('You can only have up to 4 tags!');
         return;
     }
 
-    let invalid = false;
-    args = new Set(args);
+    let series;
+    let character;
 
     let tags = new Set([]);
-    tags.add(character);
-    tags.add(series.title);
+
+    // Default tags
     tags.add('1girl');
     tags.add('-comic');
-
-    let multiple = false;
-    let nsfw = false;
     tags.add('rating:safe');
 
+    // Tag conditions
+    let nsfw = false;
+    let multiple = false;
+    let custom = false;
+
+    args = new Set(args);
     args.forEach((arg) => {
         switch(arg) {
             case 'nsfw':
@@ -53,13 +53,20 @@ let waifu = function(message, args) {
                 tags.add('multiple_girls');
                 break;
             default:
-                invalid = true;
-        }
-    })
+                custom = true;
+                tags.delete(character);
+                tags.add(arg);
 
-    if (invalid) {
-        channel.send('Invalid tag(s)!');
-        return;
+                if (arg == 'comic') {
+                    tags.delete('-comic');
+                }
+        }
+    });
+
+    if (!custom) {
+        series = characters[sample()];
+        character = series.girls[utils.random(series.girls.length)];
+        tags.add(character);
     }
 
     if (nsfw && !channel.nsfw) {
@@ -71,7 +78,7 @@ let waifu = function(message, args) {
     const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
 
     (function postImage() {
-        booru.posts({ random: true, limit: 5, tags: Array.from(tags).join(' ') })
+        booru.posts({ random: true, limit: 20, tags: Array.from(tags).join(' ') })
             .then((posts) => {
                 const post = posts[utils.random(posts.length)];
 
@@ -81,20 +88,25 @@ let waifu = function(message, args) {
 
                     if (tags.has('-rating:safe') && (post.tag_string.includes('loli') || post.tag_string.includes('shota'))) {
                         // Finds an image of a different character
-                        tags.delete(character);
-                        series = characters[sample()];
-                        character = series.girls[utils.random(series.girls.length)];
-                        tags.add(character);
+                        if (custom) {
+                            channel.send(':x: I can\'t post this because it is tagged with loli/shota!');
+                        } else {
+                            tags.delete(character);
+                            series = characters[sample()];
+                            character = series.girls[utils.random(series.girls.length)];
+                            tags.add(character);
 
-                        postImage();
-                    } else {
-                        if (multiple) {
-                            character = post.tag_string_character;
+                            postImage();
                         }
+                    } else {
+                        character = post.tag_string_character;
+                        series = post.tag_string_copyright;
                         channel.send('Pictured' + ': **' + utils.tagToTitle(character) + '**\n'
-                            + 'From: **' + utils.tagToTitle(series.title) + '**\n'
+                            + 'From: **' + utils.tagToTitle(series) + '**\n'
                             + url.href);
                     }
+                } else if (custom) {
+                    channel.send(':x: I can\'t find a waifu with those tags!');
                 } else {
                     // Logs characters who don't show up with just their names + series
                     if (!tags.has('-rating:safe') && !tags.has('multiple_girls')) {
