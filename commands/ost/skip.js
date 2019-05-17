@@ -1,20 +1,19 @@
-const ostUtils = require(__basedir + '/utils/audio/ost-utils');
+const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
+const voice = require(__basedir + '/utils/audio/voice');
+
 
 let skip = function(message, args) {
-    let id = message.guild.id;
-    let channel = message.channel;
+    const id = message.guild.id;
+    const channel = message.channel;
+    const server = voiceTasks.getServer(id);
+    const task = server.task;
 
 	if (!message.member.voice.channel) {
         message.channel.send('You must be in a voice channel to use `skip`');
         return;
     }
 
-    ostUtils.runVoiceCmd(id, channel, async (server, task) => {
-        if (!task.dispatcher) {
-            channel.send('Nothing to skip!');
-            return;
-        }
-
+    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
         channel.send(':fast_forward: Skipping...');
 
         if (task.queue[1]) {
@@ -25,7 +24,9 @@ let skip = function(message, args) {
         }
 
         task.dispatcher.end();
-    });
+    } else {
+        channel.send('Nothing to skip!');
+    }
 };
 
 module.exports = skip;

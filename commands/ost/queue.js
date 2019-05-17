@@ -1,12 +1,15 @@
-const ostUtils = require(__basedir + '/utils/audio/ost-utils');
+const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
+const voice = require(__basedir + '/utils/audio/voice');
 
 let queue = function(message, args) {
-    let id = message.guild.id;
-    let channel = message.channel;
-
-    ostUtils.runVoiceCmd(id, channel, async (server, task) => {
+    const id = message.guild.id;
+    const channel = message.channel;
+    const server = voiceTasks.getServer(id);
+    const task = server.task;
+    
+    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
         const pageLength = 10;
-        let maxPage = Math.ceil(task.queue.length / pageLength);
+        const maxPage = Math.ceil(task.queue.length / pageLength);
         let msg;
 
         if (args.length == 1) {
@@ -40,7 +43,9 @@ let queue = function(message, args) {
             msg += '\`\`\`';
             channel.send(msg);
         }
-    });
+    } else {
+        channel.send('Nothing currently playing!');
+    }
 };
 
 module.exports = queue;

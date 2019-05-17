@@ -14,6 +14,7 @@ const auth = require('./data/auth');
 const db = require('./utils/db');
 const utils = require('./utils/utils');
 const voice = require('./utils/audio/voice');
+const voiceTasks = require('./utils/audio/voice-tasks');
 
 // Client Ready
 const checkInsults = require('./event_utils/client_ready/check-insults');
@@ -60,8 +61,8 @@ dbl.on('error', (err) => {
 });
 
 process.on('SIGINT', (code) => {
-    for (let id in voice.getServers()) {
-        if (voice.getServers().hasOwnProperty(id)) {
+    for (let id in voiceTasks.getServers()) {
+        if (voiceTasks.getServers().hasOwnProperty(id)) {
             let vc = client.guilds.get(id).voiceConnection;
             if (vc) {
                 vc.disconnect();
@@ -112,7 +113,7 @@ client.on('guildCreate', (guild) => {
 
 client.on('guildDelete', (guild) => {
     db.guild.removeGuild(guild.id);
-    voice.removeServer(guild.id);
+    voiceTasks.removeServer(guild.id);
 });
 
 client.on('message', (message) => {
