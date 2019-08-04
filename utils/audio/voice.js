@@ -6,6 +6,7 @@ const leaveTime = 300000;
 
 let getConnection = function(message) {
     return new Promise((resolve, reject) => {
+        let channel = message.channel
         if (!message.guild.voiceConnection) {
             message.member.voice.channel.join()
                 .then(conn => {
