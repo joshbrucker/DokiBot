@@ -32,15 +32,26 @@ const confirmInsult = require('./event_utils/react/confirm-insult');
 const onVote = require('./event_utils/webhook_vote/on-vote');
 
 const client = new Discord.Client();
-const dbl = new DBL(auth.dbltoken, { webhookPort: auth.webhookPort, webhookAuth: auth.webhookAuth }, client);
 
-dbl.webhook.on('ready', (hook) => {
-    console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
-});
+// Sets up DiscordBotList if provided a token
+dbltoken = auth.dbltoken;
+if (dbltoken) {
+  const dbl = new DBL(dbltoken, { webhookPort: auth.webhookPort, webhookAuth: auth.webhookAuth }, client);
 
-dbl.webhook.on('vote', (vote) => {
-    onVote(vote);
-});
+  dbl.webhook.on('ready', (hook) => {
+      console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
+  });
+
+  dbl.webhook.on('vote', (vote) => {
+      onVote(vote);
+  });
+
+  dbl.on('error', (err) => {
+    console.log(err);
+  });
+} else {
+  console.log('Could not successfully connect to DBL. Are the credentials correct?');
+}
 
 process.on('unhandledRejection', (reason, p) => {
     if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
@@ -53,10 +64,6 @@ process.on('uncaughtException', (err) => {
 });
 
 client.on('error', (err) => {
-    console.log(err);
-});
-
-dbl.on('error', (err) => {
     console.log(err);
 });
 
