@@ -1,2 +1,4 @@
 data/auth.json
-assets/nep_audio
+assets/nep_audio/
+logs/
+node_modules/
