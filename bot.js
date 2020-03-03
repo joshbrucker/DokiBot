@@ -1,57 +1,25 @@
-/*
-  Created by Joshua Brucker
-*/
-
 global.__basedir = __dirname;
 
 const Discord = require('discord.js');
-const DBL = require("dblapi.js");
 
 const fs = require('fs');
 const path = require('path');
-
 const auth = require('./data/auth');
 const db = require('./utils/db');
 const utils = require('./utils/utils');
 const voice = require('./utils/audio/voice');
 const voiceTasks = require('./utils/audio/voice-tasks');
-
-// Client Ready
 const checkInsults = require('./event_utils/client_ready/check-insults');
 const setActivity = require('./event_utils/client_ready/set-activity');
-
-// Message
 const dokiReact = require('./event_utils/message/doki-react');
 const executeCmd = require('./event_utils/message/execute-cmd');
 const poemUpdate = require('./event_utils/message/poem-update');
-
-// React
 const confirmInsult = require('./event_utils/react/confirm-insult');
-
-// Webhook Vote
-const onVote = require('./event_utils/webhook_vote/on-vote');
+const setupDbl = require('./helpers/discord_bot_list/setup-dbl');
 
 const client = new Discord.Client();
 
-// Sets up DiscordBotList if provided a token
-dbltoken = auth.dbltoken;
-if (dbltoken) {
- const dbl = new DBL(dbltoken, { webhookPort: auth.webhookPort, webhookAuth: auth.webhookAuth }, client);
-
- dbl.webhook.on('ready', (hook) => {
-   console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
- });
-
- dbl.webhook.on('vote', (vote) => {
-   onVote(vote);
- });
-
- dbl.on('error', (err) => {
-  console.log(err);
- });
-} else {
- console.log('Could not successfully connect to DBL. Are the credentials correct?');
-}
+setupDbl(auth, client);
 
 process.on('unhandledRejection', (reason, p) => {
   if (reason.message != 'Missing Access' && reason.message != 'Missing Permissions') {
