@@ -9,7 +9,7 @@ let frequency = function(guild, message, args) {
         return;
     }
 
-    let poemChannel = message.guild.channels.find((channel) => channel.name === 'doki-poems');
+    let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
     
     if (!poemChannel) {
         channel.send('Hey dummy, if you want to use poem commands, you need a `doki-poems` channel!');

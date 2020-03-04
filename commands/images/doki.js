@@ -6,89 +6,88 @@ const auth = require(__basedir + '/data/auth');
 const utils = require(__basedir + '/utils/utils');
 
 let doki = function(message, args) {
-    const client = message.client;
-    const channel = message.channel;
+  const client = message.client;
+  const channel = message.channel;
 
-    if (args.length > 5) {
-        channel.send('You can only use up to 5 tags!');
-        return;
+  if (args.length > 5) {
+    channel.send('You can only use up to 5 tags!');
+    return;
+  }
+
+  let invalid = false;
+  args = new Set(args);
+
+  let tags = new Set([]);
+  tags.add('doki_doki_literature_club');
+
+  let nsfw = false;
+  tags.add('rating:safe');
+
+  args.forEach((arg) => {
+    switch(arg) {
+      case 'nsfw':
+        nsfw = true;
+        tags.delete('rating:safe');
+        tags.add('-rating:safe');
+        break;
+      case '1girl':
+        tags.add('1girl');
+        break;
+      case '2girls':
+        tags.add('2girls');
+        break;
+      case 'multiple':
+        tags.add('multiple_girls');
+        break;
+      case 'monika':
+        tags.add('monika_(doki_doki_literature_club)');
+        break;
+      case 'sayori':
+        tags.add('sayori_(doki_doki_literature_club)');
+        break;
+      case 'yuri':
+        tags.add('yuri_(doki_doki_literature_club)');
+        break;
+      case 'natsuki':
+        tags.add('natsuki_(doki_doki_literature_club)');
+        break;
+      default:
+        invalid = true;
     }
+  })
 
-    let invalid = false;
-    args = new Set(args);
+  if (invalid) {
+    channel.send('Invalid tag(s)!');
+    return;
+  }
 
-    let tags = new Set([]);
-    tags.add('doki_doki_literature_club');
+  if (nsfw && !channel.nsfw) {
+    channel.send('Woah now! This text channel isn\'t marked NSFW. I probably shouldn\'t post the steamy stuff here :underage: ');
+    return;
+  }
 
-    let nsfw = false;
-    tags.add('rating:safe');
+  const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
 
-    args.forEach((arg) => {
-        switch(arg) {
-            case 'nsfw':
-                nsfw = true;
-                tags.delete('rating:safe');
-                tags.add('-rating:safe');
-                break;
-            case '1girl':
-                tags.add('1girl');
-                break;
-            case '2girls':
-                tags.add('2girls');
-                break;
-            case 'multiple':
-                tags.add('multiple_girls');
-                break;
-            case 'monika':
-                tags.add('monika_(doki_doki_literature_club)');
-                break;
-            case 'sayori':
-                tags.add('sayori_(doki_doki_literature_club)');
-                break;
-            case 'yuri':
-                tags.add('yuri_(doki_doki_literature_club)');
-                break;
-            case 'natsuki':
-                tags.add('natsuki_(doki_doki_literature_club)');
-                break;
-            default:
-                invalid = true;
+  booru.posts({ random: true, limit: 50, tags: Array.from(tags).join(' ') })
+    .then((posts) => {
+      const post = posts[utils.random(posts.length)];
+
+      if (post) {
+        const url = booru.url(post.file_url);
+        const name = `${post.md5}.${post.file_ext}`;
+
+        if (post.tag_string.includes('loli') || post.tag_string.includes('shota')) {
+          channel.send('I can\'t post this picture because it\'s tagged with loli/shota.');
+        } else {
+          channel.send(url.href);
         }
+      } else {
+        channel.send('Hmmm... I am having trouble grabbing a picture. Please try again.');
+      }
     })
-
-    if (invalid) {
-        channel.send('Invalid tag(s)!');
-        return;
-    }
-
-    if (nsfw && !channel.nsfw) {
-        let emoji = client.emojis.get('534525159676182539');
-        channel.send("Woah now! This text channel isn't marked NSFW. I probably shouldn't post the steamy stuff here " + emoji.toString());
-        return;
-    }
-
-    const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
-
-    booru.posts({ random: true, limit: 50, tags: Array.from(tags).join(' ') })
-        .then((posts) => {
-            const post = posts[utils.random(posts.length)];
-
-            if (post) {
-                const url = booru.url(post.file_url);
-                const name = `${post.md5}.${post.file_ext}`;
-
-                if (post.tag_string.includes('loli') || post.tag_string.includes('shota')) {
-                    channel.send('I can\'t post this picture because it\'s tagged with loli/shota.');
-                } else {
-                    channel.send(url.href);
-                }
-            } else {
-                channel.send('Hmmm... I am having trouble grabbing a picture. Please try again.');
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 module.exports = doki;

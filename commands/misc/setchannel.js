@@ -17,9 +17,9 @@ let setchannel = function(message, args) {
 
     args = args.join(' ');
 
-    let newChannel = message.guild.channels.find((channel) => channel.id === utils.stripToNums(args));
+    let newChannel = message.guild.channels.cache.find((channel) => channel.id === utils.stripToNums(args));
     if (!newChannel) {
-        newChannel = message.guild.channels.find((channel) => channel.name === args);
+        newChannel = message.guild.channels.cache.find((channel) => channel.name === args);
     }
 
     if (newChannel) {

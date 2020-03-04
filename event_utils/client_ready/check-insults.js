@@ -20,7 +20,7 @@ let checkInsults = async function(client) {
                     continue;
                 }
 
-                let guild = client.guilds.get(readyGuilds[i].id);
+                let guild = client.guilds.resolve(readyGuilds[i].id);
 
                 if (guild.available) {
                     let insult = insults[i].message;
@@ -37,7 +37,7 @@ let checkInsults = async function(client) {
                         }
                     }
 
-                    let channel = guild.channels.get(readyGuilds[i].default_channel);
+                    let channel = guild.channels.resolve(readyGuilds[i].default_channel);
 
                     if (channel) {
                         channel.send(insult);
