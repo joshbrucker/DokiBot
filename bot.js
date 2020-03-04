@@ -7,8 +7,8 @@ const path = require('path');
 const auth = require('./data/auth');
 const db = require('./utils/db');
 const utils = require('./utils/utils');
-const voice = require('./utils/audio/voice');
-const voiceTasks = require('./utils/audio/voice-tasks');
+const voiceManager = require('./helpers/voice/voice-manager');
+const voiceTasks = require('./helpers/voice/voice-tasks');
 const checkInsults = require('./event_utils/client_ready/check-insults');
 const setActivity = require('./event_utils/client_ready/set-activity');
 const dokiReact = require('./event_utils/message/doki-react');
@@ -36,15 +36,7 @@ client.on('error', (err) => {
 });
 
 process.on('SIGINT', (code) => {
-  for (let id in voiceTasks.getServers()) {
-    if (voiceTasks.getServers().hasOwnProperty(id)) {
-      let vc = client.guilds.get(id).voiceConnection;
-      if (vc) {
-        vc.disconnect();
-      }
-    }
-  }
-
+  voiceManager.disconnectAll(client);
   process.exit();
 });
 
@@ -68,9 +60,9 @@ client.on('ready', () => {
     setActivity(client);
   }, 3600000);
 
-  client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).messages.fetch();
+  client.guilds.resolve(auth.dokihubId).channels.resolve(auth.submissionChannelId).messages.fetch();
   setInterval(() => {
-    client.guilds.get(auth.dokihubId).channels.get(auth.submissionChannelId).messages.fetch();
+    client.guilds.resolve(auth.dokihubId).channels.resolve(auth.submissionChannelId).messages.fetch();
   }, 600000);
 
   console.log('I am ready!');

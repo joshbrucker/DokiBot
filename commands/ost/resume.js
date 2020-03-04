@@ -1,28 +1,33 @@
-const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
-const voice = require(__basedir + '/utils/audio/voice');
+const voiceTasks = require(__basedir + '/helpers/voice/voice-tasks');
+const voiceManager = require(__basedir + '/helpers/voice/voice-manager');
 
 let resume = function(message, args) {
-    const id = message.guild.id;
-    const channel = message.channel;
-    const server = voiceTasks.getServer(id);
-    const task = server.task;
+  const id = message.guild.id;
+  const channel = message.channel;
+  const server = voiceManager.getServer(id);
+  const task = server.task;
 
-    if (!message.member.voice.channel) {
-        message.channel.send('You must be in a voice channel to use `resume`');
-        return;
+  const NOT_IN_VOICE_MSG = 'You must be in a voice channel to use `resume`';
+  const NOT_PAUSED_MSG = 'Can\'t resume because playback isn\'t paused!';
+  const RESUME_MSG = ':arrow_forward: Resuming...';
+  const NOTHING_TO_RESUME_MSG = 'Nothing to resume!';
+
+  if (!message.member.voice.channel) {
+    message.channel.send(NOT_IN_VOICE_MSG);
+    return;
+  }
+
+  if (task instanceof voiceTasks.MusicTask) {
+    if (!task.paused) {
+      channel.send(NOT_PAUSED_MSG);
+      return;
     }
-
-    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
-        if (!task.dispatcher.paused) {
-            channel.send('Can\'t resume because playback isn\'t paused!');
-            return;
-        }
-
-        channel.send(':arrow_forward: Resuming...');
-        task.dispatcher.resume();
-    } else {
-        channel.send('Nothing to resume!');
-    }
+    task.paused = false;
+    task.dispatcher.resume();
+    channel.send(RESUME_MSG);
+  } else {
+    channel.send(NOTHING_TO_RESUME_MSG);
+  }
 };
 
 module.exports = resume;
