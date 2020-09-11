@@ -16,7 +16,7 @@
     "is-url": "^1.2.4",
     "lodash": "^4.17.14",
     "mariadb": "^2.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-opus": "^0.3.2",
     "valid-filename": "^2.0.1",
     "winston": "^3.2.1",
