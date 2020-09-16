@@ -31,7 +31,7 @@ let guild = {
       for (let i = 0; i < guildsArray.length; i++) {
         let date = utils.generateNewTime(new Date());
         await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                  ON DUPLICATE KEY UPDATE id=id;`, [guildsArray[i].id, date]);
+                          ON DUPLICATE KEY UPDATE id=id;`, [guildsArray[i].id, date]);
       }
 
       res = guildsArray;
@@ -46,7 +46,7 @@ let guild = {
       if (!res || res.length == 0) {
         let date = utils.generateNewTime(new Date());
         await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                  ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
+                          ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
         res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
       }
 
@@ -77,7 +77,7 @@ let guild = {
     let date = utils.generateNewTime(new Date());
     _query(async (conn) => {
       let res = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                    ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
+                                  ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
       return res;
     }, then);
   },
@@ -141,7 +141,7 @@ let member = {
       let res = await conn.query(`SELECT * FROM member WHERE id = ?;`, [id]);
       if (!res || res.length == 0) {
         await conn.query(`INSERT INTO member (id) VALUES (?)
-                  ON DUPLICATE KEY UPDATE id=id;`, [id]);
+                          ON DUPLICATE KEY UPDATE id=id;`, [id]);
         res = await conn.query(`SELECT * FROM member WHERE id = ?;`, [id]);
       }
 
@@ -153,7 +153,7 @@ let member = {
   addMember: async function(id, then) {
     _query(async (conn) => {
       let res = await conn.query(`INSERT INTO member (id) VALUES (?)
-                    ON DUPLICATE KEY UPDATE id=id;`, [id]);
+                                  ON DUPLICATE KEY UPDATE id=id;`, [id]);
       return res;
     }, then);
   },
@@ -174,13 +174,11 @@ let insult = {
     }, then);
   },
 
-  getInsults: async function(number, then) {
+  getInsults: async function(then) {
     _query(async (conn) => {
       let res = await conn.query(`SELECT * FROM insult
-                      JOIN (SELECT id FROM insult
-                        WHERE RAND() < (SELECT ((? / COUNT(*)) * 10)
-                          FROM insult)
-                        ORDER BY RAND() LIMIT ?) AS z ON z.id = insult.id;`, [number, number]);
+                                  ORDER BY RAND()
+                                  LIMIT 1;`);
       await delete res['meta'];
       return res;
     }, then);
