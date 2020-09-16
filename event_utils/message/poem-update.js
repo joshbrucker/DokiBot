@@ -7,16 +7,19 @@ const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
 let dokipoemUpdate = function(client, guild, message) {
-  // Allows only DokiBot to send messages in doki-poems
+  let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
+  if (!poemChannel) return;
+
+  if (!poemChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
+      return;
+  }
+
   if (message.channel.name == 'doki-poems') {
     if (message.author != client.user) {
       message.delete(10);
       return;
     }
   }
-
-  let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
-  if (!poemChannel) return;
 
   if (message.author == client.user) return;
 

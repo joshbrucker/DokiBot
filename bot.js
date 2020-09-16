@@ -49,10 +49,6 @@ client.on('ready', () => {
         db.guild.setDefaultChannel(addedGuilds[i].id, defaultChannel.id);
       }
     }
-
-    setInterval(() => {
-      checkInsults(client);
-    }, 60000);
   });
 
   setActivity(client);
@@ -98,9 +94,11 @@ client.on('message', (message) => {
 
           executeCmd(guild, message, args, cmd);
         }
+      } else {
+        poemUpdate(client, guild, message);
       }
 
-      poemUpdate(client, guild, message);
+      checkInsults(client, message, guild);
 
       let dokiReactChance = Math.floor(Math.random() * 2);
       if (dokiReactChance == 1) {

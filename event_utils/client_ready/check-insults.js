@@ -4,59 +4,45 @@ const path = require('path');
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
-let checkInsults = async function(client) {
+
+let checkInsults = async function(client, message, guildDb) {
+    let guildNative = message.guild;
 
     let date = new Date();
-    db.guild.getInsultReadyGuilds(date, (readyGuilds) => {
-        if (readyGuilds.length == 0) {
-            return;
-        }
+    if (guildDb['insult_time'] <= date) {
+        db.insult.getInsults(1, (insults) => {
+            let insult = insults[0].message;
+            let insultees = insult.match(/%user%/g).length;
+            let members = utils.getMembers(guildNative);
 
-        db.insult.getInsults(readyGuilds.length, (insults) => {
-            for (let i = 0; i < readyGuilds.length; i++) {
-                // Reset times if too many servers have to send an insult at once
-                if (readyGuilds.length > 100) {
-                    db.guild.setInsultTime(readyGuilds[i].id, utils.generateNewTime(date));
-                    continue;
-                }
+            for (let j = 0; j < insultees; j++) {
+                let index = Math.floor(Math.random() * members.length);
+                let insultee = members[index];
+                insult = insult.replace('%user%', '<@' + insultee.id + '>');
 
-                let guild = client.guilds.resolve(readyGuilds[i].id);
-
-                if (guild.available) {
-                    let insult = insults[i].message;
-                    let insultees = insult.match(/%user%/g).length;
-                    let members = utils.getMembers(guild);
-
-                    for (let j = 0; j < insultees; j++) {
-                        let index = Math.floor(Math.random() * members.length);
-                        let insultee = members[index];
-                        insult = insult.replace('%user%', '<@' + insultee.id + '>');
-
-                        if (members.length > 1) {
-                            members.splice(index, 1);
-                        }
-                    }
-
-                    let channel = guild.channels.resolve(readyGuilds[i].default_channel);
-
-                    if (channel) {
-                        channel.send(insult);
-                    } else {
-                        channel = utils.getAvailableChannel(client, guild);
-                        if (channel) {
-                            db.guild.setDefaultChannel(guild.id, channel.id);
-                            channel.send('I couldn\'t find your default channel, so I set it to this channel. '
-                                    + 'If you want to change where I send messages, use the `setchannel` command!')
-                                .then(() => {
-                                    channel.send(insult);
-                                });
-                        }
-                    }
-                    db.guild.setInsultTime(guild.id, utils.generateNewTime(date));
+                if (members.length > 1) {
+                    members.splice(index, 1);
                 }
             }
+
+            let channel = guildNative.channels.resolve(guildDb['default_channel']);
+            if (channel) {
+                channel.send(insult);
+            } else {
+                channel = utils.getAvailableChannel(client, guildNative);
+                if (channel) {
+                    db.guild.setDefaultChannel(guildDb.id, channel.id);
+                    channel.send('I couldn\'t find your default channel, so I set it to this channel. '
+                            + 'If you want to change where I send messages, use the `setchannel` command!')
+                        .then(() => {
+                            channel.send(insult);
+                        });
+                }
+            }
+            let newTime = utils.generateNewTime(date);
+            db.guild.setInsultTime(guildNative.id, newTime);
         });
-    });
+    }
 };
 
 module.exports = checkInsults;
