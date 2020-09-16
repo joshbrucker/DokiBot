@@ -16,7 +16,7 @@ let dokipoemUpdate = function(client, guild, message) {
 
   if (message.channel.name == 'doki-poems') {
     if (message.author != client.user) {
-      message.delete(10);
+      message.delete({ timeout: 10 });
       return;
     }
   }

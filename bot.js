@@ -76,7 +76,7 @@ client.on('guildCreate', (guild) => {
 
 client.on('guildDelete', (guild) => {
   db.guild.removeGuild(guild.id);
-  voiceTasks.removeServer(guild.id);
+  voiceManager.removeServer(guild.id);
 });
 
 client.on('message', (message) => {
