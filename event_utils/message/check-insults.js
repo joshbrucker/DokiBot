@@ -10,8 +10,8 @@ let checkInsults = async function(client, message, guildDb) {
 
     let date = new Date();
     if (guildDb['insult_time'] <= date) {
-        db.insult.getInsults(1, (insults) => {
-            let insult = insults[0].message;
+        db.insult.getInsults((insult) => {
+            insult = insult[0].message;
             let insultees = insult.match(/%user%/g).length;
             let members = utils.getMembers(guildNative);
 
