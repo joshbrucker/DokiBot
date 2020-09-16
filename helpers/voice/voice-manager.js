@@ -128,6 +128,7 @@ module.exports = {
   LEAVE_TIME,
   getServer,
   addServer,
+  removeServer,
   addSong,
   getConnection,
   playMusic,
