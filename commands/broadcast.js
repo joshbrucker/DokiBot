@@ -21,8 +21,8 @@ let broadcast = function(message, args) {
                     if (confirm.content == 'Confirm') {
                         db.guild.getAllGuildChannels((res) => {
                             for (let response of res) {
-                                let guild = client.guilds.get(response.id);
-                                let mainChannel = guild.channels.get(response.default_channel);
+                                let guild = client.guilds.resolve(response.id);
+                                let mainChannel = guild.channels.resolve(response.default_channel);
                                 if (!mainChannel) {
                                     mainChannel = utils.getJoinChannel(client, guild);
                                 }

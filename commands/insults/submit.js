@@ -25,13 +25,13 @@ let submit = function(guild, message, args) {
         return;
     }
 
-    let dokibotHub = client.guilds.get(auth.dokihubId);
+    let dokibotHub = client.guilds.resolve(auth.dokihubId);
     if (!dokibotHub) {
         console.log('Can\'t get DokiBot Hub server!');
         return;
     }
 
-    let submissionChannel = dokibotHub.channels.get(auth.submissionChannelId);
+    let submissionChannel = dokibotHub.channels.resolve(auth.submissionChannelId);
     if (!submissionChannel) {
         console.log('Can\'t get the insult-submissions channel!');
         return;

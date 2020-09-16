@@ -1,51 +1,63 @@
-const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
-const voice = require(__basedir + '/utils/audio/voice');
+const voiceTasks = require(__basedir + '/helpers/voice/voice-tasks');
+const voiceManager = require(__basedir + '/helpers/voice/voice-manager');
 
 let queue = function(message, args) {
-    const id = message.guild.id;
-    const channel = message.channel;
-    const server = voiceTasks.getServer(id);
-    const task = server.task;
-    
-    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
-        const pageLength = 10;
-        const maxPage = Math.ceil(task.queue.length / pageLength);
-        let msg;
+  const id = message.guild.id;
+  const channel = message.channel;
+  const server = voiceManager.getServer(id);
+  const task = server.task;
+  
+  const INVALID_PAGE_MSG = 'Invalid queue page.';
+  const NOTHING_PLAYING_MSG = 'Nothing currently playing!';
 
-        if (args.length == 1) {
-            let page = args[0];
+  const PAGE_LENGTH = 10;
 
-            if (page > maxPage) {
-                channel.send('Invalid queue page.');
-            } else {
-                msg = '\`\`\`ml\nCurrent Queue (Page ' + page + ' Of ' + maxPage + ')\n';
+  if (task instanceof voiceTasks.MusicTask) {
+    const maxPage = Math.ceil(task.queue.length / PAGE_LENGTH);
 
-                let startIndex = pageLength * (page - 1);
+    let generateQueue = function(page) {
+      let msg = '\`\`\`ml\nCurrent Queue (Page ' + page + ' Of ' + maxPage + ')\n';
+      let startIndex = PAGE_LENGTH * (page - 1);
+      let endIndex;
 
-                let endIndex;
-                if (page == maxPage && task.queue.length % pageLength != 0) {
-                    endIndex = task.queue.length % pageLength + (maxPage - 1) * pageLength;
-                } else {
-                    endIndex = page * pageLength;
-                }
+      if (page == maxPage && task.queue.length % PAGE_LENGTH != 0) {
+        endIndex = task.queue.length % PAGE_LENGTH + (maxPage - 1) * PAGE_LENGTH;
+      } else {
+        endIndex = page * PAGE_LENGTH;
+      }
 
-                for (let i = startIndex; i < endIndex; i++) {
-                    msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
-                }
-                msg += '\`\`\`';
-                channel.send(msg);
-            }
-        } else {
-            msg = '\`\`\`ml\nCurrent Queue (Page 1 Of ' + maxPage + ')\n';
-            for (let i = 0; (i < pageLength) && (i < task.queue.length); i++) {
-                msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
-            }
-            msg += '\`\`\`';
-            channel.send(msg);
-        }
+      for (let i = startIndex; i < endIndex; i++) {
+        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
+      }
+      msg += '\`\`\`';
+
+      return msg;
+    };
+
+    let generateQueueHead = function() {
+      let msg = '\`\`\`ml\nCurrent Queue (Page 1 Of ' + maxPage + ')\n';
+      for (let i = 0; (i < PAGE_LENGTH) && (i < task.queue.length); i++) {
+        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
+      }
+      msg += '\`\`\`';
+
+      return msg;
+    };
+
+    if (args.length == 1) {
+      let page = args[0];
+
+      if (page > maxPage) {
+        channel.send(INVALID_PAGE_MSG);
+      } else {
+        channel.send(generateQueue(maxPage, page));
+      }
     } else {
-        channel.send('Nothing currently playing!');
+      channel.send(generateQueueHead(maxPage));
     }
+  } else {
+    channel.send(NOTHING_PLAYING_MSG);
+  }
 };
 
 module.exports = queue;

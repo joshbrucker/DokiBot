@@ -1,28 +1,33 @@
-const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
-const voice = require(__basedir + '/utils/audio/voice');
+const voiceTasks = require(__basedir + '/helpers/voice/voice-tasks');
+const voiceManager = require(__basedir + '/helpers/voice/voice-manager');
 
 let pause = function(message, args) {
-    const id = message.guild.id;
-    const channel = message.channel;
-    const server = voiceTasks.getServer(id);
-    const task = server.task;
+  const id = message.guild.id;
+  const channel = message.channel;
+  const server = voiceManager.getServer(id);
+  const task = server.task;
 
-    if (!message.member.voice.channel) {
-        message.channel.send('You must be in a voice channel to use `pause`');
-        return;
+  const NOT_IN_VOICE_MSG = 'You  must be in a voice channel to use `pause`';
+  const ALREADY_PAUSED_MSG = 'Playback is already paused!';
+  const PAUSE_MSG = ':pause_button: Pausing...';
+  const NOTHING_TO_PAUSE_MSG = 'Nothing to pause!';
+
+  if (!message.member.voice.channel) {
+    channel.send(NOT_IN_VOICE_MSG);
+    return;
+  }
+
+  if (task instanceof voiceTasks.MusicTask) {
+    if (task.paused) {
+      channel.send(ALREADY_PAUSED_MSG);
+      return;
     }
-
-    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
-        if (task.dispatcher.paused) {
-            channel.send('Playback is already paused!');
-            return;
-        }
-
-        channel.send(':pause_button: Pausing...');
-        task.dispatcher.pause();
-    } else {
-        channel.send('Nothing to pause!');
-    }
+    task.paused = true;
+    task.dispatcher.pause();
+    channel.send(PAUSE_MSG);
+  } else {
+    channel.send(NOTHING_TO_PAUSE_MSG);
+  }
 };
 
 module.exports = pause;

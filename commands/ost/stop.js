@@ -1,25 +1,28 @@
-const voiceTasks = require(__basedir + '/utils/audio/voice-tasks');
-const voice = require(__basedir + '/utils/audio/voice');
-
+const voiceTasks = require(__basedir + '/helpers/voice/voice-tasks');
+const voiceManager = require(__basedir + '/helpers/voice/voice-manager');
 
 let stop = function(message, args) {
-    const id = message.guild.id;
-    const channel = message.channel;
-    const server = voiceTasks.getServer(id);
-    const task = server.task;
+  const id = message.guild.id;
+  const channel = message.channel;
+  const server = voiceManager.getServer(id);
+  const task = server.task;
 
-	if (!message.member.voice.channel) {
-        message.channel.send('You must be in a voice channel to use `stop`');
-        return;
-    }
+  const NOT_IN_VOICE_MSG = 'You must be in a voice channel to use `stop`';
+  const STOP_MSG = ':stop_button: Stopping playback...';
+  const NOTHING_TO_STOP_MSG = 'Nothing to skip!';
 
-    if (task.dispatcher && task.name == voiceTasks.TASK.OST) {
-        channel.send(':stop_button: Stopping playback...');
-        task.queue = [];
-        task.dispatcher.end();
-    } else {
-        channel.send('Nothing to stop!');
-    }
+  if (!message.member.voice.channel) {
+    message.channel.send(NOT_IN_VOICE_MSG);
+    return;
+  }
+
+  if (task instanceof voiceTasks.MusicTask) {
+    channel.send(STOP_MSG);
+    task.queue = [];
+    task.dispatcher.end();
+  } else {
+    channel.send(NOTHING_TO_STOP_MSG);
+  }
 };
 
 module.exports = stop;
