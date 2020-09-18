@@ -80,6 +80,20 @@ client.on('guildDelete', (guild) => {
 });
 
 client.on('message', (message) => {
+
+  // Delete messages if in doki-poems channel
+  if (message.channel.name == 'doki-poems') {
+    if (message.author != client.user)  {
+      message.delete({ timeout: 20 })
+        .catch((err) => {
+          if (!(err.message == 'Unknown Message' && message.deleted)) {
+            throw err;
+          }
+        });
+      return;
+    }
+  }
+
   if (message.guild && !message.author.bot) {
     db.guild.getGuild(message.guild.id, (guild) => {
       guild = guild[0];
@@ -87,23 +101,21 @@ client.on('message', (message) => {
       let content = message.content;
 
       if (content.substring(0, prefix.length) == prefix && content.length > 1) {
-        if (message.channel.name != 'doki-poems') {
           let args = content.substring(prefix.length).split(' ');
           let cmd = args[0].toLowerCase();
           args = args.splice(1);
 
           executeCmd(guild, message, args, cmd);
-        }
       } else {
         poemUpdate(client, guild, message);
       }
-
-      checkInsults(client, message, guild);
 
       let dokiReactChance = Math.floor(Math.random() * 2);
       if (dokiReactChance == 1) {
         dokiReact(client, message);
       }
+
+      checkInsults(client, message, guild);
     });
   }
 });

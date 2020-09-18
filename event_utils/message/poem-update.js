@@ -6,6 +6,8 @@ const validFilename = require('valid-filename');
 const utils = require(__basedir + '/utils/utils');
 const db = require(__basedir + '/utils/db');
 
+const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/
+
 let dokipoemUpdate = function(client, guild, message) {
   let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
   if (!poemChannel) return;
@@ -13,14 +15,7 @@ let dokipoemUpdate = function(client, guild, message) {
   if (!poemChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
       return;
   }
-
-  if (message.channel.name == 'doki-poems') {
-    if (message.author != client.user) {
-      message.delete({ timeout: 10 });
-      return;
-    }
-  }
-
+ 
   if (message.author == client.user) return;
 
   let firstWord = message.content.split(' ')[0];
@@ -30,7 +25,7 @@ let dokipoemUpdate = function(client, guild, message) {
 
   if (firstWord.length > 99) return;
 
-  if (firstWord.charAt(0) == guild.prefix || firstWord.includes('@everyone')) {
+  if (firstWord.match(COMMON_PREFIXES)) {
     return;
   }
   
