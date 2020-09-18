@@ -15,14 +15,7 @@ let dokipoemUpdate = function(client, guild, message) {
   if (!poemChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
       return;
   }
-
-  if (message.channel.name == 'doki-poems') {
-    if (message.author != client.user) {
-      message.delete({ timeout: 10 });
-      return;
-    }
-  }
-
+ 
   if (message.author == client.user) return;
 
   let firstWord = message.content.split(' ')[0];
