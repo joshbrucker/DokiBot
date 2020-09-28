@@ -9,7 +9,7 @@ let checkInsults = async function(client, message, guildDb) {
     let guildNative = message.guild;
 
     let date = new Date();
-    if (guildDb['insult_time'] <= date) {
+    if (guildDb['insult_time'] <= date && guildDb['allow_insults'] == 1) {
         db.insult.getInsults((insult) => {
             insult = insult[0].message;
             let insultees = insult.match(/%user%/g).length;
