@@ -42,8 +42,16 @@ let waifu = async function(message, args) {
 
     character = post.tag_string_character;
     series = post.tag_string_copyright;
-    channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n'
-        + 'From: **' + danbooru.tagToTitle(series) + '**', { files: [post.file_url] });
+      channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n'
+          + 'From: **' + danbooru.tagToTitle(series) + '**', { files: [post.large_file_url] })
+        .catch((err) => {
+          if (err.message == 'Request entity too large') {
+            channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n'
+              + 'From: **' + danbooru.tagToTitle(series) + '**\n' + post.large_file_url);
+          } else {
+            throw err;
+          }
+        });
   } else {
     channel.send(':x: I can\'t find a waifu with those tags!');
   }

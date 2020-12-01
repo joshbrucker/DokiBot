@@ -71,6 +71,10 @@ let generateTags = async function(args, girlOrBoy) {
     } else if (arg.match(/([1-6]|(6\+))${girlOrBoy}(s)?/)) {
       tags.add(arg);
       tags.delete('*' + girlOrBoy);
+    } else if (arg == 'gif') {
+      tags.add('animated');
+    } else if (arg == 'sound') {
+      tags.add('video_with_sound');
     } else {
       let tag = await convertToValidTag(arg);
       tags.add(tag);
