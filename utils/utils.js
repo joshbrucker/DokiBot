@@ -7,23 +7,6 @@ let invalidArgsMsg = function(message, command) {
     + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
-let tagToTitle = function(str) {
-  str = str.split(' ');
-
-  if (str.length > 10) {
-    str = str.slice(0, 10);
-    str.push('...');
-  }
-  str = str.join(', ').replace(/_/g, ' ').replace(/ *\([^)]*\) */g, '');
-
-  return str.replace(
-    /\w\S*\W*/g,
-    function(txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    }
-  );
-};
-
 let dateFormat = function(date) {
   return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
 };
@@ -221,7 +204,6 @@ let react = function(message, reactions) {
 
 module.exports = {
   invalidArgsMsg,
-  tagToTitle,
   getAvailableChannel,
   sendWelcomeMsg,
   getMembers,

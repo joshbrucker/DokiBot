@@ -49,7 +49,7 @@ Posts an image of a Doki girl, with up to 5 specified tags.
 
 ### -waifu \[tags\]
 Posts an image of a random waifu, with up to 5 specified tags (more coming soon!).
-* **\[tags\]**: nsfw, 1girl, 2girls, multiple
+* **\[tags\]**: nsfw, questionable, explicit, any valid Danbooru tag
 
 ### -neko \[tags\]
 Posts an image of a beautiful neko girl, with up to 2 specified tags.
