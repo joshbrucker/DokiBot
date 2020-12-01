@@ -3,11 +3,8 @@
         "footer": {
             "text": "*Needs \"Manage Server\" Permission"
         },
+        "description": "Ends the current poem in the doki-poems channel.\n\u200b",
         "fields": [
-            {
-                "name": "**%pend***",
-                "value": "Ends the current poem in the doki-poems channel.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pend`\n\u200b"
@@ -18,34 +15,36 @@
         "footer": {
             "text": "*Needs \"Manage Server\" Permission"
         },
+        "description": "Changes the frequency DokiBot grabs words.\n\u200b",
         "fields": [
             {
-                "name": "**%pfrequency***",
-                "value": "Changes the frequency DokiBot grabs words.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%pfrequency <interval>`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%pfrequency <time>`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%pfrequency minute`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**<time>**: minute, hour, day\n\u200b"
+                "value": "`<interval>` minute, hour, day\n\u200b"
             }
         ]
     },
     "submit": {
+    	"description": "Submits an insult to be accepted or rejected by DokiBot.\n\u200b",
         "fields": [
             {
-                "name": "**%psubmit**",
-                "value": "Submits an insult to be accepted/rejected by DokiBot.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%psubmit <insult>`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%psubmit <insult>`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%pinsult %user% just submitted an insult!`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**<insult>** must contain at least one **%user%** where DokiBot will @ someone"
+                "value": "`<insult>` Any string of text. Each insult **must** contain at least one `%user%`, which DokiBot will later replace with a random user.\n\u200b"
             }
         ]
     },
@@ -53,11 +52,8 @@
     	"footer": {
             "text": "*Needs \"Manage Server\" Permission"
         },
+        "description": "Turns on/off the random insult functionality.\n\u200b",
         "fields": [
-            {
-                "name": "**%ptoggle***",
-                "value": "Turns on/off the random insult functionality.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%ptoggle`\n\u200b"
@@ -65,23 +61,25 @@
         ]
     },
     "anime": {
+    	"description": "Finds info on a given anime.\n\u200b",
         "fields": [
-            {
-                "name": "**%panime**",
-                "value": "Finds info on a given anime.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%panime <title>`"
+            },
+            {
+                "name": "**__Example__**",
+                "value": "`%panime steins;gate`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`<title>` Any valid anime title"
             }
         ]
     },
     "moniquote": {
+    	"description": "Posts one of Monika's quotes from the end of the DDLC.\n\u200b",
         "fields": [
-            {
-                "name": "**%pmoniquote**",
-                "value": "Posts one of Monika's quotes from the end of the DDLC.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pmoniquote`"
@@ -89,91 +87,97 @@
         ]
     },
     "doki": {
+    	"description": "Posts an image of a Doki girl.\n\u200b",
         "fields": [
             {
-                "name": "**%pdoki**",
-                "value": "Posts an image of a Doki girl.\n\u200b"
-            },
-            {
                 "name": "**__Usage__**",
-                "value": "`%pdoki [tags]`\n\u200b"
+                "value": "`%pdoki [tags]`"
+            },
+                        {
+                "name": "**__Example__**",
+                "value": "`%pdoki sayori`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**[tags]**: nsfw, 1girl, 2girls, multiple, monika, sayori, yuri, natsuki"
+                "value": "`[tags]` *nothing*, nsfw, 1girl, 2girls, multiple, monika, sayori, yuri, natsuki"
             }
         ]
     },
     "neko": {
+    	"description": "Posts an image of a beautiful neko.\n\u200b",
         "fields": [
-            {
-                "name": "**%pneko**",
-                "value": "Posts an image of a beautiful neko girl.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pneko [tags]`"
             },
             {
+            	"name": "**__Example__**",
+            	"value": "`%pneko gif"
+            },
+            {
                 "name": "**__Arguments__**",
-                "value": "**[tags]**: nsfw, gif"
+                "value": "`[tags]` *nothing*, nsfw, gif"
             }
         ]
     },
     "waifu": {
+    	"description": "Posts an image of a waifu.\n\u200b",
         "fields": [
-            {
-                "name": "**%pwaifu**",
-                "value": "Posts an image of a random waifu.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pwaifu [tags]`"
             },
             {
+                "name": "**__Example__**",
+                "value": "`%pwaifu texas arknights$feet`"
+            },
+            {
                 "name": "**__Arguments__**",
-                "value": "**[tags]**: nsfw, multiple,\nany valid Danbooru tags e.g., neptune_(neptune_series)"
+                "value": "`[tags]` *nothing*, nsfw, questionable, explicit, gif, sound, any valid Danbooru tag\n\u200b"
+            },
+            {
+                "name": "**__Additional Info__**",
+                "value": "\u2022 Tags are split with the $ symbol.\n\n\u2022 Only allows up to 4 tags.\n\n\u2606\u2606\u2606 No need for underscores anymore! Our new algorithm will automatically try to find a tag using whatever you give it. Sometimes you still have to give it the series name, though."
             }
         ]
     },
     "nep": {
+    	"description": "Plays a soundclip from Hypderdimension Neptunia.\n\u200b",
         "fields": [
             {
-                "name": "**%pnep**",
-                "value": "Plays a soundclip from Hypderdimension Neptunia.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%pnep [character]`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%pnep [character]`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%pnep neptune`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**[character]**: neptune, vert, noire, blanc, nepgear, uni, rom, ram, if, compa"
+                "value": "`[character]` *nothing*, neptune, vert, noire, blanc, nepgear, uni, rom, ram, if, compa"
             }
         ]
     },
     "play": {
+    	"description": "Plays a track from the DDLC OST.\n\u200b",
         "fields": [
             {
-                "name": "**%pplay**",
-                "value": "Plays a track from the DDLC OST.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%pplay <number>`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%pplay <number>`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%pplay 13`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**<number>**: numbers 1 to 15"
+                "value": "`<number>` numbers 1 to 15"
             }
         ]
     },
     "playall": {
+    	"description": "Queues all tracks from the DDLC OST.\n\u200b",
         "fields": [
-            {
-                "name": "**%pplayall**",
-                "value": "Queues all tracks from the DDLC OST.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pplayall`"
@@ -181,11 +185,8 @@
         ]
     },
     "list": {
+    	"description": "Lists all songs from the DDLC OST along with their numbers.\n\u200b",
         "fields": [
-            {
-                "name": "**%plist**",
-                "value": "Lists all songs from the DDLC OST along with their numbers.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%plist`"
@@ -193,11 +194,8 @@
         ]
     },
     "stop": {
+    	"description": "Stops the current song and clears the queue.\n\u200b",
         "fields": [
-            {
-                "name": "**%pstop**",
-                "value": "Stops the current song and clears the queue.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pstop`"
@@ -205,11 +203,8 @@
         ]
     },
     "pause": {
+    	"description": "Pauses the current song.\n\u200b",
         "fields": [
-            {
-                "name": "**%ppause**",
-                "value": "Pauses the current song.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%ppause`"
@@ -217,11 +212,8 @@
         ]
     },
     "resume": {
+    	"description": "Resumes a paused song.\n\u200b",
         "fields": [
-            {
-                "name": "**%presume**",
-                "value": "Resumes a paused song.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%presume`"
@@ -229,11 +221,8 @@
         ]
     },
     "skip": {
+    	"description": "Skips the current song.\n\u200b",
         "fields": [
-            {
-                "name": "**%pskip**",
-                "value": "Skips the current song.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pskip`"
@@ -241,11 +230,8 @@
         ]
     },
     "queue": {
+    	"description": "Displays the song queue.\n\u200b",
         "fields": [
-            {
-                "name": "**%pqueue**",
-                "value": "Displays the song queue.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pqueue`"
@@ -253,11 +239,8 @@
         ]
     },
     "clear": {
+    	"description": "Wipes the entire queue.\n\u200b",
         "fields": [
-            {
-                "name": "**%pclear**",
-                "value": "Wipes the entire queue.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pclear`"
@@ -265,14 +248,19 @@
         ]
     },
     "help": {
+    	"description": "Isn't this meta? Lists all commands or info about a specific command.\n\u200b",
         "fields": [
-            {
-                "name": "**%phelp**",
-                "value": "Isn't this meta? Lists all commands or info about a specific command.\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%phelp [command]`"
+            },
+            {
+                "name": "**__Example__**",
+                "value": "`%phelp waifu`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`[command]` *nothing*, any valid DokiBot command"
             }
         ]
     },
@@ -280,14 +268,19 @@
         "footer": {
             "text": "*Needs \"Manage Server\" Permission"
         },
+        "description": "Changes the channel DokiBot will post insults and other messages to.\n\u200b",
         "fields": [
             {
-                "name": "**%psetchannel***",
-                "value": "Changes the channel DokiBot will post insults and other messages to.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%psetchannel <channel>`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%psetchannel [channel]`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%psetchannel #general`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`<channel>` Any valid text channel in the Discord server\n\u200b"
             }
         ]
     },
@@ -295,27 +288,25 @@
     	"footer": {
             "text": "*Needs \"Manage Server\" Permission"
         },
+        "description": "Changes the prefix used for DokiBot commands.\n\u200b",
         "fields": [
             {
-                "name": "**%pprefix***",
-                "value": "Changes the prefix used for DokiBot commands.\n\u200b"
+                "name": "**__Usage__**",
+                "value": "`%pprefix <prefix>`"
             },
             {
-                "name": "**__Usage__**",
-                "value": "`%pprefix <new prefix>`\n\u200b"
+                "name": "**__Example__**",
+                "value": "`%pprefix -`"
             },
             {
                 "name": "**__Arguments__**",
-                "value": "**<new prefix>** must be 3 characters or less\n\u200b"
+                "value": "**<prefix>** A prefix of your choice, at most 3 characters in length"
             }
         ]
     },
     "vote": {
+    	"description": "Posts the voting link for DokiBot. Voting resets cooldowns!\n\u200b",
         "fields": [
-            {
-                "name": "**%pvote**",
-                "value": "Posts the voting link for DokiBot. Voting resets cooldowns!\n\u200b"
-            },
             {
                 "name": "**__Usage__**",
                 "value": "`%pvote`"
