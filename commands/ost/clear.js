@@ -1,9 +1,10 @@
+const voiceManager = require(__basedir + '/helpers/voice/voice-manager');
 const voiceTasks = require(__basedir + '/helpers/voice/voice-tasks');
 
 let clear = async function(message, args) {
   const id = message.guild.id;
   const channel = message.channel;
-  const server = voiceTasks.getServer(id);
+  const server = voiceManager.getServer(id);
   const task = server.task;
 
   const NOT_IN_VOICE_MSG = 'You  must be in a voice channel to use `clear`';
