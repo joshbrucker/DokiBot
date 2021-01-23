@@ -1,5 +1,4 @@
-data/auth.json
-assets/nep_audio/
-assets/images/
-logs/
+src/auth.json
+src/assets/nep_audio/
+src/assets/images/
 node_modules/
