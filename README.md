@@ -1,3 +1,5 @@
+*Currently running on over 2,000 Discord servers!*
+
 # DokiBot
 
 What started out as a fun gag with friends to keep track of so-called 'poems' has developed into a full-fledged Discord bot! If you enjoyed the game Doki Doki Literature Club, this bot is for you. It has been mostly used as a learning experience for me, but feel free to add the bot to your server if any of these features interest you.
