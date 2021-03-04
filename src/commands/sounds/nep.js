@@ -27,7 +27,7 @@ let nep = function(guild, message, args) {
   }
   const task = server.task;
 
-  let path = './assets/nep_audio/';
+  let path = __basedir + '/assets/nep_audio/';
   let character;
   if (args.length == 0) {
     folders = fs.readdirSync(path);
