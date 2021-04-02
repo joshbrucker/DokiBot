@@ -2,15 +2,23 @@ const Discord = require('discord.js');
 
 let Commands = new Discord.Collection();
 
-Commands.set('anime',      { run: require('./fun/anime.js') });
+Commands.set('anime',      { run: require('./anilist/anime.js') });
+Commands.set('aniuser',    { run: require('./anilist/aniuser.js') });
+Commands.set('character',  {
+	run: require('./anilist/character.js'),
+	aliases: ['char']
+});
+Commands.set('manga',      { run: require('./anilist/manga.js') });
+
 Commands.set('moniquote',  { run: require('./fun/moniquote.js') });
+
 Commands.set('doki',       { run: require('./images/doki.js') });
 Commands.set('neko',       { run: require('./images/neko.js') });
 Commands.set('waifu',      {
   run: require('./images/waifu.js'),
   aliases: ['w']
 });
-Commands.set('husbando',      {
+Commands.set('husbando',   {
   run: require('./images/husbando.js'),
   aliases: ['h']
 });

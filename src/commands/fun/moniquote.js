@@ -4,7 +4,7 @@ const path = require('path');
 const utils = require(__basedir + '/utils.js');
 
 var moniquote = function(guild, message, args) {
-    fs.readFile('./assets/moniquote.txt', (err, data) => {
+    fs.readFile(__basedir + '/assets/moniquote.txt', (err, data) => {
         if (err) {
             console.log(err);
         } else {
@@ -23,7 +23,7 @@ var moniquote = function(guild, message, args) {
             var i = 1;
             var currLine = lines[startIndices[quoteNum] + i];
             while (currLine && currLine.replace(/[\r\n]/g, '') != '') {
-                msg += currLine.replace(/["]/g, '').replace(/[\r\n]/g, ' ').replace('[player]', message.member.displayName);
+                msg += ' ' + currLine.replace(/["]/g, '').replace(/[\r\n]/g, ' ').replace('[player]', message.member.displayName);
                 currLine = lines[startIndices[quoteNum] + ++i];
             }
 

@@ -18,8 +18,12 @@
             "value": "**%psubmit <insult>**: Submits an insult to DokiBot; include `%user%` where you want DokiBot to mention someone\n**%ptoggle**: Turns off/on random insults*\n\n\u200b"
         },
         {
+            "name": ":regional_indicator_a: :regional_indicator_l: Anilist",
+            "value": "**%panime <anime>**: Finds info on an anime\n**%paniuser <username>**: Finds info on an anilist user\n**%pcharacter <character>**: Finds info on an anime/manga character\n**%pmanga <manga>**: Finds info on a manga\n\n\u200b"
+        },
+        {
             "name": ":tada: Fun",
-            "value": "**%panime <title>**: Finds info on a given anime\n**%pmoniquote**: Posts a random Monika quote from the end of DDLC\n\n\u200b"
+            "value": "**%pmoniquote**: Posts a random Monika quote from the end of DDLC\n\n\u200b"
         },
         {
             "name": ":frame_photo: Images",

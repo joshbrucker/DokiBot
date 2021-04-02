@@ -69,11 +69,62 @@
             },
             {
                 "name": "**__Example__**",
-                "value": "`%panime steins;gate`"
+                "value": "`%panime Steins;Gate`"
             },
             {
                 "name": "**__Arguments__**",
                 "value": "`<title>` Any valid anime title"
+            }
+        ]
+    },
+    "aniuser": {
+        "description": "Finds info on an anilist user.\n\u200b",
+        "fields": [
+            {
+                "name": "**__Usage__**",
+                "value": "`%paniuser <username>`"
+            },
+            {
+                "name": "**__Example__**",
+                "value": "`%panime Lavabird`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`<username>` Any valid anilist user's name"
+            }
+        ]
+    },
+    "character": {
+        "description": "Finds info on an anime/manga character.\n\u200b",
+        "fields": [
+            {
+                "name": "**__Usage__**",
+                "value": "`%pcharacter <character>`"
+            },
+            {
+                "name": "**__Example__**",
+                "value": "`%pcharacter Sakura Matou`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`<character>` Any valid anilist character's name"
+            }
+        ]
+    },
+    "manga": {
+        "description": "Finds info on a manga.\n\u200b",
+        "fields": [
+            {
+                "name": "**__Usage__**",
+                "value": "`%pmanga <manga>`"
+            },
+            {
+                "name": "**__Example__**",
+                "value": "`%pmanga ReLife`"
+            },
+            {
+                "name": "**__Arguments__**",
+                "value": "`<manga>` Any valid manga title"
             }
         ]
     },
@@ -137,7 +188,7 @@
             },
             {
                 "name": "**__Additional Info__**",
-                "value": "\u2022 Tags are split with the $ symbol.\n\n\u2022 Only allows up to 4 tags.\n\n\u2606\u2606\u2606 No need for underscores anymore! Our new algorithm will automatically try to find a tag using whatever you give it. Sometimes you still have to give it the series name, though."
+                "value": "\u2022Tags are split with the $ symbol.\n\n\u2022Only allows up to 4 tags.\n\n\u2606\u2606\u2606No need for underscores anymore! Our new algorithm will automatically try to find a tag using whatever you give it. Sometimes you still have to give it the series name, though."
             }
         ]
     },
