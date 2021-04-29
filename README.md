@@ -35,9 +35,22 @@ Turns on/off randoms insults.*
 
 ---
 
-## Fun
+## Anilist
 ### -anime \<title\>
 Finds info on the given anime.
+
+### -aniuser \<name\>
+Finds info on the given Anilist user.
+
+### -character \<name\>
+Provides a link to the given character
+
+### -anime \<title\>
+Finds info on the given manga.
+
+---
+
+## Fun
 
 ### -moniquote
 Posts a random Monika quote from the end of DDLC.
