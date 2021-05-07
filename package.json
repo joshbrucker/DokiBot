@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "is-url": "^1.2.4",
     "libsodium-wrappers": "^0.7.8",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mariadb": "^2.5.2",
     "node-fetch": "^2.6.1",
     "node-opus": "^0.3.2",
