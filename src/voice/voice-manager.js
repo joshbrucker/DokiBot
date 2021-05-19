@@ -1,4 +1,4 @@
-const YTDL = require('ytdl-core');
+const ytdl = require('ytdl-core');
 const voiceTasks = require('./voice-tasks');
 
 const LEAVE_TIME = 300000;
@@ -69,10 +69,10 @@ let getConnection = function(message) {
   });
 }
 
-let playMusic = function(conn, server) {
+let playMusic = async function(conn, server) {
   const task = server.task;
 
-  task.dispatcher = conn.play(YTDL(task.queue[0].url, { filter: 'audioonly' }));
+  task.dispatcher = conn.play(ytdl(task.queue[0].url, { filter: 'audioonly' }));
 
   task.dispatcher.once('start', () => {
     conn.player.streamingData.pausedTime = 0;

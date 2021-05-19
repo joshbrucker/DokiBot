@@ -27,7 +27,7 @@ let queue = function(guild, message, args) {
       }
 
       for (let i = startIndex; i < endIndex; i++) {
-        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
+        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].title + '\"';
       }
       msg += '\`\`\`';
 
@@ -37,7 +37,7 @@ let queue = function(guild, message, args) {
     let generateQueueHead = function() {
       let msg = '\`\`\`ml\nCurrent Queue (Page 1 Of ' + maxPage + ')\n';
       for (let i = 0; (i < PAGE_LENGTH) && (i < task.queue.length); i++) {
-        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].name + '\"';
+        msg += '\n\"' + (i + 1) + '. ' + task.queue[i].title + '\"';
       }
       msg += '\`\`\`';
 

@@ -3,7 +3,7 @@ const soundtrack = require(__basedir + '/assets/soundtrack.json');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
-let play = async function(guild, message, args) {
+let ost = async function(guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);
@@ -48,16 +48,16 @@ let play = async function(guild, message, args) {
   }
 
   if (queueLength > 0) {
-    channel.send('Adding `' + song.name + '` to the queue!');
+    channel.send('Adding `' + song.title + '` to the queue!');
     voiceManager.addSong(server, song);
   } else {
     voiceManager.getConnection(message)
       .then(conn => {
-        channel.send('Now playing `' + song.name + '`');
+        channel.send('Now playing `' + song.title + '`');
         voiceManager.addSong(server, song);
         voiceManager.playMusic(conn, server);
       });
   }
 };
 
-module.exports = play;
+module.exports = ost;
