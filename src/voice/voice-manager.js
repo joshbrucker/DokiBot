@@ -81,15 +81,13 @@ let playMusic = async function(conn, server) {
     }
   });
 
-  task.dispatcher.on('speaking', (isSpeaking) => {
-    if (task.dispatcher._writableState.finished) {
-      task.queue.shift();
-      if (task.queue[0]) {
-        playMusic(conn, server);
-      } else {
-        server.task = null;
-        server.timeout = createTimeout(conn, server);
-      }
+  task.dispatcher.on('finish', () => {
+    task.queue.shift();
+    if (task.queue[0]) {
+      playMusic(conn, server);
+    } else {
+      server.task = null;
+      server.timeout = createTimeout(conn, server);
     }
   });
 };
