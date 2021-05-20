@@ -82,7 +82,7 @@ let playMusic = async function(conn, server) {
   });
 
   task.dispatcher.on('speaking', (isSpeaking) => {
-    if (!isSpeaking && !task.paused) {
+    if (task.dispatcher._writableState.finished) {
       task.queue.shift();
       if (task.queue[0]) {
         playMusic(conn, server);
