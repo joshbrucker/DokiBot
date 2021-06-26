@@ -1,8 +1,10 @@
-const yts = require('yt-search');
+const yts = require('youtube-search');
 
 const utils = require(__basedir + '/utils.js');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
+
+const auth = require(__basedir + '/auth.json');
 
 let play = async function(guild, message, args) {
   const id = message.guild.id;
@@ -34,8 +36,12 @@ let play = async function(guild, message, args) {
   }
 
   let userSearch = args.join(' ');
-  let results = await yts(userSearch);
-  let video = results.all[0];
+  let opts = {
+    maxResults: 5,
+    key: auth['googleApiKey']
+  }
+  let results = (await yts(userSearch, opts))['results'];
+  let video = results[0];
 
   if (!video) {
     channel.send(NO_VIDEO_FOUND_MSG);

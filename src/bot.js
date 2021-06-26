@@ -26,5 +26,6 @@ client.on('guildCreate', (guild) => { event_handler.on_guild_create(client, guil
 client.on('guildDelete', (guild) => { event_handler.on_guild_delete(client, guild); });
 client.on('message', (message) => { event_handler.on_message(client, message); });
 client.on('messageReactionAdd', (reaction, user) => { event_handler.on_message_react(client, reaction); });
+client.on('voiceStateUpdate', (oldState, newState) => { event_handler.on_voice_state_change(client, oldState, newState); });
 
 client.login(auth.token);
