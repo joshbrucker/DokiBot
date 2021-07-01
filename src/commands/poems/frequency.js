@@ -1,7 +1,7 @@
 const utils = require(__basedir + '/utils.js');
 const db = require(__basedir + '/database/db.js');
 
-let frequency = function(guild, message, args) {
+let frequency = function(client, guild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {

@@ -1,11 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
+const auth = require('./auth.json');
+
 // Outputs a message with the given commands
 let invalidArgsMsg = function(message, command) {
   message.channel.send(':x: **' + message.member.displayName + '**, that\'s not a valid use of \`' + command + '\`!\n'
     + 'Use \`' + 'help ' + command + '\` for more info.');
 };
+
+let sleep = function(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 let dateFormat = function(date) {
   return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
@@ -183,23 +189,22 @@ let aliasSampler = function(probabilities) {
 };
 
 // Takes in an array of emojis and reacts in order
-let react = function(message, reactions) {
+let react = async function(message, reactions) {
   let currEmoji = reactions.shift();
-  message.react(currEmoji)
-    .then(() => {
+  try {
+    await message.react(currEmoji);
+    if (reactions.length > 0) {
+      await react(message, reactions);
+    }
+  } catch (err) {
+    if (err.message == 'Unknown Emoji' && currEmoji) {
       if (reactions.length > 0) {
-        react(message, reactions);
+        await react(message, reactions);
       }
-    })
-    .catch((err) => {
-      if (err.message == 'Unknown Emoji' && currEmoji) {
-        if (reactions.length > 0) {
-          react(message, reactions);
-        }
-      } else if (err.message != 'Unknown Message') {
-        throw err;
-      }
-    });
+    } else if (err.message != 'Unknown Message') {
+      throw err;
+    }
+  }
 };
 
 module.exports = {

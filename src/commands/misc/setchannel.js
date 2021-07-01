@@ -1,8 +1,7 @@
 const db = require(__basedir + '/database/db.js');
 const utils = require(__basedir + '/utils.js');
 
-let setchannel = function(guild, message, args) {
-    const client = message.client;
+let setchannel = function(client, guild, message, args) {
     const channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {

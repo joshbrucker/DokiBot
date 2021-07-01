@@ -4,8 +4,7 @@ const path = require('path');
 const danbooru = require(__basedir + '/danbooru/danbooru.js');
 const utils = require(__basedir + '/utils.js');
 
-let waifu = async function(guild, message, args) {
-  const client = message.client;
+let waifu = async function(client, guild, message, args) {
   const channel = message.channel;
 
   args = args.join(' ');
@@ -28,7 +27,8 @@ let waifu = async function(guild, message, args) {
   }
 
   if (isNsfw && !channel.nsfw) {
-    channel.send('Woah now! This text channel isn\'t marked NSFW. I probably shouldn\'t post the steamy stuff here :underage:');
+    channel.send('Woah now! This text channel isn\'t marked NSFW. ' +
+                 'I probably shouldn\'t post the steamy stuff here :underage:');
     return;
   }
 
@@ -42,16 +42,18 @@ let waifu = async function(guild, message, args) {
 
     character = post.tag_string_character;
     series = post.tag_string_copyright;
-      channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n'
-          + 'From: **' + danbooru.tagToTitle(series) + '**', { files: [post.large_file_url] })
-        .catch((err) => {
-          if (err.message == 'Request entity too large') {
-            channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n'
-              + 'From: **' + danbooru.tagToTitle(series) + '**\n' + post.large_file_url);
-          } else {
-            throw err;
-          }
-        });
+    try {
+      await channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n' +
+                         'From: **' + danbooru.tagToTitle(series) + '**',
+                         { files: [ post.large_file_url ] })
+    } catch (err) {
+      if (err.message == 'Request entity too large') {
+        channel.send('Pictured' + ': **' + danbooru.tagToTitle(character) + '**\n' +
+                     'From: **' + danbooru.tagToTitle(series) + '**\n' + post.large_file_url);
+      } else {
+        throw err;
+      }
+    }
   } else {
     channel.send(':x: I can\'t find a waifu with those tags!');
   }

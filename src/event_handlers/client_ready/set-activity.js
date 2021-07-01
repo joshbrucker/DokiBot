@@ -1,4 +1,4 @@
-let setActivity = function(client) {
+let setActivityRepeating = function(client, delay) {
     let game;
     let num = Math.floor(Math.random() * 10);
     switch(num) {
@@ -34,6 +34,8 @@ let setActivity = function(client) {
             break;
     }
     client.user.setActivity(game);
+
+    setTimeout(setActivity(client), delay)
 };
 
 module.exports = setActivity;

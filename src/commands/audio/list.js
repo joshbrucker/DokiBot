@@ -1,6 +1,6 @@
 const soundtrack = require(__basedir + '/assets/soundtrack.json');
 
-let list = function(guild, message, args) {
+let list = function(client, guild, message, args) {
   const channel = message.channel;
 
   let msg = '```ml\nDoki Doki Literature Club OST\n';

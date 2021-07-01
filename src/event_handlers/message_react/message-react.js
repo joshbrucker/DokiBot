@@ -1,7 +1,7 @@
 const db = require(__basedir + '/database/db.js');
 const auth = require (__basedir + '/auth.json');
 
-let on_message_react = function(client, reaction) {
+let on_message_react = async function(client, reaction) {
   if (reaction.message.channel.id == auth.submissionChannelId && reaction.count == 2) {
     let message = reaction.message;
     if (reaction.emoji.toString() == '✅') {
@@ -11,15 +11,10 @@ let on_message_react = function(client, reaction) {
         data = data.split('\n');
         let id = data[0].split(' ')[1];
 
-        content = content.join(' ');
-
-        client.users.fetch(id)
-            .then((user) => {
-                user.send('Your insult has been accepted!')
-                    .then((msg) => {
-                        user.send(content);
-                    });
-            });
+        // TODO: Change to get ALL users on shards
+        let user = await client.users.fetch(id);
+        await user.send('Your insult has been accepted!');
+        await user.send(content.join(' '));
 
         db.insult.addInsult(content, id);
         message.delete();

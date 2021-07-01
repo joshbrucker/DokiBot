@@ -6,7 +6,7 @@ const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
 const auth = require(__basedir + '/auth.json');
 
-let play = async function(guild, message, args) {
+let play = async function(client, guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);

@@ -7,198 +7,223 @@ const pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser,
   password: auth.dbPass, database: auth.dbName, connectionLimit: 50});
 
 let guild = {
-  verifyGuilds: async function(client, then) {
-    let guilds = client.guilds.cache.clone();
+  /**
+   * @return {
+   *           id,
+   *           prefix,
+   *           poem_id,
+   *           poem_frequency,
+   *           default_channel,
+   *           insult_time,
+   *           allow_insults
+   *         }
+   */
+  getGuild: async function(id) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      let response = await conn.query(`SELECT * FROM guild WHERE id = ?;`,
+                                      [ id ]);
+      delete response['meta'];
 
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT id FROM guild;`);
-      await delete res['meta'];
-
-      // Checks if db has guilds that the bot is not in, removes them
-      for (let i = 0; i < res.length; i++) {
-        let id = res[i].id;
-        if (!guilds.get(id)) {
-          await conn.query(`DELETE FROM guild WHERE id = ?;`, [id]);
-        } else {
-          /* Removes guilds from list that are correctly registered
-             in db so that only guilds not yet in db remain */
-          guilds.delete(id);
-        }
-      }
-
-      // Loops through remaining guilds, adds them to db
-      let guildsArray = guilds.array();
-      for (let i = 0; i < guildsArray.length; i++) {
+      if (!response || response.length == 0) {
         let date = utils.generateNewTime(new Date());
-        await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                          ON DUPLICATE KEY UPDATE id=id;`, [guildsArray[i].id, date]);
+        response = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
+                                    ON DUPLICATE KEY UPDATE id=id;`,
+                                    [ id, date ]);
+        response = await conn.query(`SELECT * FROM guild WHERE id = ?;`,
+                                    [ id ]);
+        delete response['meta'];
       }
 
-      res = guildsArray;
-      return res;
-    }, then);
+      return response[0];
+    } catch(err) {
+      throw err;
+    } finally {
+      if (conn) conn.release();
+    }
   },
 
-  // [{ id, prefix, poem_id, poem_frequency, default_channel, insult_time, allow_insults }]
-  getGuild: async function(id, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
-      if (!res || res.length == 0) {
-        let date = utils.generateNewTime(new Date());
-        await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                          ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
-        res = await conn.query(`SELECT * FROM guild WHERE id = ?;`, [id]);
-      }
-
-      await delete res['meta'];
-      return res;
-    }, then);
+  addGuild: async function(id) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      let date = utils.generateNewTime(new Date());
+      return await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
+                              ON DUPLICATE KEY UPDATE id=id;`,
+                              [id, date]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  // [{ default_channel }]
-  getAllGuildChannels: async function(then) {
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT id, default_channel FROM guild;`);
-      await delete res['meta'];
-      return res;
-    }, then);
+  removeGuild: async function(id) {
+    return await conn.query(`DELETE FROM guild WHERE id = ?;`,
+                            [ id ]);
   },
 
-  // [{ id, prefix, poem_id, poem_frequency, default_channel, insult_time, allow_insults }, ...]
-  getInsultReadyGuilds: async function(date, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT * FROM guild WHERE (insult_time <= ?) and (allow_insults);`, [date]);
-      await delete res['meta'];
-      return res;
-    }, then);
+  toggleInsults: async function(id) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET allow_insults = not allow_insults WHERE id = ?;`,
+                              [ id ]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  addGuild: async function(id, then) {
-    let date = utils.generateNewTime(new Date());
-    _query(async (conn) => {
-      let res = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
-                                  ON DUPLICATE KEY UPDATE id=id;`, [id, date]);
-      return res;
-    }, then);
+  setDefaultChannel: async function(id, channelId) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET default_channel = ? WHERE id = ?;`,
+                              [channelId, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  removeGuild: async function(id, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`DELETE FROM guild WHERE id = ?;`, [id]);
-      return res;
-    }, then);
+  setInsultTime: async function(id, date) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET insult_time = ? WHERE id = ?;`, [date, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  // [{ allow_insults }]
-  toggleInsults: async function(id, then) {
-    _query(async (conn) => {
-      await conn.query(`UPDATE guild SET allow_insults = not allow_insults WHERE id = ?;`, [id]);
-      let res = await conn.query(`SELECT allow_insults FROM guild WHERE id = ?;`, [id]);
-      await delete res['meta'];
-      return res;
-    }, then);
+  setPrefix: async function(id, prefix) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET prefix = ? WHERE id = ?;`, [prefix, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  setDefaultChannel: async function(id, channelId, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE guild SET default_channel = ? WHERE id = ?;`, [channelId, id]);
-      return res;
-    }, then);
+  setPoemId: async function(id, poemId) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET poem_id = ? WHERE id = ?;`, [poemId, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
-  setInsultTime: async function(id, date, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE guild SET insult_time = ? WHERE id = ?;`, [date, id]);
-      return res;
-    }, then);
-  },
-
-  setPrefix: async function(id, prefix, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE guild SET prefix = ? WHERE id = ?;`, [prefix, id]);
-      return res;
-    }, then);
-  },
-
-  setPoemId: async function(id, pId, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE guild SET poem_id = ? WHERE id = ?;`, [pId, id]);
-      return res;
-    }, then);
-  },
-
-  setPoemFreq: async function(id, freq, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE guild SET poem_freq = ? WHERE id = ?;`, [freq, id]);
-      return res;
-    }, then);
+  setPoemFreq: async function(id, freq) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE guild SET poem_freq = ? WHERE id = ?;`, [freq, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   }
 };
 
 let member = {
-  getMember: async function(id, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT * FROM member WHERE id = ?;`, [id]);
-      if (!res || res.length == 0) {
+    /**
+   * @return {
+   *           id,
+   *           submit_cooldown,
+   *         }
+   */
+  getMember: async function(id) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      let response = await conn.query(`SELECT * FROM member WHERE id = ?;`,
+                                      [ id ]);
+      delete response['meta'];
+
+      if (!response || response.length == 0) {
         await conn.query(`INSERT INTO member (id) VALUES (?)
-                          ON DUPLICATE KEY UPDATE id=id;`, [id]);
-        res = await conn.query(`SELECT * FROM member WHERE id = ?;`, [id]);
+                         ON DUPLICATE KEY UPDATE id=id;`,
+                         [ id ]);
+        response = await conn.query(`SELECT * FROM member WHERE id = ?;`,
+                                    [ id ]);
+        delete response['meta'];
       }
 
-      await delete res['meta'];
-      return res
-    }, then);
+      return response[0];
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
   addMember: async function(id, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`INSERT INTO member (id) VALUES (?)
-                                  ON DUPLICATE KEY UPDATE id=id;`, [id]);
-      return res;
-    }, then);
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`SELECT * FROM member WHERE id = ?;`,
+                              [ id ]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
   setSubmitCooldown: async function(id, date, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`UPDATE member SET submit_cooldown = ? WHERE id = ?;`, [date, id]);
-      return res;
-    }, then);
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`UPDATE member SET submit_cooldown = ? WHERE id = ?;`,
+                              [date, id]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   }
 };
 
 let insult = {
   addInsult: async function(message, user, then) {
-    _query(async (conn) => {
-      let res = await conn.query(`INSERT INTO insult (id, message, user) VALUES (UUID(), ?, ?);`, [message, user]);
-      return res;
-    }, then);
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`INSERT INTO insult (id, message, user) VALUES (UUID(), ?, ?);`,
+                              [message, user]);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
+    }
   },
 
   getInsults: async function(then) {
-    _query(async (conn) => {
-      let res = await conn.query(`SELECT * FROM insult
-                                  ORDER BY RAND()
-                                  LIMIT 1;`);
-      await delete res['meta'];
-      return res;
-    }, then);
-  }
-};
-
-let _query = async function(query, then) {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    let res = await query(conn);
-    conn.end();
-    if (then) {
-      then(res);
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      return await conn.query(`SELECT * FROM insult
+                              ORDER BY RAND()
+                              LIMIT 1;`);
+    } catch(err) {
+      throw err
+    } finally {
+      if (conn) conn.end();
     }
-  } catch(err) {
-    if (conn) {
-      conn.end();
-    }
-    throw err;
   }
 };
 

@@ -4,9 +4,8 @@ const path = require('path');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
-let nep = function(guild, message, args) {
+let nep = async function(client, guild, message, args) {
   const id = message.guild.id;
-  const client = message.client;
   const channel = message.channel;
   const server = voiceManager.getServer(id);
 
@@ -37,23 +36,23 @@ let nep = function(guild, message, args) {
   }
 
   path += character;
-  fs.readdir(path, (err, files) => {
-    if (err) {
-      channel.send('Can\'t find character ' + character + '!');
-      server.task = null;
-    } else {
-      let random = Math.floor(Math.random() * files.length);
-      path += '/' + files[random];
+  let files;
+  try {
+    files = await fs.promises.readdir(path);
+  } catch (err) {
+    channel.send('Can\'t find character ' + character + '!');
+    server.task = null;
+    return;
+  }
 
-      let emoji = client.emojis.resolve(NEP_EMOJI_ID);
+  let random = Math.floor(Math.random() * files.length);
+  path += '/' + files[random];
 
-      voiceManager.getConnection(message)
-        .then(conn => {
-          channel.send('Nepu nepu! ' + emoji.toString());
-          voiceManager.playSound(conn, server, path);
-        });
-    }
-  });
+  let emoji = client.emojis.resolve(NEP_EMOJI_ID);
+
+  let conn = await voiceManager.getConnection(message);
+  channel.send('Nepu nepu! ' + emoji.toString());
+  voiceManager.playSound(conn, server, path);
 };
 
 module.exports = nep;
