@@ -1,6 +1,6 @@
 const db = require(__basedir + '/database/db.js');
 
-let toggle = function(guild, message, args) {
+let toggle = function(client, guild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {

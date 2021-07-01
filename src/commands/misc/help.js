@@ -5,9 +5,7 @@ const helpEmbed = require(__basedir + '/assets/help/help.json');
 const cmdEmbed = require(__basedir + '/assets/help/cmds.json');
 const utils = require(__basedir + '/utils.js');
 
-let help = function(guild, message, args) {
-    const client = message.client;
-
+let help = function(client, guild, message, args) {
     if (args.length == 0) {
         let embed = JSON.parse(JSON.stringify(helpEmbed));
         embed.thumbnail = { url: client.user.avatarURL };

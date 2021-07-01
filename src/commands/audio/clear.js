@@ -1,7 +1,7 @@
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 
-let clear = async function(guild, message, args) {
+let clear = async function(client, guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);

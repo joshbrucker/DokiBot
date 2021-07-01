@@ -2,9 +2,8 @@ const https = require('https');
 
 const utils = require(__basedir + '/utils.js');
 
-let neko = function(guild, message, args) {
+let neko = function(client, guild, message, args) {
   const id = message.guild.id;
-  const client = message.client;
   const channel = message.channel;
 
   let tag = 'neko';

@@ -8,7 +8,10 @@ const utils = require('./utils.js');
 const event_handler = require('./event_handlers/event-handler.js');
 const setupDbl = require('./discord_bot_list/setup-dbl.js');
 
-const client = new Discord.Client();
+const intents = new Discord.Intents(Discord.Intents.NON_PRIVILEGED);
+intents.add('GUILD_MEMBERS');
+
+const client = new Discord.Client({ ws: { intents: intents } });
 
 setupDbl(auth, client);
 
@@ -26,5 +29,6 @@ client.on('guildCreate', (guild) => { event_handler.on_guild_create(client, guil
 client.on('guildDelete', (guild) => { event_handler.on_guild_delete(client, guild); });
 client.on('message', (message) => { event_handler.on_message(client, message); });
 client.on('messageReactionAdd', (reaction, user) => { event_handler.on_message_react(client, reaction); });
+client.on('voiceStateUpdate', (oldState, newState) => { event_handler.on_voice_state_change(client, oldState, newState); });
 
 client.login(auth.token);

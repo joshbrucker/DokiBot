@@ -1,4 +1,4 @@
-const YTDL = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 const voiceTasks = require('./voice-tasks');
 
 const LEAVE_TIME = 300000;
@@ -39,7 +39,7 @@ let createTimeout = function(conn, server) {
       removeServer(server.id);
       conn.disconnect();
     }, LEAVE_TIME);
-};
+}
 
 let addSong = function(server, song) {
   server.task.queue.push(song);
@@ -69,10 +69,11 @@ let getConnection = function(message) {
   });
 }
 
-let playMusic = function(conn, server) {
+let playMusic = async function(conn, server) {
   const task = server.task;
 
-  task.dispatcher = conn.play(YTDL(task.queue[0].url, { filter: 'audioonly' }));
+  let stream = await ytdl(task.queue[0].link);
+  task.dispatcher = conn.play(stream, { type: 'opus' });
 
   task.dispatcher.once('start', () => {
     conn.player.streamingData.pausedTime = 0;
@@ -81,15 +82,14 @@ let playMusic = function(conn, server) {
     }
   });
 
-  task.dispatcher.on('speaking', (isSpeaking) => {
-    if (!isSpeaking && !task.paused) {
-      task.queue.shift();
-      if (task.queue[0]) {
-        playMusic(conn, server);
-      } else {
-        server.task = null;
-        server.timeout = createTimeout(conn, server);
-      }
+  task.dispatcher.on('finish', () => {
+    console.log("finished! title: " + task.queue[0].title)
+    task.queue.shift();
+    if (task.queue[0]) {
+      playMusic(conn, server);
+    } else {
+      server.task = null;
+      server.timeout = createTimeout(conn, server);
     }
   });
 };

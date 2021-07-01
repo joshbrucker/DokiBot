@@ -2,8 +2,7 @@
 const db = require(__basedir + '/database/db.js');
 const utils = require(__basedir + '/utils.js');
 
-let broadcast = function(guild, message, args) {
-    const client = message.client;
+let broadcast = function(client, guild, message, args) {
     const channel = message.channel;
 
     if (message.author.id == '133805362347376640') {

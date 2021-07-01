@@ -1,7 +1,7 @@
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
-let resume = function(guild, message, args) {
+let resume = function(client, guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);

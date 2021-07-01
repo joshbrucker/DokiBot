@@ -5,7 +5,7 @@ const validFilename = require('valid-filename');
 const utils = require(__basedir + '/utils.js');
 const db = require(__basedir + '/database/db');
 
-let end = function(guild, message, args) {
+let end = function(client, guild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {

@@ -2,7 +2,7 @@ const soundtrack = require(__basedir + '/assets/soundtrack.json');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
-let playAll = async function(guild, message, args) {
+let ostAll = async function(client, guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);
@@ -44,4 +44,4 @@ let playAll = async function(guild, message, args) {
   }
 };
 
-module.exports = playAll;
+module.exports = ostAll;

@@ -1,7 +1,7 @@
 const db = require(__basedir + '/database/db.js');
 const utils = require(__basedir + '/utils.js');
 
-var prefix = function(guild, message, args) {
+var prefix = function(client, guild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {

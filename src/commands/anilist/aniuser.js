@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const anilist = require(__basedir + '/anilist/anilist.js');
 const utils = require(__basedir + '/utils.js');
 
-let aniuser = async function(guild, message, args) {
+let aniuser = async function(client, guild, message, args) {
   let channel = message.channel;
 
   let name = args.join(' ');

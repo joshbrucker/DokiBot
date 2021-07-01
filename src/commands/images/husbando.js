@@ -4,8 +4,7 @@ const path = require('path');
 const danbooru = require(__basedir + '/danbooru/danbooru.js');
 const utils = require(__basedir + '/utils.js');
 
-let husbando = async function(guild, message, args) {
-  const client = message.client;
+let husbando = async function(client, guild, message, args) {
   const channel = message.channel;
 
   args = args.join(' ');

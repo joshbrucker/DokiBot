@@ -32,22 +32,23 @@ Commands.set('prefix',     { run: require('./misc/prefix.js') });
 Commands.set('setchannel', { run: require('./misc/setchannel.js') });
 Commands.set('vote',       { run: require('./misc/vote.js') });
 
-Commands.set('clear',      { run: require('./ost/clear.js') });
-Commands.set('list',       { run: require('./ost/list.js') });
-Commands.set('pause',      { run: require('./ost/pause.js') });
-Commands.set('play',       { run: require('./ost/play.js') });
-Commands.set('playall',    { run: require('./ost/playall.js') });
-Commands.set('queue',      { run: require('./ost/queue.js') });
-Commands.set('resume',     { run: require('./ost/resume.js') });
-Commands.set('skip',       { run: require('./ost/skip.js') });
-Commands.set('stop',       { run: require('./ost/stop.js') });
+Commands.set('clear',      { run: require('./audio/clear.js') });
+Commands.set('list',       { run: require('./audio/list.js') });
+Commands.set('pause',      { run: require('./audio/pause.js') });
+Commands.set('play',       { run: require('./audio/play.js') });
+Commands.set('ost',        { run: require('./audio/ost.js') });
+Commands.set('ostAll',     { run: require('./audio/ostAll.js') });
+Commands.set('queue',      { run: require('./audio/queue.js') });
+Commands.set('resume',     { run: require('./audio/resume.js') });
+Commands.set('skip',       { run: require('./audio/skip.js') });
+Commands.set('stop',       { run: require('./audio/stop.js') });
+
+Commands.set('nep',        { run: require('./audio/sounds/nep.js')});
 
 Commands.set('end',        { run: require('./poems/end.js') });
 Commands.set('frequency',  {
   run: require('./poems/frequency.js'),
   aliases: ['freq']
 });
-
-Commands.set('nep',        { run: require('./sounds/nep.js')});
 
 module.exports = Commands;
