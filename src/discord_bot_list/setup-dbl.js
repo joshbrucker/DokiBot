@@ -6,7 +6,9 @@ const DBL_ERROR_MSG = 'WARNING: Could not successfully connect to DBL. Are the c
 let setupDbl = function(auth, client) {
   DBL_TOKEN = auth.dbltoken;
   if (DBL_TOKEN) {
-    const dblInstance = new DiscordBotList(DBL_TOKEN, { webhookPort: auth.webhookPort,
+    let port = auth.webhookPort + client.shard.ids[0];
+
+    const dblInstance = new DiscordBotList(DBL_TOKEN, { webhookPort: port,
     	webhookAuth: auth.webhookAuth }, client);
 
     dblInstance.webhook.on('ready', (hook) => {

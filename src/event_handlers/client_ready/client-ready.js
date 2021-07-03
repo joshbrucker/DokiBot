@@ -1,3 +1,5 @@
+const sample = require('alias-sampling');
+
 const auth = require(__basedir + '/auth.json');
 const db = require(__basedir + '/database/db.js');
 const utils = require(__basedir + '/utils.js');
@@ -12,24 +14,25 @@ let on_client_ready = function(client) {
   console.log('I am ready!');
 }
 
-
 let startRepeatingActivityChange = async function(client, delay) {
-    // TODO: Change chance of getting guild based on total size
-    let randomGuild = client.guilds.cache.random();
-    let members = await randomGuild.members.fetch();
-    members = members.filter((guildMember) => !guildMember.user.bot);
+  let guilds = client.guilds.cache;
+  let guildIds = guilds.map((guild) => guild.id);
+  let memberCounts = guilds.map((guild) => guild.memberCount);
 
-    let username;
-    if (members.first()) {
-      let randomMember = members.random();
-      username = randomMember.nickname || randomMember.user.username;
-    } else {
-      username = 'no one in particular'
+  let message = 'by myself';
+  if (guildIds.length > 0) {
+    let sampler = sample(memberCounts, guildIds);
+    let guild = client.guilds.resolve(sampler.next());
+    if (guild) {
+      let member = guild.members.cache.random();
+      if (member) {
+        message = 'with ' + (member.nickname || member.user.username);
+      }
     }
+  }
+  await client.user.setActivity(message);
 
-    await client.user.setActivity('with ' + username);
-
-    setTimeout(startRepeatingActivityChange, delay, client, delay);
+  setTimeout(startRepeatingActivityChange, delay, client, delay);
 };
 
 let startRepeatingMessageCache = async function(client, channelId, delay) {

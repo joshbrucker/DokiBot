@@ -8,10 +8,7 @@ const utils = require('./utils.js');
 const event_handler = require('./event_handlers/event-handler.js');
 const setupDbl = require('./discord_bot_list/setup-dbl.js');
 
-const intents = new Discord.Intents(Discord.Intents.NON_PRIVILEGED);
-intents.add('GUILD_MEMBERS');
-
-const client = new Discord.Client({ ws: { intents: intents } });
+const client = new Discord.Client();
 
 setupDbl(auth, client);
 

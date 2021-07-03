@@ -9,6 +9,23 @@ let invalidArgsMsg = function(message, command) {
     + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
+let getCustomEmoji = async function(client, emojiId) {
+  let results = await client.shard.broadcastEval(`
+      (async () => {
+        const utils = require(__basedir + '/utils.js');
+        const guild = await this.guilds.resolve('${auth.dokihubId}');
+        if (guild) {
+          let emoji = await guild.emojis.resolveID('${emojiId}');
+          return emoji;
+        } else {
+          return null;
+        }
+      })();`);
+
+  let emojis = results.filter((res) => res != null);
+  return (emojis.length > 0) ? emojis[0] : null;
+};
+
 let sleep = function(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
@@ -104,7 +121,7 @@ let sendWelcomeMsg = function(client, guild, channel) {
       + '* [4] Use `-help\' to see more commands. Best of luck, dummies!```');
 
   channel.send(message);
-}
+};
 
 let getMembers = function(guild) {
   let members = guild.members.cache.array();
@@ -138,56 +155,6 @@ let random = function(num) {
   return Math.floor(Math.random() * num);
 };
 
-// Generates a sampler function using the alias method
-let aliasSampler = function(probabilities) {
-  let probSum = probabilities.reduce((sum, p) => {
-    return sum + p;
-  }, 0);
-  
-  let probMultiplier = probabilities.length / probSum;
-  probabilities = probabilities.map((p) => {
-    return p * probMultiplier;
-  });
-  
-  let overFull = [], underFull = [];
-  probabilities.forEach((p, i) => {
-    if (p > 1) {
-      overFull.push(i);
-    } else if (p < 1) {
-      underFull.push(i);
-    }
-  });
-
-  let aliases = [];
-  while (overFull.length > 0 || underFull.length > 0) {
-    if (overFull.length > 0 && underFull.length > 0) {
-      aliases[underFull[0]] = overFull[0];
-      probabilities[overFull[0]] += probabilities[underFull[0]] - 1;
-      underFull.shift();
-      if (probabilities[overFull[0]] > 1) {
-        overFull.push(overFull.shift());
-      }
-      else if (probabilities[overFull[0]] < 1) {
-        underFull.push(overFull.shift());
-      }
-      else {
-        overFull.shift();
-      }
-    } else {
-      let notEmptyArray = overFull.length > 0 ? overFull : underFull;
-      notEmptyArray.forEach(index => {
-        probabilities[index] = 1;
-      });
-      notEmptyArray.length = 0;
-    }
-  }
-  
-  return function sample() {
-    let index = random(probabilities.length);
-    return Math.random() < probabilities[index] ? index : aliases[index];
-  };
-};
-
 // Takes in an array of emojis and reacts in order
 let react = async function(message, reactions) {
   let currEmoji = reactions.shift();
@@ -219,6 +186,6 @@ module.exports = {
   generateNewTime,
   stripToNums,
   random,
-  aliasSampler,
+  getCustomEmoji,
   react
 };
