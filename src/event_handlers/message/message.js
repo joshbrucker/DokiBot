@@ -38,11 +38,7 @@ let on_message = async function(client, message) {
     poemUpdate(client, guildData, message);
   }
 
-  let dokiReactChance = Math.floor(Math.random() * 2);
-  if (dokiReactChance == 1) {
-    dokiReact(client, message);
-  }
-
+  dokiReact(client, message);
   checkInsults(client, message, guildData)
 }
 
