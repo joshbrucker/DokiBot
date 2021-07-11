@@ -9,25 +9,30 @@ let invalidArgsMsg = function(message, command) {
     + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
-let getCustomEmoji = async function(client, emojiId) {
-  let results = await client.shard.broadcastEval(`
-      (async () => {
-        const utils = require(__basedir + '/utils.js');
-        const guild = await this.guilds.resolve('${auth.dokihubId}');
-        if (guild) {
-          let emoji = await guild.emojis.resolveID('${emojiId}');
-          return emoji;
-        } else {
-          return null;
-        }
-      })();`);
+let fetchEmoji = async function (client, guild, channel, nameOrID) {
+  function findEmoji(nameOrID) {
+    const emoji = this.emojis.cache.get(nameOrID) || this.emojis.cache.find(e => e.name.toLowerCase() === nameOrID.toLowerCase());
+    if (!emoji) return null;
+    return emoji;
+  }
 
-  let emojis = results.filter((res) => res != null);
-  return (emojis.length > 0) ? emojis[0] : null;
+  let emoji = '';
+
+  if (guild.me.permissionsIn(channel).has('USE_EXTERNAL_EMOJIS')) {
+    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, '${nameOrID}')`);
+    const foundEmoji = emojiArray.find(emoji => emoji);
+    emoji = foundEmoji.animated ? ` <${foundEmoji.identifier}> ` : ` <:${foundEmoji.identifier}> `;
+  }
+
+  return emoji;
 };
 
 let sleep = function(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+let capitalizeFirstLetter = function(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 let dateFormat = function(date) {
@@ -106,23 +111,6 @@ let getAvailableChannel = function(client, guild) {
   }
 };
 
-let sendWelcomeMsg = function(client, guild, channel) {
-  let emoji = client.emojis.resolve('539122262347874334');
-
-  let message = ('Square up! Your true love has joined the server. '
-      + 'Here are a few helpful tips for using me! ' + emoji.toString() + '\n\n'
-      + '```AsciiDoc\n'
-      + 'Welcome to the Club!\n'
-      + '====================\n\n'
-      + '* [1] You may not want me posting in this channel. Use `-setchannel [channel]\' to set the default channel for me to post insults, etc.\n\n'
-      + '* [2] Random insults are *disabled* by default. Use `-toggle\' to turn them on. '
-      + 'They may not be appropriate for all club members, so enable them at your own discretion.\n\n'
-      + '* [3] You can make a channel called `doki-poems\' where I can create my poems for you.\n\n'
-      + '* [4] Use `-help\' to see more commands. Best of luck, dummies!```');
-
-  channel.send(message);
-};
-
 let getMembers = function(guild) {
   let members = guild.members.cache.array();
   let humans = [];
@@ -174,10 +162,13 @@ let react = async function(message, reactions) {
   }
 };
 
+let insertPrefix = function(dbGuild, string) {
+  return string.replace(/%p/g, dbGuild.prefix);
+}
+
 module.exports = {
   invalidArgsMsg,
   getAvailableChannel,
-  sendWelcomeMsg,
   getMembers,
   dateFormat,
   timeFormat,
@@ -186,6 +177,8 @@ module.exports = {
   generateNewTime,
   stripToNums,
   random,
-  getCustomEmoji,
-  react
+  fetchEmoji,
+  react,
+  capitalizeFirstLetter,
+  insertPrefix
 };

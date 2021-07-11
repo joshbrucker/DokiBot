@@ -1,23 +1,34 @@
 const utils = require(__basedir + '/utils.js');
 
 let dokiReact = async function(client, message) {
+    let guild = message.guild;
+    let channel = message.channel;
     let content = message.content.toLowerCase();
 
     if (content.search(/\bmonika\b/) > -1) {
-        const monika = await utils.getCustomEmoji(client, '860677947857698847');
-        utils.react(message, [monika]);
-    }
+        const monika = await utils.fetchEmoji(client, guild, channel, 'monika');
+        if (monika != '') {
+            utils.react(message, [monika]);
+        }
+    };
+
     if (content.search(/\bnatsuki\b/) > -1) {
-        const natsuki = await utils.getCustomEmoji(client, '860678345662267392');
-        utils.react(message, [natsuki]);
+        const natsuki = await utils.fetchEmoji(client, guild, channel, 'natsuki');
+        if (natsuki != '') {
+            utils.react(message, [natsuki]);
+        }
     }
     if (content.search(/\bsayori\b/) > -1) {
-        const sayori = await utils.getCustomEmoji(client, '860677897039773726');
-        utils.react(message, [sayori]);
+        const sayori = await utils.fetchEmoji(client, guild, channel, 'sayori');
+        if (sayori != '') {
+            utils.react(message, [sayori]);
+        }
     }
     if (content.search(/\byuri\b/) > -1) {
-        const yuri = await utils.getCustomEmoji(client, '860677986226274354');
-        utils.react(message, [yuri]);
+        const yuri = await utils.fetchEmoji(client, guild, channel, 'yuri');
+        if (yuri != '') {
+            utils.react(message, [yuri]);
+        }
     }
 };
 
