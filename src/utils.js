@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const auth = require('./auth.json');
+const emojis = require(__basedir + '/assets/emojis.json');
 
 // Outputs a message with the given commands
 let invalidArgsMsg = function(message, command) {
@@ -9,7 +10,7 @@ let invalidArgsMsg = function(message, command) {
     + 'Use \`' + 'help ' + command + '\` for more info.');
 };
 
-let fetchEmoji = async function (client, guild, channel, nameOrID) {
+let fetchEmoji = async function (client, guild, channel, name) {
   function findEmoji(nameOrID) {
     const emoji = this.emojis.cache.get(nameOrID) || this.emojis.cache.find(e => e.name.toLowerCase() === nameOrID.toLowerCase());
     if (!emoji) return null;
@@ -19,7 +20,7 @@ let fetchEmoji = async function (client, guild, channel, nameOrID) {
   let emoji = '';
 
   if (guild.me.permissionsIn(channel).has('USE_EXTERNAL_EMOJIS')) {
-    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, '${nameOrID}')`);
+    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, '${emojis[name]}')`);
     const foundEmoji = emojiArray.find(emoji => emoji);
     emoji = foundEmoji.animated ? ` <${foundEmoji.identifier}> ` : ` <:${foundEmoji.identifier}> `;
   }
