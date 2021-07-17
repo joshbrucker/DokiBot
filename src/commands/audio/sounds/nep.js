@@ -1,17 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
+const utils = require(__basedir + '/utils');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
 const voiceManager = require(__basedir + '/voice/voice-manager.js');
 
-let nep = async function(client, guild, message, args) {
+let nep = async function(client, dbGuild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);
 
   const NOT_IN_VOICE_MSG = 'You must be in a voice channel to use `nep`';
   const ALREADY_IN_USE_MSG = 'Voice chat already in use!';
-  const NEP_EMOJI_ID = '522202578818301970';
 
   if (!message.member.voice.channel) {
     message.channel.send(NOT_IN_VOICE_MSG);
@@ -48,7 +48,7 @@ let nep = async function(client, guild, message, args) {
   let random = Math.floor(Math.random() * files.length);
   path += '/' + files[random];
 
-  let emoji = client.emojis.resolve(NEP_EMOJI_ID);
+  let emoji = await utils.fetchEmoji(client, message.guild, message.channel, 'nep');
 
   let conn = await voiceManager.getConnection(message);
   channel.send('Nepu nepu! ' + emoji.toString());
