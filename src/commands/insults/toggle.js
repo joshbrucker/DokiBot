@@ -1,6 +1,6 @@
 const db = require(__basedir + '/database/db.js');
 
-let toggle = function(client, guild, message, args) {
+let toggle = async function(client, dbGuild, message, args) {
     let channel = message.channel;
 
     if (!message.member.hasPermission('MANAGE_GUILD')) {
@@ -8,13 +8,12 @@ let toggle = function(client, guild, message, args) {
         return;
     }
 
-    db.guild.toggleInsults(message.guild.id, (newToggle) => {
-        if (newToggle[0].allow_insults == 1) {
-            channel.send('Enabled random insults!');
-        } else {
-            channel.send('Disabled random insults!')
-        }
-    });
+    let updatedGuild = await db.guild.toggleInsults(message.guild.id);
+    if (updatedGuild.allow_insults == 1) {
+        channel.send('Enabled random insults!');
+    } else {
+        channel.send('Disabled random insults!')
+    }
 };
 
 module.exports = toggle;
