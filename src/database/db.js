@@ -58,7 +58,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   },
 
   removeGuild: async function(id) {
@@ -105,7 +105,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   },
 
   setInsultTime: async function(id, date) {
@@ -120,7 +120,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   },
 
   setPrefix: async function(id, prefix) {
@@ -135,7 +135,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   },
 
   setPoemId: async function(id, poemId) {
@@ -150,7 +150,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   },
 
   setPoemFreq: async function(id, freq) {
@@ -165,7 +165,7 @@ let guild = {
     } finally {
       if (conn) conn.end();
     }
-    return res;
+    return res[0];
   }
 };
 
@@ -202,7 +202,7 @@ let member = {
     return res[0];
   },
 
-  addMember: async function(id, then) {
+  addMember: async function(id) {
     let conn;
     let res;
     try {
@@ -217,7 +217,7 @@ let member = {
     return res;
   },
 
-  setSubmitCooldown: async function(id, date, then) {
+  setSubmitCooldown: async function(id, date) {
     let conn;
     let res;
     try {
