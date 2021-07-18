@@ -8,11 +8,12 @@ let toggle = async function(client, dbGuild, message, args) {
         return;
     }
 
-    let updatedGuild = await db.guild.toggleInsults(message.guild.id);
-    if (updatedGuild.allow_insults == 1) {
-        channel.send('Enabled random insults!');
+    await db.guild.toggleInsults(message.guild.id);
+
+    if (dbGuild.allow_insults == 1) {
+        channel.send('Disabled random insults!');
     } else {
-        channel.send('Disabled random insults!')
+        channel.send('Enabled random insults!')
     }
 };
 
