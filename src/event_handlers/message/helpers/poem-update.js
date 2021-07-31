@@ -8,37 +8,41 @@ const db = require(__basedir + '/database/db.js');
 
 const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/
 
-let dokipoemUpdate = function(client, guild, message) {
+let dokipoemUpdate = async function(client, guild, message) {
   let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
-  if (!poemChannel) return;
+  if (!poemChannel) {
+    return;
+  }
 
   if (!poemChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
-      return;
+    return;
   }
- 
-  if (message.author == client.user) return;
 
   let firstWord = message.content.split(' ')[0];
-  if (!firstWord) return;
+  if (!firstWord) {
+    return;
+  }
 
-  if (isUrl(firstWord)) return;
+  if (isUrl(firstWord)) {
+    return;
+  }
 
-  if (firstWord.length > 99) return;
+  if (firstWord.length > 99) {
+    return;
+  }
 
   if (firstWord.match(COMMON_PREFIXES)) {
     return;
   }
   
   if (!guild.poem_id) {
-    poemChannel.send(firstWord)
-      .then((msg) => {
-        db.guild.setPoemId(guild.id, msg.id);
-      });
+    let msg = await poemChannel.send(firstWord)
+    await db.guild.setPoemId(guild.id, msg.id);
   } else {
     let filepath = '';
 
-    poemChannel.messages.fetch(guild.poem_id)
-      .then((msg) => {
+    let msg = poemChannel.messages.fetch(guild.poem_id)
+      .then(async (msg) => {
         // Check time to see if it's time to grab a word
         let messageDate = message.createdAt;
         let poemDate;
@@ -61,7 +65,7 @@ let dokipoemUpdate = function(client, guild, message) {
 
         if (messageTime != poemTime) {
           msg.edit(msg.content + ' ' + firstWord)
-            .then((newMsg) => {
+            .then(async (newMsg) => {
               let words = newMsg.content.split(' ');
               if (words.length >= 20) {
                 poemChannel.send('You wrote a full doki-poem. Nice!');
@@ -95,17 +99,17 @@ let dokipoemUpdate = function(client, guild, message) {
                     });
                 });
 
-                db.guild.setPoemId(guild.id, null);
+                await db.guild.setPoemId(guild.id, null);
               }
             });
         }
       })
-      .catch((err) => {
+      .catch(async (err) => {
         if (err.message == 'Unknown Message') {
           message.channel.send('Hmm... I can\'t seem to find your old doki-poem. Starting a new one...!');
           poemChannel.send(firstWord)
-            .then((msg) => {
-              db.guild.setPoemId(guild.id, msg.id);
+            .then(async (msg) => {
+              await db.guild.setPoemId(guild.id, msg.id);
             });
         } else {
           throw err;

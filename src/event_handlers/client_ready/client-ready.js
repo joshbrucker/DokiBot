@@ -5,7 +5,7 @@ const db = require(__basedir + '/database/db.js');
 const utils = require(__basedir + '/utils.js');
 
 let on_client_ready = function(client) {
-  startRepeatingActivityChange(client, 3600000);
+  //startRepeatingActivityChange(client, 3600000);
 
   if (client.channels.resolve(auth.submissionChannelId)) {
     startRepeatingMessageCache(client, auth.submissionChannelId, 600000);
