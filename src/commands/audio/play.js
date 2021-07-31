@@ -1,4 +1,5 @@
-const yts = require('youtube-search');
+const yts = require('youtube-search-without-api-key');
+const https = require('https');
 
 const utils = require(__basedir + '/utils.js');
 const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
@@ -36,17 +37,17 @@ let play = async function(client, guild, message, args) {
   }
 
   let userSearch = args.join(' ');
-  let opts = {
-    maxResults: 5,
-    key: auth['googleApiKey']
-  }
-  let results = (await yts(userSearch, opts))['results'];
-  let video = results[0];
+  let results = await yts.search(userSearch);
 
-  if (!video) {
+  if (results.length == 0) {
     channel.send(NO_VIDEO_FOUND_MSG);
     return;
   }
+
+  let videoData = {
+    link: results[0]["url"],
+    title: results[0]["title"]
+  };
 
   let queueLength = task.queue.length;
   if (queueLength + 1 > 30) {
@@ -55,13 +56,13 @@ let play = async function(client, guild, message, args) {
   }
 
   if (queueLength > 0) {
-    channel.send('Adding `' + video.title + '` to the queue!');
-    voiceManager.addSong(server, video);
+    channel.send('Adding `' + videoData.title + '` to the queue!');
+    voiceManager.addSong(server, videoData);
   } else {
     voiceManager.getConnection(message)
       .then(conn => {
-        channel.send('Now playing `' + video.title + '`');
-        voiceManager.addSong(server, video);
+        channel.send('Now playing `' + videoData.title + '`');
+        voiceManager.addSong(server, videoData);
         voiceManager.playMusic(conn, server);
       });
   }
