@@ -1,4 +1,4 @@
-*Currently running on over 2,000 Discord servers!*
+*Currently running on over 2,500 Discord servers!*
 
 # DokiBot
 
@@ -79,9 +79,12 @@ Plays a soundclip from Hyperdimension Neptunia (more coming soon!).
 
 ---
 
-## OST
-### -play \<number\>
-Plays a track from the DDLC OST, #1-15.
+## Audio
+
+NOTE: By using audio commands, you are also agreeing to [YouTube's Terms of Service](https://www.youtube.com/t/terms). The audio feature will not collect any data on you than the song that is played and the time. This information is needed to play the video audio for you. There is no association to your specific Discord account. Please check out [Google's privacy policy](http://www.google.com/policies/privacy) as well.
+
+### -play \<title\>
+Searches YouTube for a video with the given title and plays its audio.
 
 ### -playall
 Queues all tracks from the DDLC OST.
