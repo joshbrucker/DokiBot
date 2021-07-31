@@ -20,7 +20,7 @@ let skip = function(client, guild, message, args) {
     channel.send(SKIP_MSG);
 
     if (task.queue[1]) {
-      let nextSong = task.queue[1].name;
+      let nextSong = task.queue[1].title;
       channel.send('Now playing \`' + nextSong + '\`');
     }
 

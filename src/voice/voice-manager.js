@@ -83,7 +83,6 @@ let playMusic = async function(conn, server) {
   });
 
   task.dispatcher.on('finish', () => {
-    console.log("finished! title: " + task.queue[0].title)
     task.queue.shift();
     if (task.queue[0]) {
       playMusic(conn, server);
