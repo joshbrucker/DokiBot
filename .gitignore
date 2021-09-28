@@ -1,4 +1,4 @@
 src/auth.json
-src/assets/nep_audio/
-src/assets/images/
+src/resources/nep_audio/
+src/resources/images/
 node_modules/

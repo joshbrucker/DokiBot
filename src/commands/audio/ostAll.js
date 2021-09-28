@@ -1,16 +1,16 @@
-const soundtrack = require(__basedir + '/assets/soundtrack.json');
-const voiceTasks = require(__basedir + '/voice/voice-tasks.js');
-const voiceManager = require(__basedir + '/voice/voice-manager.js');
+const soundtrack = require(__basedir + "/resources/soundtrack.json");
+const voiceTasks = require(__basedir + "/voice/voice-tasks.js");
+const voiceManager = require(__basedir + "/voice/voice-manager.js");
 
 let ostAll = async function(client, guild, message, args) {
   const id = message.guild.id;
   const channel = message.channel;
   const server = voiceManager.getServer(id);
 
-  const NOT_IN_VOICE_MSG = 'You must be in a voice channel to use `playall`';
-  const ALREADY_IN_USE_MSG = 'Voice chat already in use!';
-  const ADDING_ALL_MSG = 'Adding all OST songs to the queue!';
-  const MAX_QUEUE_MSG = 'The queue is maxed-out at 30! Calm your Dokis!';
+  const NOT_IN_VOICE_MSG = "You must be in a voice channel to use `playall`";
+  const ALREADY_IN_USE_MSG = "Voice chat already in use!";
+  const ADDING_ALL_MSG = "Adding all OST songs to the queue!";
+  const MAX_QUEUE_MSG = "The queue is maxed-out at 30! Calm your Dokis!";
 
   if (!message.member.voice.channel) {
     channel.send(NOT_IN_VOICE_MSG);
@@ -36,7 +36,7 @@ let ostAll = async function(client, guild, message, args) {
     }
   }
 
-  if (firstQueueLen == 0) {
+  if (firstQueueLen === 0) {
     voiceManager.getConnection(message)
       .then(conn => {
         voiceManager.playMusic(message, server, conn);

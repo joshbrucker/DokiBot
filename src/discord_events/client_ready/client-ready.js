@@ -1,8 +1,6 @@
-const sample = require('alias-sampling');
+const sample = require("alias-sampling");
 
-const auth = require(__basedir + '/auth.json');
-const db = require(__basedir + '/database/db.js');
-const utils = require(__basedir + '/utils.js');
+const auth = require(__basedir + "/auth.json");
 
 let on_client_ready = function(client) {
   //startRepeatingActivityChange(client, 3600000);
