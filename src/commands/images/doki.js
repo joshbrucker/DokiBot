@@ -18,23 +18,14 @@ let doki = function(client, guild, message, args) {
   tags.add("doki_doki_literature_club");
 
   let nsfw = false;
-<<<<<<< HEAD
-  tags.add('is:sfw');
-=======
   tags.add("rating:safe");
->>>>>>> Basic code cleanups.
 
   args.forEach((arg) => {
     switch(arg) {
       case "nsfw":
         nsfw = true;
-<<<<<<< HEAD
-        tags.delete('is:sfw');
-        tags.add('is:nsfw');
-=======
         tags.delete("rating:safe");
         tags.add("-rating:safe");
->>>>>>> Basic code cleanups.
         break;
       case "1girl":
         tags.add("1girl");
@@ -74,11 +65,7 @@ let doki = function(client, guild, message, args) {
 
   const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 
-<<<<<<< HEAD
-  booru.posts({ limit: 50, tags: Array.from(tags).join(' ') })
-=======
   booru.posts({ random: true, limit: 50, tags: Array.from(tags).join(" ") })
->>>>>>> Basic code cleanups.
     .then((posts) => {
       const post = posts[utils.random(posts.length)];
 
