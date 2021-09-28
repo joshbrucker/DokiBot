@@ -1,7 +1,7 @@
-const mariadb = require('mariadb');
+const mariadb = require("mariadb");
 
-const auth = require(__basedir + '/auth.json');
-const utils = require(__basedir + '/utils.js');
+const auth = require(__basedir + "/auth.json");
+const utils = require(__basedir + "/utils.js");
 
 const pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser, 
   password: auth.dbPass, database: auth.dbName, connectionLimit: 30});
@@ -25,21 +25,21 @@ let guild = {
       conn = await pool.getConnection();
       res = await conn.query(`SELECT * FROM guild WHERE id = ?;`,
                             [ id ]);
-      delete res['meta'];
+      delete res["meta"];
 
-      if (!res || res.length == 0) {
+      if (!res || res.length === 0) {
         let date = utils.generateNewTime(new Date());
         res = await conn.query(`INSERT INTO guild (id, insult_time) VALUES (?, ?)
                                     ON DUPLICATE KEY UPDATE id=id;`,
                                     [ id, date ]);
         res = await conn.query(`SELECT * FROM guild WHERE id = ?;`,
                                     [ id ]);
-        delete res['meta'];
+        delete res["meta"];
       }
     } catch(err) {
       throw err;
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -56,7 +56,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -72,7 +72,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
 
     return res;
@@ -88,7 +88,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res;
   },
@@ -103,7 +103,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -118,7 +118,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -133,7 +133,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -148,7 +148,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   },
@@ -163,7 +163,7 @@ let guild = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res[0];
   }
@@ -183,7 +183,7 @@ let member = {
       conn = await pool.getConnection();
       res = await conn.query(`SELECT * FROM member WHERE id = ?;`,
                              [ id ]);
-      delete res['meta'];
+      delete res["meta"];
 
       if (!res || res.length == 0) {
         await conn.query(`INSERT INTO member (id) VALUES (?)
@@ -191,12 +191,12 @@ let member = {
                          [ id ]);
         res = await conn.query(`SELECT * FROM member WHERE id = ?;`,
                                     [ id ]);
-        delete res['meta'];
+        delete res["meta"];
       }
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
 
     return res[0];
@@ -212,7 +212,7 @@ let member = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res;
   },
@@ -227,7 +227,7 @@ let member = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res;
   }
@@ -244,7 +244,7 @@ let insult = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res;
   },
@@ -260,7 +260,7 @@ let insult = {
     } catch(err) {
       throw err
     } finally {
-      if (conn) conn.end();
+      if (conn) await conn.end();
     }
     return res;
   }

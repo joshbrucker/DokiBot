@@ -1,4 +1,4 @@
-const voiceManager = require(__basedir + '/voice/voice-manager.js');
+const voiceManager = require(__basedir + "/voice/voice-manager.js");
 
 let on_voice_state_change = function(client, oldState, newState) {
   // Leaves voice

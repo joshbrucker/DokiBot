@@ -1,12 +1,12 @@
-const fetch = require('node-fetch');
+const fetch = require("node-fetch");
 
 let query = async function(query, variables) {
-  let url = 'https://graphql.anilist.co';
+  let url = "https://graphql.anilist.co";
   let options = {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      "Content-Type": "application/json",
+      "Accept": "application/json",
     },
     body: JSON.stringify({
       query: query,

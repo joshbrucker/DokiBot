@@ -1,10 +1,10 @@
-let Commands = require('./Commands.js');
+let Commands = require("./Commands.js");
 
 let executeCmd = function(client, guild, message, args, cmd) {
-  if (cmd == 'broadcast') {
-    args = message.content.split(' ').splice(1);
+  if (cmd === "broadcast") {
+    args = message.content.split(" ").splice(1);
     broadcast(message, args);
-  } else if (cmd != 'submit') {
+  } else if (cmd !== "submit") {
     args = args.map((arg) => arg.toLowerCase());
   }
 
