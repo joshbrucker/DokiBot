@@ -1,5 +1,4 @@
-const ytdl = require('ytdl-core-discord');
-const voiceTasks = require('./voice-tasks');
+const ytdl = require("ytdl-core-discord");
 
 const LEAVE_TIME = 300000;
 const servers = {};
@@ -46,8 +45,8 @@ let addSong = function(server, song) {
 };
 
 let getConnection = function(message) {
-  const NO_PERMS_ERROR = 'Error [VOICE_JOIN_CHANNEL]: You do not have permission to join this voice channel.';
-  const NO_PERMS_MSG = 'I don\'t have access to your voice channel! :frowning:';
+  const NO_PERMS_ERROR = "Error [VOICE_JOIN_CHANNEL]: You do not have permission to join this voice channel.";
+  const NO_PERMS_MSG = "'I don't have access to your voice channel! :frowning:'";
 
   return new Promise((resolve, reject) => {
     const channel = message.channel
@@ -57,7 +56,7 @@ let getConnection = function(message) {
           resolve(conn);
         })
         .catch(err => {
-          if (err.toString() == NO_PERMS_ERROR) {
+          if (err.toString() === NO_PERMS_ERROR) {
             channel.send(NO_PERMS_MSG);
           } else {
             reject();
@@ -73,16 +72,16 @@ let playMusic = async function(conn, server) {
   const task = server.task;
 
   let stream = await ytdl(task.queue[0].link);
-  task.dispatcher = conn.play(stream, { type: 'opus' });
+  task.dispatcher = conn.play(stream, { type: "opus" });
 
-  task.dispatcher.once('start', () => {
+  task.dispatcher.once("start", () => {
     conn.player.streamingData.pausedTime = 0;
     if (server.timeout) {
       removeTimeout(server);
     }
   });
 
-  task.dispatcher.on('finish', () => {
+  task.dispatcher.on("finish", () => {
     task.queue.shift();
     if (task.queue[0]) {
       playMusic(conn, server);
@@ -98,13 +97,13 @@ let playSound = function(conn, server, path) {
 
   task.dispatcher = conn.play(path);
 
-  task.dispatcher.once('start', () => {
+  task.dispatcher.once("start", () => {
     if (server.timeout) {
       removeTimeout(server);
     }
   });
 
-  task.dispatcher.on('speaking', (isSpeaking) => {
+  task.dispatcher.on("speaking", (isSpeaking) => {
     if (!isSpeaking) {
       server.task = null;
       server.timeout = createTimeout(conn, server);

@@ -1,13 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-
-const auth = require('./auth.json');
-const emojis = require(__basedir + '/assets/emojis.json');
+const emojis = require(__basedir + "/resources/emojis.json");
 
 // Outputs a message with the given commands
 let invalidArgsMsg = function(message, command) {
-  message.channel.send(':x: **' + message.member.displayName + '**, that\'s not a valid use of \`' + command + '\`!\n'
-    + 'Use \`' + 'help ' + command + '\` for more info.');
+  message.channel.send(":x: **" + message.member.displayName + "**, that's not a valid use of \`" + command + "\`!\n"
+      + "Use \`help " + command + "\` for more info.");
 };
 
 let fetchEmoji = async function (client, guild, channel, name) {
@@ -17,12 +13,12 @@ let fetchEmoji = async function (client, guild, channel, name) {
     return emoji;
   }
 
-  let emoji = '';
+  let emoji = "";
 
-  if (guild.me.permissionsIn(channel).has('USE_EXTERNAL_EMOJIS')) {
-    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, '${emojis[name]}')`);
+  if (guild.me.permissionsIn(channel).has("USE_EXTERNAL_EMOJIS")) {
+    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, "${emojis[name]}")`);
     const foundEmoji = emojiArray.find(emoji => emoji);
-    emoji = foundEmoji.animated ? ` <${foundEmoji.identifier}> ` : ` <:${foundEmoji.identifier}> `;
+    emoji = foundEmoji.animated ? `<${foundEmoji.identifier}>` : `<:${foundEmoji.identifier}>`;
   }
 
   return emoji;
@@ -37,39 +33,39 @@ let capitalizeFirstLetter = function(string) {
 }
 
 let dateFormat = function(date) {
-  return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
+  return (date.getMonth() + 1) + "-" + date.getDate() + "-" + date.getFullYear();
 };
 
 let timeFormat = function(date) {
-  return date.getHours() + ':' + ((date.getMinutes() >= 10) ? ':' : ':0') + date.getMinutes();
+  return date.getHours() + ":" + ((date.getMinutes() >= 10) ? ":" : ":0") + date.getMinutes();
 };
 
 let getMonthName = function(int) {
   switch(int) {
     case 1:
-      return 'January';
+      return "January";
     case 2:
-      return 'February';
+      return "February";
     case 3:
-      return 'March';
+      return "March";
     case 4:
-      return 'April';
+      return "April";
     case 5:
-      return 'May';
+      return "May";
     case 6:
-      return 'June';
+      return "June";
     case 7:
-      return 'July';
+      return "July";
     case 8:
-      return 'August';
+      return "August";
     case 9:
-      return 'September';
+      return "September";
     case 10:
-      return 'October';
+      return "October";
     case 11:
-      return 'November';
+      return "November";
     case 12:
-      return 'December';
+      return "December";
   }
 };
 
@@ -78,32 +74,32 @@ let secondsConverter = function(int) {
 
   let days = Math.floor(remaining / 86400);
   if (days < 10) {
-    days = '0' + days;
+    days = "0" + days;
   }
   remaining = remaining % 86400;
 
   let hours = Math.floor(remaining / 3600);
   if (hours < 10) {
-    hours = '0' + hours;
+    hours = "0" + hours;
   }
   remaining = remaining % 3600;
 
   let minutes = Math.floor(remaining / 60);
   if (minutes < 10) {
-    minutes = '0' + minutes;
+    minutes = "0" + minutes;
   }
   remaining = Math.floor(remaining % 60);
 
   if (remaining < 10) {
-    remaining = '0' + remaining;
+    remaining = "0" + remaining;
   }
 
-  return (days + ':' + hours + ':' + minutes + ':' + remaining);
+  return (days + ":" + hours + ":" + minutes + ":" + remaining);
 };
 
 let getAvailableChannel = function(client, guild) {
-  let channels = guild.channels.cache.filter((channel) => (channel.type === 'text' && channel.permissionsFor(client.user).has('SEND_MESSAGES')
-      && channel.permissionsFor(client.user).has('VIEW_CHANNEL')));
+  let channels = guild.channels.cache.filter((channel) => (channel.type === "text" && channel.permissionsFor(client.user).has("SEND_MESSAGES")
+      && channel.permissionsFor(client.user).has("VIEW_CHANNEL")));
 
   if (channels.first()) {
     return channels.first();
@@ -137,7 +133,7 @@ let generateNewTime = function(date) {
 };
 
 let stripToNums = function(string) {
-  return string.replace(/\D/g,'')
+  return string.replace(/\D/g,"")
 };
 
 let random = function(num) {
@@ -153,11 +149,11 @@ let react = async function(message, reactions) {
       await react(message, reactions);
     }
   } catch (err) {
-    if (err.message == 'Unknown Emoji' && currEmoji) {
+    if (err.message === "Unknown Emoji" && currEmoji) {
       if (reactions.length > 0) {
         await react(message, reactions);
       }
-    } else if (err.message != 'Unknown Message') {
+    } else if (err.message !== "Unknown Message") {
       throw err;
     }
   }

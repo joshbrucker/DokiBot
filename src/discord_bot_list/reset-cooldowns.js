@@ -1,4 +1,4 @@
-const db = require(__basedir + '/database/db.js');
+const db = require(__basedir + "/database/db.js");
 
 let resetCooldowns = function(vote) {
   const ID = vote.user;

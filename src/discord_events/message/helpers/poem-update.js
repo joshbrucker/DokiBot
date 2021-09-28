@@ -1,20 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const isUrl = require('is-url');
-const validFilename = require('valid-filename');
+const fs = require("fs");
+const isUrl = require("is-url");
+const validFilename = require("valid-filename");
 
-const utils = require(__basedir + '/utils.js');
-const db = require(__basedir + '/database/db.js');
+const utils = require(__basedir + "/utils.js");
+const db = require(__basedir + "/database/db.js");
 
 const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/
 
 let dokipoemUpdate = async function(client, guild, message) {
-  let poemChannel = message.guild.channels.cache.find((channel) => channel.name === 'doki-poems');
+  let poemChannel = message.guild.channels.cache.find((channel) => channel.name === "doki-poems");
   if (!poemChannel) {
     return;
   }
 
-  if (!poemChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
+  if (!poemChannel.permissionsFor(client.user).has("SEND_MESSAGES")) {
     return;
   }
 
@@ -41,7 +40,7 @@ let dokipoemUpdate = async function(client, guild, message) {
   } else {
     let filepath = '';
 
-    let msg = poemChannel.messages.fetch(guild.poem_id)
+    poemChannel.messages.fetch(guild.poem_id)
       .then(async (msg) => {
         // Check time to see if it's time to grab a word
         let messageDate = message.createdAt;
@@ -55,32 +54,32 @@ let dokipoemUpdate = async function(client, guild, message) {
         let messageTime = messageDate.getFullYear() + ' ' + messageDate.getMonth() + ' ' + messageDate.getDate();
         let poemTime = poemDate.getFullYear() + ' ' + poemDate.getMonth() + ' ' + poemDate.getDate();
 
-        if (guild.poem_freq == 'hour') {
+        if (guild.poem_freq === "hour") {
           messageTime += ' ' + messageDate.getHours();
           poemTime += ' ' + poemDate.getHours();
-        } else if (guild.poem_freq == 'minute') {
+        } else if (guild.poem_freq === "minute") {
           messageTime += ' ' + messageDate.getHours() + ' ' + messageDate.getMinutes();
           poemTime += ' ' + poemDate.getHours() + ' ' + poemDate.getMinutes();
         }
 
-        if (messageTime != poemTime) {
+        if (messageTime !== poemTime) {
           msg.edit(msg.content + ' ' + firstWord)
             .then(async (newMsg) => {
               let words = newMsg.content.split(' ');
               if (words.length >= 20) {
-                poemChannel.send('You wrote a full doki-poem. Nice!');
+                poemChannel.send("You wrote a full doki-poem. Nice!");
 
                 // Creates file name
                 for (let i = 0; (i < words.length) && (i < 3); i++) {
                   if (validFilename(words[i])) {
-                    filepath += words[i] + ' ';
+                    filepath += words[i] + " ";
                   }
                 }
-                if (filepath == '') {
+                if (filepath === "") {
                   let d = new Date();
-                  filepath = utils.dateFormat(d) + ' ' + utils.timeFormat(d) + '.txt';
+                  filepath = utils.dateFormat(d) + " " + utils.timeFormat(d) + ".txt";
                 } else {
-                  filepath = filepath.slice(0, filepath.length - 1) + '.txt';
+                  filepath = filepath.slice(0, filepath.length - 1) + ".txt";
                 }
 
                 // Create and send .txt file
@@ -105,8 +104,8 @@ let dokipoemUpdate = async function(client, guild, message) {
         }
       })
       .catch(async (err) => {
-        if (err.message == 'Unknown Message') {
-          message.channel.send('Hmm... I can\'t seem to find your old doki-poem. Starting a new one...!');
+        if (err.message === "Unknown Message") {
+          message.channel.send("'Hmm... I can't seem to find your old doki-poem. Starting a new one...!'");
           poemChannel.send(firstWord)
             .then(async (msg) => {
               await db.guild.setPoemId(guild.id, msg.id);
