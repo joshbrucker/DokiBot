@@ -1,4 +1,5 @@
 const ytdl = require("ytdl-core-discord");
+const { joinVoiceChannel } = require('@discordjs/voice');
 
 const LEAVE_TIME = 300000;
 const servers = {};
