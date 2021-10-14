@@ -1,4 +1,5 @@
 const emojis = require(__basedir + "/resources/emojis.json");
+const auth = require(__basedir + "/auth.json");
 
 // Outputs a message with the given commands
 let invalidArgsMsg = function(message, command) {
@@ -7,16 +8,18 @@ let invalidArgsMsg = function(message, command) {
 };
 
 let fetchEmoji = async function (client, guild, channel, name) {
-  function findEmoji(nameOrID) {
-    const emoji = this.emojis.cache.get(nameOrID) || this.emojis.cache.find(e => e.name.toLowerCase() === nameOrID.toLowerCase());
-    if (!emoji) return null;
-    return emoji;
+  function findEmoji(target, { dokihubId, nameOrID }) {
+    if (target.guilds.resolve(dokihubId)) {
+      const emoji = target.emojis.cache.get(nameOrID) || target.emojis.cache.find(e => e.name.toLowerCase() === nameOrID.toLowerCase());
+      if (!emoji) return null;
+      return emoji;
+    }
   }
 
   let emoji = "";
 
   if (guild.me.permissionsIn(channel).has("USE_EXTERNAL_EMOJIS")) {
-    emojiArray = await client.shard.broadcastEval(`(${findEmoji}).call(this, "${emojis[name]}")`);
+    emojiArray = await client.shard.broadcastEval(findEmoji, { context: { dokihubId: auth["dokihubId"], nameOrID: emojis[name] }});
     const foundEmoji = emojiArray.find(emoji => emoji);
     emoji = foundEmoji.animated ? `<${foundEmoji.identifier}>` : `<:${foundEmoji.identifier}>`;
   }
