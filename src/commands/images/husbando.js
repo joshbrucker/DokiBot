@@ -1,4 +1,4 @@
-const danbooru = require(__basedir + "/danbooru/danbooru.js");
+const danbooru = require(__basedir + "/external_services/danbooru/danbooru.js");
 
 let husbando = async function(client, guild, message, args) {
   const channel = message.channel;
