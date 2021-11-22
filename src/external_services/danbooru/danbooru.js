@@ -11,40 +11,31 @@ let hasNsfwTag = function(tags) {
 };
 
 let convertToValidTag = async function(tag) {
-  let res = await booru.get("/tags", { "search[name]": tag, "search[order]": "count" });
-  if (res[0]) {
-    return res[0].name;
-  }
-
   let tokenized = tag.split(/_| /);
-  if (tokenized.length === 2) {
-    let tag1 = tokenized[0] + "_" + tokenized[1];
-    let tag2 = tokenized[1] + "_" + tokenized[0];
-    res = await booru.get("/tags", { "search[name_comma]": tag1 + "," + tag2, "search[order]": "count"});
-    if (res[0]) {
-      return res[0].name;
-    }
+  let wildcarded = tag.replace(/_| /g, ".*");
 
-    res = await booru.get("/tags", { "search[name_matches]": tag1 + "*", "search[order]": "count" });
-    if (res[0]) {
-      return res[0].name;
-    }
+  const [ basicSearch, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2 ] = await Promise.all([
+    booru.get("/tags", { "search[name]": tag, "search[order]": "count" }),
+    (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[0] + "_" + tokenized[1]
+        + ".*," + tokenized[1] + "_" + tokenized[0] + ".*", "search[order]": "count"}) :  [],
+    booru.get("/tags", { "search[name_regex]": wildcarded + ".*", "search[order]": "count" }),
+    booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
+  ]);
 
-    res = await booru.get("/tags", { "search[name_matches]": tag2 + "*", "search[order]": "count" });
-    if (res[0]) {
-      return res[0].name;
-    }
+  if (basicSearch.length > 0 && basicSearch[0] && basicSearch[0]["post_count"] !== 0) {
+    return basicSearch[0].name;
   }
 
-  let wildcard = tag.replace(/_| /g, "*") + "*";
-  res = await booru.get("/tags", { "search[name_matches]": wildcard, "search[order]": "count" });
-  if (res[0]) {
-    return res[0].name;
+  if (japaneseNameSearch.length > 0 && japaneseNameSearch[0]) {
+    return japaneseNameSearch[0].name;
   }
 
-  res = await booru.get("/tags", { "search[name_matches]": "*" + wildcard, "search[order]": "count"  });
-  if (res[0]) {
-    return res[0].name;
+  if (wildCardAttempt1.length > 0 && wildCardAttempt1[0]) {
+    return wildCardAttempt1[0].name;
+  }
+
+  if (wildCardAttempt2.length > 0 && wildCardAttempt2[0]) {
+    return wildCardAttempt2[0].name;
   }
 
   return "n/a";
@@ -52,6 +43,7 @@ let convertToValidTag = async function(tag) {
 
 let generateTags = async function(args, girlOrBoy) {
   let tags = new Set(["-comic", "*" + girlOrBoy, "rating:safe"]);
+  let customTags = [];
 
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
@@ -72,23 +64,28 @@ let generateTags = async function(args, girlOrBoy) {
     } else if (arg === "sound") {
       tags.add("video_with_sound");
     } else {
-      let tag = await convertToValidTag(arg);
-      tags.add(tag);
+      customTags.push(convertToValidTag(arg));
     }
   }
+
+  customTags = await Promise.all(customTags);
+  customTags.forEach(customTag => tags.add(customTag));
 
   return tags;
 };
 
-let tagToTitle = function(title) {
-  title = title.split(" ");
+let tagsToReadable = function(title) {
+  title = title.split(" ")
+  title = title.map(t => t.replace(/_\([^)]*\)/g, "").replace(/_/g, " "));
+  title = Array.from(new Set(title));
 
-  if (title.length > 10) {
-    title = title.slice(0, 10);
+  if (title.length > 5) {
+    title = title.slice(0, 5);
     title.push("...");
   }
-  title = title.join("", "").replace(/_/g, " ").replace(/ *\([^)]*\) */g, "");
+  title = title.join(", ")
 
+  // capitalize first letter of words
   return title.replace(
     /\w\S*\W*/g,
     function(str) {
@@ -105,6 +102,6 @@ let getImage = async function(tags) {
 module.exports = {
   hasNsfwTag,
   generateTags,
-  tagToTitle,
+  tagsToReadable,
   getImage
 }

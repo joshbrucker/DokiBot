@@ -1,4 +1,4 @@
-const anilist = require(__basedir + "/anilist/anilist.js");
+const anilist = require(__basedir + "/external_services/anilist/anilist.js");
 
 let aniuser = async function(client, guild, message, args) {
   let channel = message.channel;
