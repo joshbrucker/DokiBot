@@ -1,29 +1,38 @@
-const anilist = require(__basedir + "/anilist/anilist.js");
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const anilist = require(__basedir + "/external_services/anilist/anilist.js");
 
-let anime = async function(client, guild, message, args) {
-  let channel = message.channel;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('anime')
+    .setDescription('Searches Anilist for an anime.')
+    .addStringOption(option =>
+      option.setName('title')
+        .setDescription('The title of the anime to search for.')
+        .setRequired(true)),
 
-  let title = args.join(" ");
-  let variables = { search: title };
-  let query = `
-    query ($search: String) {
-      Media (search: $search, type: ANIME) {
-        id
+  async execute(interaction) {
+    let title = interaction.options.get("title").value;
+
+    let variables = { search: title };
+    let query = `
+      query ($search: String) {
+        Media (search: $search, type: ANIME) {
+          id
+        }
       }
+    `;
+
+    let res = await anilist.query(query, variables);
+
+    if (res.ok) {
+      let json = await res.json();
+      let data = json.data.Media;
+      interaction.reply("https://anilist.co/anime/" + data.id);
+    } else if (res.status === 404) {
+      interaction.reply("I can\'t find that anime!");
+    } else {
+      interaction.reply("I\'m having some issues reaching Anilist. Is it down?");
+      console.log("Anilist request status:" + res.status);
     }
-  `;
-
-  let res = await anilist.query(query, variables);
-  if (res.ok) {
-    let json = await res.json();
-    let data = json.data.Media;
-    channel.send("https://anilist.co/anime/" + data.id);
-  } else if (res.status === 404) {
-    channel.send("I can\'t find that anime!");
-  } else {
-    channel.send("I\'m having some issues reaching Anilist. Is it down?");
-    console.log("Anilist request status:" + res.status);
-  }
-}
-
-module.exports = anime;
+  },
+};
