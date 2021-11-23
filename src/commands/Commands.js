@@ -2,37 +2,17 @@ const Discord = require("discord.js");
 
 let Commands = new Discord.Collection();
 
-const anime = require("./anilist/anime.js");
-const waifu = require("./images/waifu.js");
-
-Commands.set("anime", {
-  data: anime.data,
-  execute: anime.execute,
-  aliases: []
-});
-
-Commands.set("waifu", {
-  data: waifu.data,
-  execute: waifu.execute,
-  aliases: ["w"]
-});
+Commands.set("anime", require("./anilist/anime.js"));
+Commands.set("aniuser", require("./anilist/aniuser.js"));
+Commands.set("character", require("./anilist/character.js"));
+Commands.set("manga", require("./anilist/manga.js"));
+Commands.set("waifu", require("./images/waifu.js"));
 
 // Below is not looked at yet
-// Commands.set("aniuser",    { run: require("./anilist/aniuser.js") });
-// Commands.set("character",  {
-// 	run: require("./anilist/character.js"),
-// 	aliases: ["char"]
-// });
-// Commands.set("manga",      { run: require("./anilist/manga.js") });
-//
 // Commands.set("moniquote",  { run: require("./fun/moniquote.js") });
 //
 // Commands.set("doki",       { run: require("./images/doki.js") });
 // Commands.set("neko",       { run: require("./images/neko.js") });
-// Commands.set("waifu",      {
-//   run: require("./images/waifu.js"),
-//   aliases: ["w"]
-// });
 // Commands.set("husbando",   {
 //   run: require("./images/husbando.js"),
 //   aliases: ["h"]
