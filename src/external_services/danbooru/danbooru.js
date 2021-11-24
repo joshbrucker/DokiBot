@@ -5,6 +5,12 @@ const utils = require(__basedir + "/utils.js");
 
 const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 
+class InvalidTag {
+  constructor(tag) {
+    this.tag = tag;
+  }
+}
+
 let hasNsfwTag = function(tags) {
   tags = new Set(tags);
   return tags.has("-rating:safe") || tags.has("rating:questionable") || tags.has("rating:explicit");
@@ -38,7 +44,7 @@ let convertToValidTag = async function(tag) {
     return wildCardAttempt2[0].name;
   }
 
-  return "n/a";
+  return new InvalidTag(tag);
 };
 
 let generateTags = async function(args, girlOrBoy) {
@@ -100,6 +106,7 @@ let getImage = async function(tags) {
 };
 
 module.exports = {
+  InvalidTag,
   hasNsfwTag,
   generateTags,
   tagsToReadable,
