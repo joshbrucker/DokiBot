@@ -12,6 +12,7 @@ module.exports = {
         .setRequired(false)),
 
   async execute(interaction) {
+    let channel = interaction.channel;
     let rawTags = interaction.options.get("search_tags");
     let tagList = [];
 
@@ -22,35 +23,31 @@ module.exports = {
     tagList.forEach(t => t.trim());
 
     if (tagList.length > 4) {
-      interaction.reply("You can only have up to 4 tags!");
+      await interaction.reply("You can only have up to 4 tags!");
       return;
     }
 
     if (tagList.length > 0) {
-      interaction.reply("Searching for tags: [ **" + tagList.join(", ") + "** ]");
+      await interaction.reply("Searching for tags: [ **" + tagList.join(", ") + "** ]");
     } else {
-      interaction.reply("Searching for a waifu...");
+      await interaction.reply("Searching for a waifu...");
     }
 
     let parsedTags = [...new Set(await danbooru.generateTags(tagList, "girl"))];
     let invalidTags = parsedTags.filter(t => t instanceof danbooru.InvalidTag).map(t => t.tag);
     let isNsfw = danbooru.hasNsfwTag(parsedTags);
 
-    // tag does not exist
     if (invalidTags.length > 0) {
       await interaction.editReply("Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
         "[ **" + invalidTags.join(", ") + "** ]");
       return;
     }
 
-    // ensure NSFW images only in NSFW channels
     if (isNsfw && !channel.nsfw) {
-      await interaction.editReply("Woah now! This text channel isn't marked NSFW. " +
-        "I probably shouldn't post the steamy stuff here :underage:");
+      await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel :underage:");
       return;
     }
 
-    // retrieve image
     const post = await danbooru.getImage(parsedTags);
     if (post) {
       if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
@@ -63,7 +60,7 @@ module.exports = {
 
       if (post.file_size < 8000000) {
         await interaction.editReply(
-          new Discord.MessagePayload(interaction.channel, {
+          new Discord.MessagePayload(channel, {
             content: "Pictured" + ": **" + danbooru.tagsToReadable(character) + "**\n" +
               "From: **" + danbooru.tagsToReadable(series) + "**",
             files: [ post.large_file_url ]
