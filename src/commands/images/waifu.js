@@ -18,9 +18,8 @@ module.exports = {
 
     if (rawTags) {
       tagList = rawTags.value.toLowerCase().split("$");
+      tagList.forEach(t => t.trim());
     }
-
-    tagList.forEach(t => t.trim());
 
     if (tagList.length > 4) {
       await interaction.reply("You can only have up to 4 tags!");
@@ -28,9 +27,9 @@ module.exports = {
     }
 
     if (tagList.length > 0) {
-      await interaction.reply("Searching for tags: [ **" + tagList.join(", ") + "** ]");
+      await interaction.reply("Searching with tags: [ **" + tagList.join(", ") + "** ]");
     } else {
-      await interaction.reply("Searching for a waifu...");
+      await interaction.reply("Searching for a random waifu...");
     }
 
     let parsedTags = [...new Set(await danbooru.generateTags(tagList, "girl"))];
@@ -51,7 +50,7 @@ module.exports = {
     const post = await danbooru.getImage(parsedTags);
     if (post) {
       if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
-        await interaction.editReply(":x: I can't post this because it contains nsfw loli/shota!");
+        await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota :police_car:");
         return;
       }
 
@@ -73,7 +72,7 @@ module.exports = {
         );
       }
     } else {
-      await interaction.editReply(":x: I can't find a waifu with those tags!");
+      await interaction.editReply(":x: I couldn't find a waifu with those tags :x:");
     }
   }
 }
