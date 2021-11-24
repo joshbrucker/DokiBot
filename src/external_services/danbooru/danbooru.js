@@ -52,37 +52,39 @@ let convertToValidTag = async function(tag) {
   return new InvalidTag(tag);
 };
 
-let generateTags = async function(args, girlOrBoy) {
-  let tags = new Set(["-comic", "*" + girlOrBoy, "rating:safe"]);
+let generateTags = async function(tags, girlOrBoy) {
+  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe"]);
   let customTags = [];
 
-  for (let i = 0; i < args.length; i++) {
-    let arg = args[i];
-    if (arg === "nsfw") {
-      tags.add("-rating:safe")
-      tags.delete("rating:safe");
-    } else if (arg.match(/rating:(explicit|questionable)/)) {
-      tags.add(arg);
-      tags.delete("rating:safe")
-    } else if (arg === "explicit" || arg === "questionable") {
-      tags.add("rating:" + arg);
-      tags.delete("rating:safe");
-    } else if (arg.match(/([1-6]|(6\+))${girlOrBoy}(s)?/)) {
-      tags.add(arg);
-      tags.delete("*" + girlOrBoy);
-    } else if (arg === "gif") {
-      tags.add("animated");
-    } else if (arg === "sound") {
-      tags.add("video_with_sound");
+  tags.forEach(t => {
+    if (t === "nsfw") {
+      finalTags.add("-rating:safe")
+      finalTags.delete("rating:safe");
+    } else if (t.match(/rating:(explicit|questionable)/)) {
+      finalTags.add(t);
+      finalTags.delete("rating:safe")
+    } else if (t === "explicit" || t === "questionable") {
+      finalTags.add("rating:" + t);
+      finalTags.delete("rating:safe");
+    } else if (t === "comic") {
+      finalTags.add("comic");
+      finalTags.delete("-comic");
+    } else if (t.match(/([1-6]|(6\+))${girlOrBoy}(s)?/)) {
+      finalTags.add(t);
+      finalTags.delete("*" + girlOrBoy);
+    } else if (t === "gif" || t === "video") {
+      finalTags.add("animated");
+    } else if (t === "sound" || t === "audio") {
+      finalTags.add("video_with_sound");
     } else {
-      customTags.push(convertToValidTag(arg));
+      customTags.push(convertToValidTag(t));
     }
-  }
+  });
 
-  customTags = await Promise.all(customTags);
-  customTags.forEach(customTag => tags.add(customTag));
+  // gather all custom tags and add them to the final list
+  (await Promise.all(customTags)).forEach(t => finalTags.add(t));
 
-  return tags;
+  return finalTags;
 };
 
 let tagsToReadable = function(title) {
