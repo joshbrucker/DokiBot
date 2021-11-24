@@ -1,33 +1,46 @@
 const Discord = require("discord.js");
-const danbooru = require(__basedir + "/external_services/danbooru/danbooru.js");
-const {SlashCommandBuilder} = require("@discordjs/builders");
+const danbooru = require(__basedir + "/external_services/danbooru/danbooru");
+const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('waifu')
-    .setDescription('Searches Danbooru for an image of a waifu.')
+    .setName("waifu")
+    .setDescription("Searches Danbooru for an image of a waifu.")
     .addStringOption(option =>
-      option.setName('search_tags')
-        .setDescription('Tags to search for. Separate tags with the $ symbol.')
+      option.setName("search_tags")
+        .setDescription("Tags to search for. Separate tags with the $ symbol.")
         .setRequired(false)),
 
   async execute(interaction) {
-    let args = interaction.options.get("search_tags").value.split("$");
-    args.forEach(arg => arg.trim());
+    let rawTags = interaction.options.get("search_tags");
+    let tagList = [];
 
-    if (args.length > 4) {
+    if (rawTags) {
+      tagList = rawTags.value.toLowerCase().split("$");
+    }
+
+    tagList.forEach(t => t.trim());
+
+    if (tagList.length > 4) {
       interaction.reply("You can only have up to 4 tags!");
       return;
     }
 
-    await interaction.reply("Searching for tags: [ **" + args.join(", ") + "** ]...");
+    if (tagList.length > 0) {
+      interaction.reply("Searching for tags: [ **" + tagList.join(", ") + "** ]");
+    } else {
+      interaction.reply("Searching for a waifu...");
+    }
 
-    let tags = new Set(await danbooru.generateTags(args, "girl"));
-    let isNsfw = danbooru.hasNsfwTag(tags);
+    let parsedTags = [...new Set(await danbooru.generateTags(tagList, "girl"))];
+    let invalidTags = parsedTags.filter(t => t instanceof danbooru.InvalidTag).map(t => t.tag);
+    let isNsfw = danbooru.hasNsfwTag(parsedTags);
 
     // tag does not exist
-    if (tags.has("n/a")) {
-      await interaction.editReply("Oops, I can't find that tag!");
+    if (invalidTags.length > 0) {
+      await interaction.editReply("Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
+        "[ **" + invalidTags.join(", ") + "** ]");
+      return;
     }
 
     // ensure NSFW images only in NSFW channels
@@ -38,7 +51,7 @@ module.exports = {
     }
 
     // retrieve image
-    const post = await danbooru.getImage(tags);
+    const post = await danbooru.getImage(parsedTags);
     if (post) {
       if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
         await interaction.editReply(":x: I can't post this because it contains nsfw loli/shota!");
