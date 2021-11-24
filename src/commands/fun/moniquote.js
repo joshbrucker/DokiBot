@@ -6,7 +6,7 @@ const fs = require("fs");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("moniquote")
-    .setDescription("Replies with a quote from Monica."),
+    .setDescription("Replies with a quote from Monika."),
 
   async execute(interaction) {
     let text = await fs.promises.readFile(__basedir + "/resources/moniquote.txt");
