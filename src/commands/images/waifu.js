@@ -37,20 +37,20 @@ module.exports = {
     let isNsfw = danbooru.hasNsfwTag(parsedTags);
 
     if (invalidTags.length > 0) {
-      await interaction.editReply("Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
+      await interaction.editReply(":x: Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
         "[ **" + invalidTags.join(", ") + "** ]");
       return;
     }
 
     if (isNsfw && !channel.nsfw) {
-      await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel :underage:");
+      await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel");
       return;
     }
 
     const post = await danbooru.getImage(parsedTags);
     if (post) {
       if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
-        await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota :police_car:");
+        await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota");
         return;
       }
 
@@ -72,7 +72,7 @@ module.exports = {
         );
       }
     } else {
-      await interaction.editReply(":x: I couldn't find a waifu with those tags :x:");
+      await interaction.editReply(":x: I couldn't find a waifu with those tags");
     }
   }
 }
