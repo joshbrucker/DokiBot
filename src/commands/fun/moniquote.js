@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fs = require("fs");
 
+const { PagingResponse } = require(__basedir + "/classes/PagingResponse");
+
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,19 +31,36 @@ module.exports = {
     let i = 1;
     let currLine = lines[startIndices[quoteNum] + i];
     while (currLine && currLine.replace(/[\r\n]/g, "") !== "") {
-      msg += " " + currLine.replace(/"/g, "").replace(/[\r\n]/g, "\n\n").replace("[player]", interaction.user.username);
+      msg += currLine.replace(/"/g, "").replace("[player]", interaction.user.username) + " ";
       currLine = lines[startIndices[quoteNum] + ++i];
     }
 
-    msg = msg.slice(0, msg.length - 1);
+    msg = msg.split(/[\r\n]/g);
 
-    interaction.reply(new Discord.MessagePayload(interaction.channel, {
-      embeds: [
-        new Discord.MessageEmbed({
-          title: title,
-          description: msg
-        })
-      ]
-    }));
+    // increase length of each page of text
+    let finalMsg = [];
+    for (let i = 0; i < msg.length; i++) {
+      let current = msg[i];
+      while (current.length <= 200 && (i + 1) < msg.length && !msg[i + 1].startsWith(" ...")) {
+        current += msg[++i];
+      }
+      finalMsg.push(current);
+    }
+    finalMsg.push("END");
+
+
+    let msgData = finalMsg.map(line => {
+      return new Discord.MessagePayload(interaction.channel, {
+        embeds: [
+          new Discord.MessageEmbed({
+            title: title,
+            description: line
+          })
+        ]
+      })
+    });
+
+    let pagingResponse = new PagingResponse(interaction, msgData, 60000);
+    await pagingResponse.initialize();
   }
 };
