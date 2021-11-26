@@ -1,14 +1,14 @@
 global.__basedir = __dirname;
 
 const Discord = require("discord.js");
-const setupDbl = require("./external_services/discord_bot_list/setup-dbl.js");
+const setupDbl = require("./external_services/discord-bot-list.js");
 const auth = require("./auth.json");
 const event_handler = require("./event_handlers/event-handler.js");
 
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGE_REACTIONS"] });
 
 // Set up the Discord Bot List connection
-// setupDbl(auth, client);
+setupDbl(auth, client);
 
 // Set client event handlers
 client.on("ready", () => event_handler.on_client_ready(client));
@@ -21,5 +21,3 @@ client.on("messageReactionRemove", (reaction, user) => { event_handler.on_messag
 // client.on("voiceStateUpdate", (oldState, newState) => { event_handler.on_voice_state_change(client, oldState, newState); });
 
 client.login(auth.token);
-
-console.log("uwu");

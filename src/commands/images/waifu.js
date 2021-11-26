@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const danbooru = require(__basedir + "/external_services/danbooru/danbooru");
+const danbooru = require(__basedir + "/external_services/danbooru");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
