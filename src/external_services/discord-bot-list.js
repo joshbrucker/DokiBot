@@ -1,10 +1,8 @@
 const DiscordBotList = require("dblapi.js");
-const resetCooldowns = require("./reset-cooldowns");
+const db = require(__basedir + "/database/db.js");
 
-const DBL_ERROR_MSG = "WARNING: Could not successfully connect to DBL. Are the credentials correct?";
-
-let setupDbl = function(auth, client) {
-  DBL_TOKEN = auth.dbltoken;
+let setupDBL = function(auth, client) {
+  let DBL_TOKEN = auth.dbltoken;
   if (DBL_TOKEN) {
     let port = auth.webhookPort + client.shard.ids[0];
 
@@ -23,8 +21,21 @@ let setupDbl = function(auth, client) {
       console.log(err);
     });
   } else {
-    console.log(DBL_ERROR_MSG);
+    console.log("WARNING: Could not successfully connect to DBL. Are the credentials correct?");
   }
 };
 
-module.exports = setupDbl;
+let resetCooldowns = function(vote) {
+  const ID = vote.user;
+  const DATE = new Date();
+
+  db.member.getMember(ID, (member) => {
+    member = member[0];
+    if (member.submit_cooldown == null || member.submit_cooldown <= date) {
+      return;
+    }
+    db.member.setSubmitCooldown(ID, null);
+  });
+};
+
+module.exports = setupDBL;

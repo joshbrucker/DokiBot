@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const anilist = require(__basedir + "/external_services/anilist/anilist.js");
+const anilist = require(__basedir + "/external_services/anilist.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
