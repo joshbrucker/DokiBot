@@ -29,23 +29,19 @@ let convertToValidTag = async function(tag) {
     booru.get("/tags", { "search[name_regex]": tokenized[1] + "_" + tokenized[0] + ".*", "search[order]": "count" })
   ]);
 
-  if (basicSearch.length > 0 && basicSearch[0] && basicSearch[0]["post_count"] !== 0) {
+  if (basicSearch.length > 0 && basicSearch[0].post_count > 0) {
     return basicSearch[0].name;
   }
-
-  if (japaneseNameSearch.length > 0 && japaneseNameSearch[0]) {
+  else if (japaneseNameSearch.length > 0 && japaneseNameSearch[0].post_count > 0) {
     return japaneseNameSearch[0].name;
   }
-
-  if (wildCardAttempt1.length > 0 && wildCardAttempt1[0]) {
+  else if (wildCardAttempt1.length > 0 && wildCardAttempt1[0].post_count > 0) {
     return wildCardAttempt1[0].name;
   }
-
-  if (wildCardAttempt2.length > 0 && wildCardAttempt2[0]) {
+  else if (wildCardAttempt2.length > 0 && wildCardAttempt2[0].post_count > 0) {
     return wildCardAttempt2[0].name;
   }
-
-  if (japaneseWildcarded.length > 0 && japaneseWildcarded[0]) {
+  else if (japaneseWildcarded.length > 0 && japaneseWildcarded[0].post_count > 0) {
     return japaneseWildcarded[0].name;
   }
 
