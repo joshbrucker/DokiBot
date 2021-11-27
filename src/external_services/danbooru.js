@@ -1,7 +1,7 @@
 const Danbooru = require("danbooru");
 
 const auth = require(__basedir + "/auth.json");
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 

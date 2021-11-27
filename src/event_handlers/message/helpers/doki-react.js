@@ -1,4 +1,4 @@
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 let dokiReact = async function(client, message) {
     let guild = message.guild;

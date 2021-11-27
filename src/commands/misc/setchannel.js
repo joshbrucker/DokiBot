@@ -1,5 +1,5 @@
 const db = require(__basedir + "/database/db.js");
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 let setchannel = function(client, guild, message, args) {
     const channel = message.channel;
