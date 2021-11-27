@@ -1,6 +1,6 @@
 // Very powerful function. Bug test thoroughly when adding changes here.
 const db = require(__basedir + "/database/db.js");
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 let broadcast = function(client, guild, message, args) {
     const channel = message.channel;

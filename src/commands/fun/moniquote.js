@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fs = require("fs");
 
-const { PagingResponse } = require(__basedir + "/classes/PagingResponse");
+const { sendPagedResponse } = require(__basedir + "/utils/paged-response");
 
 
 module.exports = {
@@ -46,21 +46,14 @@ module.exports = {
       }
       finalMsg.push(current);
     }
-    finalMsg.push("END");
-
 
     let msgData = finalMsg.map(line => {
-      return new Discord.MessagePayload(interaction.channel, {
-        embeds: [
-          new Discord.MessageEmbed({
-            title: title,
-            description: line
-          })
-        ]
+      return new Discord.MessageEmbed({
+        title: title,
+        description: line
       })
     });
 
-    let pagingResponse = new PagingResponse(interaction, msgData, 60000);
-    await pagingResponse.initialize();
+    await sendPagedResponse(interaction, msgData, 120000);
   }
 };
