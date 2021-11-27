@@ -2,7 +2,7 @@ const fs = require("fs");
 const isUrl = require("is-url");
 const validFilename = require("valid-filename");
 
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 const db = require(__basedir + "/database/db.js");
 
 const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/

@@ -1,7 +1,7 @@
 const Danbooru = require("danbooru");
 
 const auth = require(__basedir + "/auth.json");
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 let doki = function(client, guild, message, args) {
   const channel = message.channel;

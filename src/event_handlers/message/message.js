@@ -6,7 +6,7 @@ const checkInsults = require("./helpers/check-insults.js");
 const dokiReact = require("./helpers/doki-react.js");
 const poemUpdate = require("./helpers/poem-update.js");
 
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 let on_message = async function(client, message) {
   if (message.channel.name === "doki-poems") {

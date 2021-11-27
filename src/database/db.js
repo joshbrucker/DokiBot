@@ -1,7 +1,7 @@
 const mariadb = require("mariadb");
 
 const auth = require(__basedir + "/auth.json");
-const utils = require(__basedir + "/utils.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 const pool = mariadb.createPool({host: auth.dbHost, user: auth.dbUser, 
   password: auth.dbPass, database: auth.dbName, connectionLimit: 30});
