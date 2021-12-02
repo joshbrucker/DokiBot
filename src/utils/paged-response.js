@@ -3,17 +3,6 @@ const {MessageButton, MessageActionRow, MessageEmbed} = require("discord.js");
 const backId = 'back';
 const forwardId = 'forward';
 
-const backButton = new MessageButton({
-  style: 'SECONDARY',
-  emoji: '◀️',
-  customId: backId
-});
-const forwardButton = new MessageButton({
-  style: 'SECONDARY',
-  emoji: '▶️',
-  customId: forwardId
-});
-
 // can accept an embed or a string message
 let generatePayload = function(data) {
   let options = {};
@@ -30,6 +19,17 @@ let sendPagedResponse = async function(interaction, pageData, timeout) {
   if (pageData.length === 1) {
     return;
   }
+
+  const backButton = new MessageButton({
+    style: 'SECONDARY',
+    emoji: '◀️',
+    customId: backId
+  });
+  const forwardButton = new MessageButton({
+    style: 'SECONDARY',
+    emoji: '▶️',
+    customId: forwardId
+  });
 
   let embed = await interaction.reply({
     ...generatePayload(pageData[0]),
@@ -60,9 +60,18 @@ let sendPagedResponse = async function(interaction, pageData, timeout) {
   })
 
   collector.on("end", async () => {
+    backButton.disabled = true;
+    forwardButton.disabled = true;
+
     await interaction.editReply({
-      ...generatePayload(pageData[currentIndex]),
-      components: []
+      components: [
+        new MessageActionRow({
+          components: [
+            ...(currentIndex ? [backButton] : []),
+            ...(currentIndex < pageData.length - 1 ? [forwardButton] : [])
+          ]
+        })
+      ]
     });
   });
 }
