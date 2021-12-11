@@ -8,8 +8,8 @@ const utils = require(__basedir + '/utils.js');
 let doki = function(client, guild, message, args) {
   const channel = message.channel;
 
-  if (args.length > 5) {
-    channel.send('You can only use up to 5 tags!');
+  if (args.length > 4) {
+    channel.send('You can only use up to 4 tags!');
     return;
   }
 
@@ -67,7 +67,7 @@ let doki = function(client, guild, message, args) {
 
   const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
 
-  booru.posts({ random: true, limit: 50, tags: Array.from(tags).join(' ') })
+  booru.posts({ limit: 50, tags: Array.from(tags).join(' ') })
     .then((posts) => {
       const post = posts[utils.random(posts.length)];
 

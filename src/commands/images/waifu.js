@@ -13,7 +13,7 @@ let waifu = async function(client, guild, message, args) {
     return arg.trim();
   });
 
-  if (args.length > 4) {
+  if (args.length > 3) {
     channel.send('You can only have up to 4 tags!');
     return;
   }
