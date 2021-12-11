@@ -188,7 +188,7 @@
             },
             {
                 "name": "**__Additional Info__**",
-                "value": "\u2022Tags are split with the $ symbol.\n\n\u2022Only allows up to 4 tags.\n\n\u2606\u2606\u2606No need for underscores anymore! Our new algorithm will automatically try to find a tag using whatever you give it. Sometimes you still have to give it the series name, though."
+                "value": "\u2022Tags are split with the $ symbol.\n\n\u2022Only allows up to 3 tags.\n\n\u2606\u2606\u2606No need for underscores anymore! Our new algorithm will automatically try to find a tag using whatever you give it. Sometimes you still have to give it the series name, though."
             }
         ]
     },
