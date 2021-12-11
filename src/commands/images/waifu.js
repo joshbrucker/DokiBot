@@ -21,8 +21,8 @@ module.exports = {
       tagList.forEach(t => t.trim());
     }
 
-    if (tagList.length > 4) {
-      await interaction.reply("You can only have up to 4 tags!");
+    if (tagList.length > 3) {
+      await interaction.reply("You can only have up to 3 tags!");
       return;
     }
 
@@ -62,13 +62,13 @@ module.exports = {
           new Discord.MessagePayload(channel, {
             content: "Pictured" + ": **" + danbooru.tagsToReadable(character) + "**\n" +
               "From: **" + danbooru.tagsToReadable(series) + "**",
-            files: [ post.large_file_url ]
+            files: [ post.file_url ]
           })
         )
       } else {
         await interaction.editReply(
           "Pictured" + ": **" + danbooru.tagsToReadable(character) + "**\n" +
-          "From: **" + danbooru.tagsToReadable(series) + "**\n" + post.large_file_url
+          "From: **" + danbooru.tagsToReadable(series) + "**\n" + post.file_url
         );
       }
     } else {
