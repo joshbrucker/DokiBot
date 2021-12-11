@@ -49,7 +49,7 @@ let convertToValidTag = async function(tag) {
 };
 
 let generateTags = async function(tags, girlOrBoy) {
-  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe"]);
+  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "order:random"]);
   let customTags = [];
 
   tags.forEach(t => {
@@ -104,7 +104,7 @@ let tagsToReadable = function(title) {
 };
 
 let getImage = async function(tags) {
-  let posts = await booru.posts({ random: true, limit: 1, tags: Array.from(tags).join(" ") });
+  let posts = await booru.posts({ limit: 1, tags: Array.from(tags).join(" ") });
   return posts[utils.random(posts.length)];
 };
 
