@@ -1,15 +1,14 @@
-const Discord = require("discord.js");
 const danbooru = require(__basedir + "/external_services/danbooru");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("waifu")
-    .setDescription("Searches Danbooru for an image of a waifu.")
-    .addStringOption(option =>
-      option.setName("search_tags")
-        .setDescription("Tags to search for. Separate tags with the $ symbol.")
-        .setRequired(false)),
+      .setName("waifu")
+      .setDescription("Searches Danbooru for an image of a waifu.")
+      .addStringOption(option =>
+          option.setName("search_tags")
+              .setDescription("Tags to search for. Separate tags with the $ symbol.")
+              .setRequired(false)),
 
   async execute(interaction) {
     let channel = interaction.channel;
@@ -21,8 +20,8 @@ module.exports = {
       tagList.forEach(t => t.trim());
     }
 
-    if (tagList.length > 3) {
-      await interaction.reply("You can only have up to 3 tags!");
+    if (tagList.length > 8) {
+      await interaction.reply("You can only have up to 8 tags!");
       return;
     }
 
@@ -38,7 +37,7 @@ module.exports = {
 
     if (invalidTags.length > 0) {
       await interaction.editReply(":x: Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
-        "[ **" + invalidTags.join(", ") + "** ]");
+          "[ **" + invalidTags.join(", ") + "** ]");
       return;
     }
 
@@ -47,30 +46,17 @@ module.exports = {
       return;
     }
 
-    const post = await danbooru.getImage(parsedTags);
-    if (post) {
+    let posts = await danbooru.getImage(parsedTags, 1);
+
+    if (posts[0]) {
+      let post = posts[0];
+
       if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
         await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota");
         return;
       }
 
-      character = post.tag_string_character;
-      series = post.tag_string_copyright;
-
-      if (post.file_size < 8000000) {
-        await interaction.editReply(
-          new Discord.MessagePayload(channel, {
-            content: "Pictured" + ": **" + danbooru.tagsToReadable(character) + "**\n" +
-              "From: **" + danbooru.tagsToReadable(series) + "**",
-            files: [ post.file_url ]
-          })
-        )
-      } else {
-        await interaction.editReply(
-          "Pictured" + ": **" + danbooru.tagsToReadable(character) + "**\n" +
-          "From: **" + danbooru.tagsToReadable(series) + "**\n" + post.file_url
-        );
-      }
+      await interaction.editReply(await danbooru.generateMessagePayload(post));
     } else {
       await interaction.editReply(":x: I couldn't find a waifu with those tags");
     }
