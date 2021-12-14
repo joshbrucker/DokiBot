@@ -51,7 +51,7 @@ let convertToValidTag = async function(tag) {
 };
 
 let generateTags = async function(tags, girlOrBoy) {
-  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "random:20"]);
+  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "order:random"]);
   let customTags = [];
 
   tags.forEach(t => {
@@ -133,8 +133,8 @@ let generateMessagePayload = async function(post) {
     };
   } else {
     payload = {
-      content: "Pictured: **" + danbooru.tagsToReadable(post.tag_string_character) + "**\n" +
-          "From: **" + danbooru.tagsToReadable(post.tag_string_copyright) + "**\n" +
+      content: "Pictured: **" + tagsToReadable(post.tag_string_character) + "**\n" +
+          "From: **" + tagsToReadable(post.tag_string_copyright) + "**\n" +
           post.large_file_url
     };
   }
