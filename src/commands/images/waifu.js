@@ -7,7 +7,7 @@ module.exports = {
       .setDescription("Searches Danbooru for an image of a waifu.")
       .addStringOption(option =>
           option.setName("search_tags")
-              .setDescription("Tags to search for. Separate tags with the $ symbol.")
+              .setDescription("Search up to 8 tags. Separate tags with the $ symbol.")
               .setRequired(false)),
 
   async execute(interaction) {
@@ -18,6 +18,7 @@ module.exports = {
     if (rawTags) {
       tagList = rawTags.value.toLowerCase().split("$");
       tagList.forEach(t => t.trim());
+      tagList = tagList.filter(t => t !== "");
     }
 
     if (tagList.length > 8) {

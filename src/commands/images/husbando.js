@@ -1,55 +1,65 @@
-const danbooru = require(__basedir + "/external_services/danbooru/danbooru.js");
+const danbooru = require(__basedir + "/external_services/danbooru");
+const { SlashCommandBuilder } = require("@discordjs/builders");
 
-let husbando = async function(client, guild, message, args) {
-  const channel = message.channel;
+module.exports = {
+  data: new SlashCommandBuilder()
+      .setName("husbando")
+      .setDescription("Searches Danbooru for an image of a husbando.")
+      .addStringOption(option =>
+          option.setName("search_tags")
+              .setDescription("Search up to 8 tags. Separate tags with the $ symbol.")
+              .setRequired(false)),
 
-  args = args.join(" ");
-  args = args.split("$");
-  args.forEach((arg) => {
-    return arg.trim();
-  });
+  async execute(interaction) {
+    let channel = interaction.channel;
+    let rawTags = interaction.options.get("search_tags");
+    let tagList = [];
 
-  if (args.length > 4) {
-    channel.send("You can only have up to 4 tags!");
-    return;
-  }
+    if (rawTags) {
+      tagList = rawTags.value.toLowerCase().split("$");
+      tagList.forEach(t => t.trim());
+      tagList = tagList.filter(t => t !== "");
+    }
 
-  const tags = new Set(await danbooru.generateTags(args, "boy"));
-  const isNsfw = danbooru.hasNsfwTag(tags);
-
-  if (tags.has("n/a")) {
-    channel.send("Oops, I can't find that tag!");
-    return;
-  }
-
-  if (isNsfw && !channel.nsfw) {
-    channel.send("Woah now! This text channel isn't marked NSFW. I probably shouldn't post the steamy stuff here :underage:");
-    return;
-  }
-
-  const post = await danbooru.getImage(tags);
-  if (post) {
-    const name = `${post.md5}.${post.file_ext}`;
-    if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
-      channel.send(":x: I can't post this because it contains nsfw loli/shota!");
+    if (tagList.length > 8) {
+      await interaction.reply("You can only have up to 8 tags!");
       return;
     }
 
-    character = post.tag_string_character;
-    series = post.tag_string_copyright;
-      channel.send("Pictured" + ": **" + danbooru.tagToTitle(character) + "**\n"
-          + "From: **" + danbooru.tagToTitle(series) + "**", { files: [post.large_file_url] })
-        .catch((err) => {
-          if (err.message == "Request entity too large") {
-            channel.send("Pictured" + ": **" + danbooru.tagToTitle(character) + "**\n"
-              + "From: **" + danbooru.tagToTitle(series) + "**\n" + post.large_file_url);
-          } else {
-            throw err;
-          }
-        });
-  } else {
-    channel.send(":x: I can't find a waifu with those tags!");
-  }
-};
+    if (tagList.length > 0) {
+      await interaction.reply("Searching with tags: [ **" + tagList.join(", ") + "** ]");
+    } else {
+      await interaction.reply("Searching for a random husbando...");
+    }
 
-module.exports = husbando;
+    let parsedTags = [...new Set(await danbooru.generateTags(tagList, "boy"))];
+    let invalidTags = parsedTags.filter(t => t instanceof danbooru.InvalidTag).map(t => t.tag);
+    let isNsfw = danbooru.hasNsfwTag(parsedTags);
+
+    if (invalidTags.length > 0) {
+      await interaction.editReply(":x: Oops, I can't find the following tag" + (invalidTags.length > 1 ? "s" : "") + ": " +
+          "[ **" + invalidTags.join(", ") + "** ]");
+      return;
+    }
+
+    if (isNsfw && !channel.nsfw) {
+      await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel");
+      return;
+    }
+
+    let posts = await danbooru.getImage(parsedTags, 1);
+
+    if (posts[0]) {
+      let post = posts[0];
+
+      if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
+        await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota");
+        return;
+      }
+
+      await interaction.editReply(await danbooru.generateMessagePayload(post));
+    } else {
+      await interaction.editReply(":x: I couldn't find a husbando with those tags");
+    }
+  }
+}
