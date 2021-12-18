@@ -20,19 +20,24 @@ let hasNsfwTag = function(tags) {
 
 let convertToValidTag = async function(tag) {
   let tokenized = tag.split(/_| /);
+  let matching = tag.replace(/_| /g, "*");
   let wildcarded = tag.replace(/_| /g, ".*");
 
-  const [ basicSearch, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2, japaneseWildcarded ] = await Promise.all([
+  const [ basicSearch, tagAliases, tagAliases2, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2, japaneseWildcarded ] = await Promise.all([
     booru.get("/tags", { "search[name]": tag, "search[order]": "count" }),
+    booru.get("/tag_aliases", { "search[antecedent_name]": tag }),
+    booru.get("/tag_aliases", { "search[name_matches]": matching + "*" }),
     (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[1] + "_" + tokenized[0], "search[order]": "count"}) :  [],
     booru.get("/tags", { "search[name_regex]": wildcarded + ".*", "search[order]": "count" }),
-    booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
     booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
     booru.get("/tags", { "search[name_regex]": tokenized[1] + "_" + tokenized[0] + ".*", "search[order]": "count" })
   ]);
 
   if (basicSearch.length > 0 && basicSearch[0].post_count > 0) {
     return basicSearch[0].name;
+  }
+  else if (tagAliases.length > 0) {
+      return tagAliases[0].consequent_name;
   }
   else if (japaneseNameSearch.length > 0 && japaneseNameSearch[0].post_count > 0) {
     return japaneseNameSearch[0].name;
@@ -45,6 +50,9 @@ let convertToValidTag = async function(tag) {
   }
   else if (japaneseWildcarded.length > 0 && japaneseWildcarded[0].post_count > 0) {
     return japaneseWildcarded[0].name;
+  }
+  else if (tagAliases2.length > 0) {
+      return tagAliases2[0].consequent_name;
   }
 
   return new InvalidTag(tag);
