@@ -1,6 +1,5 @@
 const fs = require("fs");
 const isUrl = require("is-url");
-const validFilename = require("valid-filename");
 
 const utils = require(__basedir + "/utils/utils.js");
 const db = require(__basedir + "/database/db.js");
@@ -71,9 +70,7 @@ let dokipoemUpdate = async function(client, guild, message) {
 
                 // Creates file name
                 for (let i = 0; (i < words.length) && (i < 3); i++) {
-                  if (validFilename(words[i])) {
-                    filepath += words[i] + " ";
-                  }
+                  filepath += words[i] + " ";
                 }
                 if (filepath === "") {
                   let d = new Date();

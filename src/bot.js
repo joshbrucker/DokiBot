@@ -1,9 +1,10 @@
 global.__basedir = __dirname;
 
 const Discord = require("discord.js");
-const setupDbl = require("./external_services/discord-bot-list.js");
+
 const auth = require("./auth.json");
 const event_handler = require("./event_handlers/event-handler.js");
+const setupDbl = require("./external_services/discord-bot-list.js");
 
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGE_REACTIONS"] });
 
