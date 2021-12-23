@@ -7,7 +7,7 @@ let on_client_ready = function(client) {
   const rest = new REST({ version: '9' }).setToken(auth.token);
   const commandJSONs = Commands.map(command => command.data);
 
-  rest.put(Routes.applicationGuildCommands(auth.clientId, "403991118775320577"), { body: commandJSONs })
+  rest.put(Routes.applicationGuildCommands(auth.clientId, auth.testGuild), { body: commandJSONs })
       .then(() => console.log('Successfully registered application commands.'))
       .catch(console.error);
 
