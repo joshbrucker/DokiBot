@@ -21,8 +21,8 @@ module.exports = {
       tagList = tagList.filter(t => t !== "");
     }
 
-    if (tagList.length > 8) {
-      await interaction.reply("You can only have up to 8 tags!");
+    if (tagList.length > 6) {
+      await interaction.reply("You can only have up to 6 tags!");
       return;
     }
 
@@ -50,14 +50,7 @@ module.exports = {
     let posts = await danbooru.getImage(parsedTags, 1);
 
     if (posts[0]) {
-      let post = posts[0];
-
-      if (isNsfw && (post.tag_string.includes("loli") || post.tag_string.includes("shota"))) {
-        await interaction.editReply(":police_car: I can't post this because it contains the tags NSFW and loli/shota");
-        return;
-      }
-
-      await interaction.editReply(await danbooru.generateMessagePayload(post));
+      await interaction.editReply(await danbooru.generateMessagePayload(posts[0]));
     } else {
       await interaction.editReply(":x: I couldn't find a waifu with those tags");
     }
