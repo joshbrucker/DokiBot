@@ -3,7 +3,7 @@ const Danbooru = require("danbooru");
 const auth = require(__basedir + "/auth.json");
 const utils = require(__basedir + "/utils/utils.js");
 const Vibrant = require("node-vibrant");
-const {MessageEmbed, MessagePayload} = require("discord.js");
+const { MessageEmbed, MessagePayload } = require("discord.js");
 
 const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 
@@ -59,7 +59,7 @@ let convertToValidTag = async function(tag) {
 };
 
 let generateTags = async function(tags, girlOrBoy) {
-  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "order:random"]);
+  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "order:random", "-loli", "-shota"]);
   let customTags = [];
 
   tags.forEach(t => {
@@ -116,7 +116,6 @@ let tagsToReadable = function(title) {
 let getImage = async function(tags, imageCount) {
   return await booru.posts({limit: imageCount, tags: Array.from(tags).join(" ")});
 };
-
 
 let generateMessagePayload = async function(post) {
   let payload;
