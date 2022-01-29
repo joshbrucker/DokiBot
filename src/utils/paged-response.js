@@ -1,51 +1,55 @@
-const {MessageButton, MessageActionRow, MessageEmbed} = require("discord.js");
+const { MessageButton, MessageActionRow, MessageEmbed } = require("discord.js");
 
-const backId = 'back';
-const forwardId = 'forward';
+const backId = "back";
+const forwardId = "forward";
 
-// can accept an embed or a string message
+// ensures that content/embeds do not persist across pages
 let generatePayload = function(data) {
-  let options = {};
+  let { content, embeds } = data;
+  return { content: content || null, embeds: embeds || null };
+};
 
-  if (data instanceof MessageEmbed) {
-    options.embeds = [ data ];
-  } else {
-    options.content = data;
-  }
-  return options;
-}
-
-let sendPagedResponse = async function(interaction, pageData, timeout) {
+let sendPagedResponse = async function(interaction, pageData, attachments=[], timeout=120000) {
   if (pageData.length === 1) {
+    await interaction.reply({
+      ...generatePayload(pageData[0]),
+      files: attachments
+    });
     return;
   }
 
   const backButton = new MessageButton({
-    style: 'SECONDARY',
-    emoji: '◀️',
+    style: "SECONDARY",
+    emoji: "◀️",
     customId: backId
   });
   const forwardButton = new MessageButton({
-    style: 'SECONDARY',
-    emoji: '▶️',
+    style: "SECONDARY",
+    emoji: "▶️",
     customId: forwardId
   });
 
   let embed = await interaction.reply({
     ...generatePayload(pageData[0]),
-    components: [new MessageActionRow({components: [forwardButton]})],
+    files: attachments,
+    components: pageData.length > 1 ? [new MessageActionRow({components: [forwardButton]})] : [],
     fetchReply: true
   });
 
   const collector = embed.createMessageComponentCollector({
     time: timeout
-  })
+  });
 
-  let currentIndex = 0
+  let currentIndex = 0;
   collector.on("collect", async interaction => {
     collector.resetTimer();
 
-    interaction.customId === backId ? (currentIndex -= 1) : (currentIndex += 1)
+    if (interaction.customId === backId) {
+      currentIndex -= 1;
+    } else {
+      currentIndex += 1;
+    }
+
     await interaction.update({
       ...generatePayload(pageData[currentIndex]),
       components: [
@@ -57,7 +61,7 @@ let sendPagedResponse = async function(interaction, pageData, timeout) {
         })
       ]
     });
-  })
+  });
 
   collector.on("end", async () => {
     backButton.disabled = true;
@@ -74,9 +78,6 @@ let sendPagedResponse = async function(interaction, pageData, timeout) {
       ]
     });
   });
-}
-
-module.exports = {
-  sendPagedResponse
 };
 
+module.exports = sendPagedResponse;

@@ -2,12 +2,12 @@ const emojis = require(__basedir + "/resources/emojis.json");
 const auth = require(__basedir + "/auth.json");
 
 // Outputs a message with the given commands
-let invalidArgsMsg = function(message, command) {
-  message.channel.send(":x: **" + message.member.displayName + "**, that's not a valid use of \`" + command + "\`!\n"
-      + "Use \`help " + command + "\` for more info.");
-};
+function invalidArgsMsg(message, command) {
+  message.channel.send(":x: **" + message.member.displayName + "**, that's not a valid use of \`" + command + "\`!\n" +
+      "Use \`help " + command + "\` for more info.");
+}
 
-let fetchEmoji = async function (client, guild, channel, name) {
+async function fetchEmoji(client, guild, channel, name) {
   function findEmoji(target, { dokihubId, nameOrID }) {
     if (target.guilds.resolve(dokihubId)) {
       const emoji = target.emojis.cache.get(nameOrID) || target.emojis.cache.find(e => e.name.toLowerCase() === nameOrID.toLowerCase());
@@ -25,25 +25,25 @@ let fetchEmoji = async function (client, guild, channel, name) {
   }
 
   return emoji;
-};
+}
 
-let sleep = function(milliseconds) {
+function sleep(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-let capitalizeFirstLetter = function(string) {
+function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-let dateFormat = function(date) {
+function dateFormat(date) {
   return (date.getMonth() + 1) + "-" + date.getDate() + "-" + date.getFullYear();
-};
+}
 
-let timeFormat = function(date) {
+function timeFormat(date) {
   return date.getHours() + ":" + ((date.getMinutes() >= 10) ? ":" : ":0") + date.getMinutes();
-};
+}
 
-let getMonthName = function(int) {
+function getMonthName(int) {
   switch(int) {
     case 1:
       return "January";
@@ -70,9 +70,9 @@ let getMonthName = function(int) {
     case 12:
       return "December";
   }
-};
+}
 
-let secondsConverter = function(int) {
+function secondsConverter(int) {
   let remaining = int;
 
   let days = Math.floor(remaining / 86400);
@@ -98,20 +98,22 @@ let secondsConverter = function(int) {
   }
 
   return (days + ":" + hours + ":" + minutes + ":" + remaining);
-};
+}
 
-let getAvailableChannel = function(client, guild) {
-  let channels = guild.channels.cache.filter((channel) => (channel.type === "text" && channel.permissionsFor(client.user).has("SEND_MESSAGES")
-      && channel.permissionsFor(client.user).has("VIEW_CHANNEL")));
+function getAvailableChannel(client, guild) {
+  let channels = guild.channels.cache.filter((channel) =>
+      channel.type === "text" &&
+      channel.permissionsFor(client.user).has("SEND_MESSAGES" &&
+      channel.permissionsFor(client.user).has("VIEW_CHANNEL")));
 
   if (channels.first()) {
     return channels.first();
   } else {
     return null;
   }
-};
+}
 
-let getMembers = function(guild) {
+function getMembers(guild) {
   let members = guild.members.cache.array();
   let humans = [];
   for (let i = 0; i < members.length; i++) {
@@ -120,9 +122,9 @@ let getMembers = function(guild) {
     }
   }
   return humans;
-};
+}
 
-let generateNewTime = function(date) {
+function generateNewTime(date) {
   let newDate = new Date(date);
   let hours = Math.floor(Math.random() * 24);
   let minutes = Math.floor(Math.random() * 64);
@@ -133,18 +135,18 @@ let generateNewTime = function(date) {
   newDate.setDate(newDate.getDate() + 1);
 
   return newDate;
-};
+}
 
-let stripToNums = function(string) {
-  return string.replace(/\D/g,"")
-};
+function stripToNums(string) {
+  return string.replace(/\D/g,"");
+}
 
-let random = function(num) {
+function random(num) {
   return Math.floor(Math.random() * num);
-};
+}
 
 // Takes in an array of emojis and reacts in order
-let react = async function(message, reactions) {
+async function react(message, reactions) {
   let currEmoji = reactions.shift();
   try {
     await message.react(currEmoji);
@@ -162,8 +164,19 @@ let react = async function(message, reactions) {
   }
 };
 
-let insertPrefix = function(dbGuild, string) {
+function insertPrefix(dbGuild, string) {
   return string.replace(/%p/g, dbGuild.prefix);
+}
+
+function prefixWithAnOrA(word, capitalize=false) {
+  let result = (word.startsWith("a") || word.startsWith("e") || word.startsWith("i") ||
+      word.startsWith("o") || word.startsWith("u")) ? "an" : "a";
+
+  return (capitalize ? result[0].toUpperCase() : result) + " " + word;
+}
+
+function maybePluralize(count, noun, suffix="s") {
+  return `${count} ${noun}${count !== 1 ? suffix : ''}`;
 }
 
 module.exports = {
@@ -180,5 +193,7 @@ module.exports = {
   fetchEmoji,
   react,
   capitalizeFirstLetter,
-  insertPrefix
+  insertPrefix,
+  prefixWithAnOrA,
+  maybePluralize
 };
