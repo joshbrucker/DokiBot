@@ -8,6 +8,7 @@ Commands.set("character", require("./anilist/character.js"));
 Commands.set("husbando", require("./images/husbando.js"));
 Commands.set("manga", require("./anilist/manga.js"));
 Commands.set("moniquote", require("./fun/moniquote.js"));
+Commands.set("neko", require("./images/neko.js"));
 Commands.set("poem", require("./fun/poem.js"));
 Commands.set("waifu", require("./images/waifu.js"));
 
