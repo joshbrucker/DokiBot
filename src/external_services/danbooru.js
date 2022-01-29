@@ -1,9 +1,9 @@
 const Danbooru = require("danbooru");
+const Vibrant = require("node-vibrant");
+const { MessageEmbed, MessagePayload } = require("discord.js");
 
 const auth = require(__basedir + "/auth.json");
 const utils = require(__basedir + "/utils/utils.js");
-const Vibrant = require("node-vibrant");
-const { MessageEmbed, MessagePayload } = require("discord.js");
 
 const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 
@@ -37,7 +37,7 @@ let convertToValidTag = async function(tag) {
     return basicSearch[0].name;
   }
   else if (tagAliases.length > 0) {
-      return tagAliases[0].consequent_name;
+    return tagAliases[0].consequent_name;
   }
   else if (japaneseNameSearch.length > 0 && japaneseNameSearch[0].post_count > 0) {
     return japaneseNameSearch[0].name;
@@ -52,32 +52,35 @@ let convertToValidTag = async function(tag) {
     return japaneseWildcarded[0].name;
   }
   else if (tagAliases2.length > 0) {
-      return tagAliases2[0].consequent_name;
+    return tagAliases2[0].consequent_name;
   }
 
   return new InvalidTag(tag);
 };
 
-let generateTags = async function(tags, girlOrBoy) {
-  let finalTags = new Set(["-comic", "*" + girlOrBoy, "rating:safe", "order:random", "-loli", "-shota"]);
+let generateTags = async function(defaultTags, requestedTags) {
+  let finalTags = new Set([...defaultTags]);
   let customTags = [];
 
-  tags.forEach(t => {
+  requestedTags.forEach(t => {
     if (t === "nsfw") {
-      finalTags.add("-rating:safe")
+      finalTags.add("-rating:safe");
       finalTags.delete("rating:safe");
     } else if (t.match(/rating:(explicit|questionable)/)) {
       finalTags.add(t);
-      finalTags.delete("rating:safe")
+      finalTags.delete("rating:safe");
     } else if (t === "explicit" || t === "questionable") {
       finalTags.add("rating:" + t);
       finalTags.delete("rating:safe");
     } else if (t === "comic") {
       finalTags.add("comic");
       finalTags.delete("-comic");
-    } else if (t.match(/([1-6]|(6\+))${girlOrBoy}(s)?/)) {
+    } else if (t.match(/([1-6]|(6\+))girl(s)?/)) {
       finalTags.add(t);
-      finalTags.delete("*" + girlOrBoy);
+      finalTags.delete("*girl");
+    } else if (t.match(/([1-6]|(6\+))boy(s)?/)) {
+      finalTags.add(t);
+      finalTags.delete("*boy");
     } else if (t === "gif" || t === "video") {
       finalTags.add("animated");
     } else if (t === "sound" || t === "audio") {
@@ -94,7 +97,7 @@ let generateTags = async function(tags, girlOrBoy) {
 };
 
 let tagsToReadable = function(title) {
-  title = title.split(" ")
+  title = title.split(" ");
   title = title.map(t => t.replace(/_\([^)]*\)/g, "").replace(/_/g, " "));
   title = Array.from(new Set(title));
 
@@ -102,7 +105,7 @@ let tagsToReadable = function(title) {
     title = title.slice(0, 5);
     title.push("...");
   }
-  title = title.join(", ")
+  title = title.join(", ");
 
   // capitalize first letter of words
   return title.replace(
@@ -147,7 +150,7 @@ let generateMessagePayload = async function(post) {
   }
 
   return payload;
-}
+};
 
 
 module.exports = {
@@ -157,4 +160,4 @@ module.exports = {
   tagsToReadable,
   getImage,
   generateMessagePayload
-}
+};
