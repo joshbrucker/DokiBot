@@ -1,7 +1,7 @@
-const db = require(__basedir + "/database/db.js");
+const GuildModel = require(__basedir + "/database/models/GuildModel.js");
 
-let on_guild_delete = async function(client, guild) {
-  await db.guild.removeGuild(guild.id);
-}
+let onGuildDelete = async function(client, guild) {
+  await GuildModel.remove(guild.id);
+};
 
-module.exports = on_guild_delete;
+module.exports = onGuildDelete;

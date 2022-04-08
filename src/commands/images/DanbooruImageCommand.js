@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 const danbooru = require(__basedir + "/external_services/danbooru");
-const utils = require(__basedir + "/utils/utils");
+const { ignoreUnkownMessage, maybePluralize, prefixWithAnOrA } = require(__basedir + "/utils/string-utils.js");
 
 class SearchType {
   constructor(name, tags) {
@@ -29,10 +29,10 @@ class DanbooruImageCommand {
     this.slashCommand = new SlashCommandBuilder()
         .setName(this.imageType.name)
         .setDescription(`Searches for an image of a ${this.imageType.name}.`)
-        .addStringOption(option =>
-            option.setName("tags")
-                .setDescription(`Search up to ${this.allowedTagCount} tags. Separate tags with the $ symbol.`)
-                .setRequired(false));
+        .addStringOption(option => option
+            .setName("tags")
+            .setDescription(`Search up to ${this.allowedTagCount} tags. Separate tags with the $ symbol.`)
+            .setRequired(false));
   }
  
   getCommand() {
@@ -58,31 +58,36 @@ class DanbooruImageCommand {
           if (this.imageType === booruSearchTypes.ANY) {
             await interaction.reply("Searching for an image...");
           } else {
-            await interaction.reply(`Searching for ${utils.prefixWithAnOrA(this.imageType.name)}...`);
+            await interaction.reply(`Searching for ${prefixWithAnOrA(this.imageType.name)}...`);
           }
         }
 
         let { allTags, invalidTags, isNsfw } = await parseTags(this.defaultTags, requestedTags);
 
         if (invalidTags.length > 0) {
-          await interaction.editReply(`:x: Oops, I can't find the following ${utils.maybePluralize("tag", invalidTags.length)} [ **${invalidTags.join(", ")}** ]`);
+          await interaction.editReply(`:x: Oops, I can't find the following ${maybePluralize("tag", invalidTags.length)} [ **${invalidTags.join(", ")}** ]`)
+              .catch(ignoreUnkownMessage);
           return;
         }
 
         if (isNsfw && !channel.nsfw) {
-          await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel");
+          await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel")
+              .catch(ignoreUnkownMessage);
           return;
         }
 
         let posts = await danbooru.getImage(allTags, 1);
 
         if (posts[0]) {
-          await interaction.editReply(await danbooru.generateMessagePayload(posts[0]));
+          await interaction.editReply(await danbooru.generateMessagePayload(posts[0]))
+              .catch(ignoreUnkownMessage);
         } else {
           if (this.imageType === booruSearchTypes.ANY) {
-            await interaction.editReply(":x: I couldn't find an image with those tags");
+            await interaction.editReply(":x: I couldn't find an image with those tags")
+                .catch(ignoreUnkownMessage);
           } else {
-            await interaction.editReply(`:x: I couldn't find ${utils.prefixWithAnOrA(this.imageType.name)} with those tags`);
+            await interaction.editReply(`:x: I couldn't find ${prefixWithAnOrA(this.imageType.name)} with those tags`)
+                .catch(ignoreUnkownMessage);
           }
         }
 

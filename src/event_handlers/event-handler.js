@@ -1,17 +1,17 @@
-const on_client_ready = require("./client_ready/client-ready");
-const on_guild_create = require("./guild_create/guild-create");
-const on_interaction_create = require("./interaction_create/interaction-create");
-const on_guild_delete = require("./guild_delete/guild-delete");
-const on_message = require("./message/message");
-const on_message_react_add = require("./message_react_add/message-react-add");
-const on_message_react_remove = require("./message_react_remove/message-react-remove");
+const onClientReady = require("./client_ready/client-ready");
+const onGuildCreate = require("./guild_create/guild-create");
+const onInteractionCreate = require("./interaction_create/interaction-create");
+const onGuildDelete = require("./guild_delete/guild-delete");
+const onMessage = require("./message/message");
+const onMessageReactAdd = require("./message_react_add/message-react-add");
+const onMessageReactRemove = require("./message_react_remove/message-react-remove");
 
 module.exports = {
-	on_client_ready,
-	on_guild_create,
-	on_guild_delete,
-	on_interaction_create,
-	on_message_react_add,
-	on_message_react_remove,
-	on_message,
-}
+  onClientReady,
+  onGuildCreate,
+  onGuildDelete,
+  onInteractionCreate,
+  onMessageReactAdd,
+  onMessageReactRemove,
+  onMessage
+};

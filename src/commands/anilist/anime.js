@@ -5,8 +5,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("anime")
     .setDescription("Searches Anilist for an anime.")
-    .addStringOption(option =>
-      option.setName("title")
+    .addStringOption(option => option
+        .setName("title")
         .setDescription("The title of the anime to search for.")
         .setRequired(true)),
 
