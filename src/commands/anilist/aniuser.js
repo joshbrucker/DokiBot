@@ -5,8 +5,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("aniuser")
     .setDescription("Searches Anilist for a user.")
-    .addStringOption(option =>
-      option.setName("name")
+    .addStringOption(option => option
+        .setName("name")
         .setDescription("The name of the user to search for.")
         .setRequired(true)),
 

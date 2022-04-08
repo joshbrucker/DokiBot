@@ -1,117 +1,272 @@
+const { MessageEmbed } = require("discord.js");
+const contractions = require("expand-contractions");
 const fs = require("fs");
 const isUrl = require("is-url");
+const WordPOS = require("wordpos");
 
 const utils = require(__basedir + "/utils/utils.js");
 const db = require(__basedir + "/database/db.js");
 
-const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/
+const articles = ["a", "an", "the"];
 
-let dokipoemUpdate = async function(client, guild, message) {
-  let poemChannel = message.guild.channels.cache.find((channel) => channel.name === "doki-poems");
-  if (!poemChannel) {
-    return;
-  }
+// WORDS
+const personalPronouns = ["i", "we", "you", "he", "she", "it", "they"];
+const objectPronouns = ["me", "us", "you", "her", "him", "it", "them"];
+const possessivePronouns = ["mine", "ours", "yours", "hers", "his", "theirs"];
 
-  if (!poemChannel.permissionsFor(client.user).has("SEND_MESSAGES")) {
-    return;
-  }
+const possessives = ["my", "our", "your", "his", "her", "its", "their"];
 
-  let firstWord = message.content.split(' ')[0];
-  if (!firstWord) {
-    return;
-  }
+const conjunctions = ["and", "but", "yet"];
 
-  if (isUrl(firstWord)) {
-    return;
-  }
+const commonPrepositions = ["about", "above", "across", "after", "against", "among",
+    "around", "at", "before", "behind", "below", "beside", "between", "by", "down",
+    "during", "for", "from", "in", "inside", "into", "near", "of", "off", "on",
+    "out", "over", "through", "to", "toward", "under", "up", "with"];
+const lessCommonPrepositions = ["aboard", "along", "amid", "as", "beneath", "beyond",
+    "but", "concerning", "considering", "despite", "except", "following", "like",
+    "minus", "next", "onto", "opposite", "outside", "past", "per", "plus", "regarding",
+    "round", "save", "since", "than", "till", "underneath", "unlike", "until", "upon",
+    "versus", "via", "within", "without"];
+const prepositions = commonPrepositions.concat(lessCommonPrepositions);
 
-  if (firstWord.length > 99) {
-    return;
-  }
+let dokipoemUpdate = async function(client, guildData, message) {
+  let currentPoem = guildData.currentPoem;
+  let nextWord = await generateNextWord(message);
 
-  if (firstWord.match(COMMON_PREFIXES)) {
-    return;
-  }
-  
-  if (!guild.poem_id) {
-    let msg = await poemChannel.send(firstWord)
-    await db.guild.setPoemId(guild.id, msg.id);
+  if (!nextWord) return;
+
+  if (currentPoem == null) {
+    currentPoem = nextWord[0].toUpperCase() + nextWord.substr(1);
   } else {
-    let filepath = '';
-
-    poemChannel.messages.fetch(guild.poem_id)
-      .then(async (msg) => {
-        // Check time to see if it's time to grab a word
-        let messageDate = message.createdAt;
-        let poemDate;
-        if (msg.editedAt) {
-          poemDate = msg.editedAt;
-        } else {
-          poemDate = msg.createdAt;
-        }
-
-        let messageTime = messageDate.getFullYear() + ' ' + messageDate.getMonth() + ' ' + messageDate.getDate();
-        let poemTime = poemDate.getFullYear() + ' ' + poemDate.getMonth() + ' ' + poemDate.getDate();
-
-        if (guild.poem_freq === "hour") {
-          messageTime += ' ' + messageDate.getHours();
-          poemTime += ' ' + poemDate.getHours();
-        } else if (guild.poem_freq === "minute") {
-          messageTime += ' ' + messageDate.getHours() + ' ' + messageDate.getMinutes();
-          poemTime += ' ' + poemDate.getHours() + ' ' + poemDate.getMinutes();
-        }
-
-        if (messageTime !== poemTime) {
-          msg.edit(msg.content + ' ' + firstWord)
-            .then(async (newMsg) => {
-              let words = newMsg.content.split(' ');
-              if (words.length >= 20) {
-                poemChannel.send("You wrote a full doki-poem. Nice!");
-
-                // Creates file name
-                for (let i = 0; (i < words.length) && (i < 3); i++) {
-                  filepath += words[i] + " ";
-                }
-                if (filepath === "") {
-                  let d = new Date();
-                  filepath = utils.dateFormat(d) + " " + utils.timeFormat(d) + ".txt";
-                } else {
-                  filepath = filepath.slice(0, filepath.length - 1) + ".txt";
-                }
-
-                // Create and send .txt file
-                fs.writeFile(filepath, newMsg.content, (err) => {
-                  if (err) console.log(err);
-
-                  poemChannel.send({files: [filepath]})
-                    .finally(() => {
-                      fs.stat(filepath, (err, stat) => {
-                        if (!err) {
-                          fs.unlink(filepath, (err) => {
-                            if (err) console.log(err);
-                          });
-                        }
-                      });
-                    });
-                });
-
-                await db.guild.setPoemId(guild.id, null);
-              }
-            });
-        }
-      })
-      .catch(async (err) => {
-        if (err.message === "Unknown Message") {
-          message.channel.send("'Hmm... I can't seem to find your old doki-poem. Starting a new one...!'");
-          poemChannel.send(firstWord)
-            .then(async (msg) => {
-              await db.guild.setPoemId(guild.id, msg.id);
-            });
-        } else {
-          throw err;
-        }
-      });
+    currentPoem += " " + nextWord;
   }
+
+  let allLines = currentPoem.split("\n\n");
+  let lastLine = allLines[allLines.length - 1];
+  let wordsInLine = lastLine.split(" ");
+
+  let oddsOfEndingLine = wordsInLine.length * 3;
+
+  if (oddsOfEndingLine > (utils.random(100) + 1)) {
+    // end line
+    currentPoem += "\n\n";
+
+    let oddsOfEndingPoem = allLines.length * 5;
+    if (oddsOfEndingPoem > (utils.random(100) + 1)) {
+      let embed = new MessageEmbed()
+          .setTitle("Your Poem")
+          .setDescription(currentPoem);
+
+      await message.channel.send({embeds: [embed]});
+
+      currentPoem = null;
+    }
+  }
+
+  await guildData.updateCurrentPoem(currentPoem);
 };
+
+
+async function generateNextWord(message) {
+  let cleanedInput = cleanInput(message.content);
+  if (!cleanedInput) return null;
+
+  let splitInput = cleanedInput.split(" ");
+
+  return getRandomFromList(splitInput);
+}
+
+// If you are trying to read the below code... I am sorry.
+// This is manual language processing that I decided to put on hold for now (or forever)...
+
+// async function generateNextWord(currentPoem, message) {
+//   let wordpos = new WordPOS({ stopwords: false });
+//   let cleanedInput = cleanInput(message.content);
+
+//   if (!cleanedInput) return;
+
+//   let pos = processPOSWithCustomFields(await wordpos.getPOS(cleanedInput));
+
+//   // Get any word
+//   if (!currentPoem || currentPoem.endsWith("\n\n")) {
+//     let splitInput = cleanedInput.split(" ");
+//     return getRandomFromList(splitInput);
+//   }
+
+//   let lastLine = currentPoem.split("\n\n").pop();
+//   let lineWords = lastLine.split(" ");
+//   let lastWord = lineWords.pop().toLowerCase();
+
+//   let nextWord;
+//   if (lastWord === "a") {
+//     let consonantNouns = pos.nouns.filter(value => !utils.startsWithVowel(value));
+//     let consonantAdjectives = pos.adjectives.filter(value => !utils.startsWithVowel(value));
+//     let consonantAdverbs = pos.adjectives.filter(value => !utils.startsWithVowel(value));
+
+//     let deciderVal = utils.random(100);
+
+//     let randomNoun = getRandomFromList(consonantNouns);
+//     let randomAdjective = getRandomFromList(consonantAdjectives);
+//     let randomAdverb = getRandomFromList(consonantAdverbs);
+
+//     nextWord = randomNoun;
+//     if (deciderVal >= 60 && randomAdjective) {
+//       nextWord = randomAdjective;
+//     }
+//     if (deciderVal >= 90 && randomAdverb) {
+//       nextWord = randomAdverb;
+//     }
+
+//   } else if (lastWord === "an") {
+//     let vowelNouns = pos.nouns.filter(value => utils.startsWithVowel(value));
+//     let vowelAdjectives = pos.adjectives.filter(value => utils.startsWithVowel(value));
+//     let vowelAdverbs = pos.adjectives.filter(value => utils.startsWithVowel(value));
+
+//     let deciderVal = utils.random(100);
+
+//     let randomNoun = getRandomFromList(vowelNouns);
+//     let randomAdjective = getRandomFromList(vowelAdjectives);
+//     let randomAdverb = getRandomFromList(vowelAdverbs);
+
+//     nextWord = randomNoun;
+//     if (deciderVal >= 60 && randomAdjective) {
+//       nextWord = randomAdjective;
+//     }
+//     if (deciderVal >= 90 && randomAdverb) {
+//       nextWord = randomAdverb;
+//     }
+
+//   } else if (lastWord === "the") {
+//     let deciderVal = utils.random(100);
+
+//     let randomNoun = getRandomFromList(pos.nouns);
+//     let randomAdjective = getRandomFromList(pos.adjectives);
+//     let randomAdverb = getRandomFromList(pos.adverbs);
+
+//     nextWord = randomNoun;
+//     if (deciderVal >= 60 && randomAdjective) {
+//       nextWord = randomAdjective;
+//     }
+//     if (deciderVal >= 90 && randomAdverb) {
+//       nextWord = randomAdverb;
+//     }
+
+//   } else if (conjunctions.includes(lastWord)) {
+//     nextWord = getRandomFromList(pos.nouns
+//         .concat(pos.adverbs)
+//         .concat(pos.articles)
+//         .concat(pos.possessivePronouns)
+//         .concat(pos.possessives)
+//         .concat(pos.conjunctions)
+//         .concat(pos.prepositions)
+//         .concat(pos.articles)
+//     );
+
+//   } else if (await wordpos.isAdjective(lastWord)) {
+//     nextWord = getRandomFromList(pos.nouns);
+
+//   } else if (await wordpos.isAdverb(lastWord)) {
+//     if (lineWords.length > 0) {
+//       let secondLastWord = lineWords.pop().toLowerCase();
+//       if (articles.includes(secondLastWord) || possessives.includes(secondLastWord)) {
+//         nextWord = getRandomFromList(pos.adjectives);
+//       } else if (await wordpos.isVerb(secondLastWord)) {
+//         nextWord = getRandomFromList(pos.prepositions);
+//       } else {
+//         nextWord = getRandomFromList(pos.verbs);
+//       }
+//     }
+
+//   } else if (await wordpos.isVerb(lastWord)) {
+//     nextWord = getRandomFromList(pos.adverbs
+//         .concat(pos.nouns)
+//         .concat(pos.objectPronouns)
+//         .concat(pos.personalPronouns)
+//         .concat(pos.verbs)
+//         .concat(pos.prepositions)
+//         .concat(pos.articles)
+//     );
+
+//   } else if (objectPronouns.includes(lastWord) || possessivePronouns.includes(lastWord)) {
+//     nextWord = getRandomFromList(pos.adverbs
+//         .concat(pos.conjunctions)
+//     );
+
+//   } else if (possessives.includes(lastWord)) {
+//     nextWord = getRandomFromList(pos.nouns
+//         .concat(pos.adverbs)
+//         .concat(pos.adjectives)
+//         .concat(pos.personalPronouns)
+//     );
+
+//   } else if (prepositions.includes(lastWord)) {
+//     nextWord = getRandomFromList(pos.nouns
+//         .concat(pos.objectPronouns)
+//         .concat(pos.articles)
+//         .concat(pos.conjunctions)
+//         .concat(pos.possessives)
+//         .concat(pos.objectPronouns)
+//         .concat(pos.adverbs)
+//     );
+
+//   // Nouns, personal pronouns, and "other" words
+//   } else {
+//     let deciderVal = utils.random(100);
+
+//     let randomVerb = getRandomFromList(pos.verbs);
+//     let randomAdverb = getRandomFromList(pos.adverbs);
+//     let randomConjunction = getRandomFromList(pos.conjunctions);
+
+//     nextWord = randomVerb;
+//     if (deciderVal >= 85 && randomAdverb) {
+//       nextWord = randomAdverb;
+//     }
+//     if (deciderVal >= 95 && randomConjunction) {
+//       nextWord = randomConjunction;
+//     }
+//   }
+
+//   return nextWord;
+// }
+
+// function processPOSWithCustomFields(pos) {
+//   pos.articles = pos.rest.filter(value => articles.includes(value));
+//   pos.personalPronouns = pos.rest.filter(value => personalPronouns.includes(value));
+//   pos.objectPronouns = pos.rest.filter(value => objectPronouns.includes(value));
+//   pos.possessivePronouns = pos.rest.filter(value => possessivePronouns.includes(value));
+//   pos.possessives = pos.rest.filter(value => possessives.includes(value));
+//   pos.conjunctions = pos.rest.filter(value => conjunctions.includes(value)); 
+//   pos.prepositions = pos.rest.filter(value => prepositions.includes(value));
+
+//   pos.rest = pos.rest.filter(value => !articles.includes(value) && !personalPronouns.includes(value) &&
+//       !objectPronouns.includes(value) && !possessivePronouns.includes(value) && !conjunctions.includes(value) &&
+//       !prepositions.includes(value));
+
+//   pos.nouns = pos.nouns.concat(pos.rest);
+
+//   return pos;
+// }
+
+function getRandomFromList(list) {
+  if (list.length > 0) {
+      return list[Math.floor(Math.random() * list.length)];
+  }
+  return null;
+}
+
+function cleanInput(input) {
+  const COMMON_PREFIXES = /^(-|--|=|==|\$|.?\!|%|&|\^|>|<|\*|~|`|.?\?|\+|\+\+).*/;
+  const EMOJI_MATCH = /<:.*>/g;
+  const NOTIFY_MATCH = /<@!.*:>/g;
+  const PUNCTUATION_MATCH = /(!|@|#|\$|%|\^|&|\*|\(|\)|-|_|=|\+|\[|{|\]|}|\.|,|>|<|\?|\/|`|~)/g;
+
+  if (input.match(COMMON_PREFIXES)) return null;
+
+  // let cleanedInput = contractions.expand(input.toLowerCase().split(" ").filter(value => !isUrl(value) && value.length < 30).join(" "));
+
+  return input.toLowerCase().split(" ")
+      .filter(value => !isUrl(value) && value.length < 30).join(" ")
+      .replace(EMOJI_MATCH, "").replace(NOTIFY_MATCH, "").replace(PUNCTUATION_MATCH, "");
+}
 
 module.exports = dokipoemUpdate;

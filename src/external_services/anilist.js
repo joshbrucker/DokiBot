@@ -16,6 +16,6 @@ let query = async function(query, variables) {
 
   res = await fetch(url, options);
   return res;
-}
+};
 
 module.exports = { query }
