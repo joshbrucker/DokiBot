@@ -1,0 +1,10 @@
+Hey, what's your favourite colour?
+Mine is emerald green.
+It's the colour of my eyes!
+...That's not conceited or anything, is it?
+I just meant that I feel some kind of special connection to it.
+Like it's part of my identity.
+Does it happen to also be your favorite colour, [player]?
+It's just a guess...
+...Because you've been looking into my eyes for a while now.
+Ehehe~

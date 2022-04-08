@@ -1,0 +1,13 @@
+{
+	"developerMode": true,
+	"adminUsers": [
+		"133805362347376640"
+	],
+	"authorizationUrl": "https://discord.com/oauth2/authorize?client_id=412824514414510080&permissions=534760516672&scope=applications.commands%20bot",
+	"hubGuild": "413064571075559425",
+	"insults": {
+		"submissionChannel": "859960783295348776",
+		"approvalsToAccept": 1,
+		"rejectionsToDeny": 1 
+	}
+}

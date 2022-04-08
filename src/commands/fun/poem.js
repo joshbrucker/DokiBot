@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 const utils = require(__basedir + "/utils/utils");
 const dokiWords = require(__basedir + "/resources/doki_words.json");
-const {MessageActionRow, MessageButton} = require("discord.js");
+const { MessageActionRow, MessageButton } = require("discord.js");
 
 const WORD_COUNT = 10; // Discord ActionRows/Buttons restricts WORD_COUNT to 25 (5 rows w/ 5 buttons)
 const SELECT_COUNT = 3;
@@ -11,8 +11,8 @@ const TIMEOUT = 60000;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("poem")
-    .setDescription("Create your own poem!"),
+      .setName("poem")
+      .setDescription("Create your own poem!"),
 
   async execute(interaction) {
     let randomWords = {}

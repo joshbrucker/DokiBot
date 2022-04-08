@@ -1,7 +1,7 @@
-let Commands = require("./Commands.js");
+const { Commands, AdminCommands } = require("./Commands.js");
 
 let executeCmd = function(name, interaction) {
-  let command = Commands.get(name);
+  const command = Commands.get(name) || AdminCommands.get(name);
   if (command) {
     command.execute(interaction);
   }
