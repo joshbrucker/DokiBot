@@ -64,11 +64,11 @@ let generateTags = async function(defaultTags, requestedTags) {
 
   requestedTags.forEach(t => {
     if (t === "nsfw") {
-      finalTags.add("-rating:safe");
-      finalTags.delete("rating:safe");
+      finalTags.add("is:nsfw");
+      finalTags.delete("is:sfw");
     } else if (t.match(/rating:(explicit|questionable)/)) {
       finalTags.add(t);
-      finalTags.delete("rating:safe");
+      finalTags.delete("is:sfw");
     } else if (t === "explicit" || t === "questionable") {
       finalTags.add("rating:" + t);
       finalTags.delete("rating:safe");
