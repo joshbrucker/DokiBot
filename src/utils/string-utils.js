@@ -83,8 +83,8 @@ function startsWithVowel(word) {
       word.startsWith("o") || word.startsWith("u"));
 }
 
-function maybePluralize(count, noun, suffix="s") {
-  return `${count} ${noun}${count !== 1 ? suffix : ''}`;
+function maybePluralize(noun, count, suffix="s") {
+  return `${noun}${count !== 1 ? suffix : ''}`;
 }
 
 function ignoreMarkdown(content) {
