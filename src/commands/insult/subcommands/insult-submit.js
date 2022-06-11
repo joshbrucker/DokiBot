@@ -78,7 +78,7 @@ function getRemainingTimeString(time) {
     return `**${Math.ceil(remaining / 60000)}** minutes!`;
   } else {
     remaining = Math.ceil(remaining / 1000);
-    return `**${remaining}** ${maybePluralize(remaining, "second")}!`;
+    return `**${remaining}** ${maybePluralize("second", remaining)}!`;
   }
 }
 
