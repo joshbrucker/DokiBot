@@ -17,7 +17,7 @@ const booruSearchTypes = {
   WAIFU: new SearchType("waifu", ["*girl"])
 };
 
-const DEFAULT_TAGS = new Set(["-comic", "rating:safe", "order:random", "-loli", "-shota"]);
+const DEFAULT_TAGS = new Set(["-comic", "is:sfw", "order:random", "-loli", "-shota"]);
 const MAX_TAGS = 12;
 
 class DanbooruImageCommand {
