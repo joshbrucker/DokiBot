@@ -1,5 +1,4 @@
 const { authorizationUrl } = require(__basedir + "/settings.json");
-const { runQuery } = require(__basedir + "/database/db.js");
 
 const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
@@ -15,7 +14,7 @@ async function onMessage(client, message) {
   const guildData = await GuildAccessor.get(message.guild.id);
 
   // Migration to slash commands assistance
-  let prefix = await getPrefix(guildData.id);
+  let prefix = await utils.getPrefix(guildData.id);
   if (prefix && message.content.startsWith(prefix)) {
     message.channel.send(
         "Prefixed commands are **no longer** supported. Please use slash commands instead.\n\n" +
@@ -65,17 +64,6 @@ async function onMessage(client, message) {
 
     await dokiPoem(client, guildData, message);
   }
-}
-
-// temporary function to allow for servers to transition to new slash commands
-async function getPrefix(guildId) {
-  let response = await runQuery(`SELECT prefix FROM guild WHERE id=?;`, [guildId]);
-  
-  if (response.length > 0) {
-    return response[0].prefix;
-  }
-
-  return null;
 }
 
 module.exports = onMessage;

@@ -1,5 +1,17 @@
 const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 const { submissionChannel } = require(__basedir + "/settings.json");
+const { runQuery } = require(__basedir + "/database/db.js");
+
+// temporary function to allow for servers to transition to new slash commands
+async function getPrefix(guildId) {
+  let response = await runQuery(`SELECT prefix FROM guild WHERE id=?;`, [guildId]);
+  
+  if (response.length > 0) {
+    return response[0].prefix;
+  }
+
+  return null;
+}
 
 // Outputs a message with the given commands
 function invalidArgsMsg(message, command) {
@@ -60,10 +72,6 @@ async function randomDokiEmoji(client) {
   return await emojiUtils.fetch(client, doki);
 }
 
-function insertPrefix(dbGuild, string) {
-  return string.replace(/%p/g, dbGuild.prefix);
-}
-
 async function cacheSubmissionChannel(client) {
   async function cacheMessages(target, { submissionChannel }) {
     let channel = target.channels.resolve(submissionChannel);
@@ -87,7 +95,7 @@ module.exports = {
   generateNewTime,
   random,
   randomDokiEmoji,
-  insertPrefix,
+  getPrefix,
   cacheSubmissionChannel,
   ignoreUnkownMessage
 };
