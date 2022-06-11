@@ -7,7 +7,7 @@ const booru = new Danbooru(auth.danbooruLogin + ':' + auth.danbooruKey);
 
 let hasNsfwTag = function(tags) {
   tags = new Set(tags);
-  if (tags.has('-rating:safe') || tags.has('rating:questionable') || tags.has('rating:explicit')) {
+  if (tags.has('-is:sfw') || tags.has("is:nsfw") || tags.has('rating:questionable') || tags.has('rating:explicit')) {
     return true;
   } else {
     return false;
@@ -55,19 +55,19 @@ let convertToValidTag = async function(tag) {
 };
 
 let generateTags = async function(args, girlOrBoy) {
-  let tags = new Set(['order:random', '-comic', '*' + girlOrBoy, 'rating:safe']);
+  let tags = new Set(['order:random', '-comic', '*' + girlOrBoy, 'is:sfw']);
 
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
     if (arg == 'nsfw') {
-      tags.add('-rating:safe')
-      tags.delete('rating:safe');
+      tags.add('is:nsfw');
+      tags.delete('is:sfw');
     } else if (arg.match(/rating:(explicit|questionable)/)) {
       tags.add(arg);
-      tags.delete('rating:safe')
+      tags.delete('is:sfw');
     } else if (arg == 'explicit' || arg == 'questionable') {
       tags.add('rating:' + arg);
-      tags.delete('rating:safe');
+      tags.delete('is:sfw');
     } else if (arg.match(/([1-6]|(6\+))${girlOrBoy}(s)?/)) {
       tags.add(arg);
       tags.delete('*' + girlOrBoy);

@@ -20,14 +20,14 @@ let doki = function(client, guild, message, args) {
   tags.add('doki_doki_literature_club');
 
   let nsfw = false;
-  tags.add('rating:safe');
+  tags.add('is:sfw');
 
   args.forEach((arg) => {
     switch(arg) {
       case 'nsfw':
         nsfw = true;
-        tags.delete('rating:safe');
-        tags.add('-rating:safe');
+        tags.delete('is:sfw');
+        tags.add('is:nsfw');
         break;
       case '1girl':
         tags.add('1girl');
