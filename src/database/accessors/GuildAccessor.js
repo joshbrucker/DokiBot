@@ -30,7 +30,7 @@ const GuildAccessor = {
 
   async remove(guildId) {
     await runQuery(`DELETE FROM guild WHERE id=?;`, [ guildId ]);
-    Cache.del([Cache.getGuildCacheKey(guildId)]);
+    Cache.del([Cache.getGuildKey(guildId)]);
   },
 };
 

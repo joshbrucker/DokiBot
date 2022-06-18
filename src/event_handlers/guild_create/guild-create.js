@@ -1,8 +1,7 @@
-const GuildModel = require(__basedir + "/database/models/GuildModel.js");
-const utils = require(__basedir + "/utils/utils.js");
+const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
 
 async function onGuildCreate(guild) {
-  await GuildModel.add(guild.id);
+  await GuildAccessor.add(guild.id);
 }
 
 module.exports = onGuildCreate;
