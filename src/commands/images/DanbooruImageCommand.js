@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { ignore } = require("@joshbrucker/discordjs-utils");
+const { Constants: { APIErrors: { UNKNOWN_MESSAGE }}} = require('discord.js');
 
 const danbooru = require(__basedir + "/external_services/danbooru");
-const { ignoreUnkownMessage, maybePluralize, prefixWithAnOrA } = require(__basedir + "/utils/string-utils.js");
+const { maybePluralize, prefixWithAnOrA } = require(__basedir + "/utils/string-utils.js");
 
 class SearchType {
   constructor(name, tags) {
@@ -66,13 +68,13 @@ class DanbooruImageCommand {
 
         if (invalidTags.length > 0) {
           await interaction.editReply(`:x: Oops, I can't find the following ${maybePluralize("tag", invalidTags.length)} [ **${invalidTags.join(", ")}** ]`)
-              .catch(ignoreUnkownMessage);
+              .catch(ignore([UNKNOWN_MESSAGE]));
           return;
         }
 
         if (isNsfw && !channel.nsfw) {
           await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel")
-              .catch(ignoreUnkownMessage);
+              .catch(ignore([UNKNOWN_MESSAGE]));
           return;
         }
 
@@ -80,14 +82,14 @@ class DanbooruImageCommand {
 
         if (posts[0]) {
           await interaction.editReply(await danbooru.generateMessagePayload(posts[0]))
-              .catch(ignoreUnkownMessage);
+              .catch(ignore([UNKNOWN_MESSAGE]));
         } else {
           if (this.imageType === booruSearchTypes.ANY) {
             await interaction.editReply(":x: I couldn't find an image with those tags")
-                .catch(ignoreUnkownMessage);
+                .catch(ignore([UNKNOWN_MESSAGE]));
           } else {
             await interaction.editReply(`:x: I couldn't find ${prefixWithAnOrA(this.imageType.name)} with those tags`)
-                .catch(ignoreUnkownMessage);
+                .catch(ignore([UNKNOWN_MESSAGE]));
           }
         }
 

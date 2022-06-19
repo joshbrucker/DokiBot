@@ -82,12 +82,6 @@ async function cacheSubmissionChannel(client) {
   await client.shard.broadcastEval(cacheMessages, { context: { submissionChannel: submissionChannel }});
 }
 
-function ignoreUnkownMessage(err) {
-  if (err.message !== "Unknown Message") {
-    throw err;
-  }
-}
-
 module.exports = {
   invalidArgsMsg,
   getAvailableChannel,
@@ -96,6 +90,5 @@ module.exports = {
   random,
   randomDokiEmoji,
   getPrefix,
-  cacheSubmissionChannel,
-  ignoreUnkownMessage
+  cacheSubmissionChannel
 };
