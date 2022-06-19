@@ -1,3 +1,4 @@
+const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 const Discord = require("discord.js");
 
 const InsultAccesor = require(__basedir + "/database/accessors/InsultAccessor.js");
@@ -37,7 +38,7 @@ async function execute(interaction) {
 
   const insult = await InsultAccesor.getRandomAccepted();
   const insultMessage = insult ? await insult.formatWithRandomUsers(interaction.guild, chooseableMembers) : "There are no insults added yet!";
-  const emoji = await utils.randomDokiEmoji(interaction.client, interaction.guild, interaction.channel);
+  const emoji = emojiUtils.formatForChat(await utils.randomDokiEmoji(interaction.client));
 
   const content = `==== ${emoji} Doki Doki Time! ${emoji} ====\n\n${insultMessage}\n\n=========================`;
 
