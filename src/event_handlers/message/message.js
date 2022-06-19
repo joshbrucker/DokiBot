@@ -34,7 +34,7 @@ async function onMessage(client, message) {
 
     if (insult) {
       const insultMessage = await insult.formatWithRandomUsers(message.guild, members);
-      const emoji = await utils.randomDokiEmoji(client);
+      const emoji = emojiUtils.formatForChat(await utils.randomDokiEmoji(client));
       const content = `==== ${emoji} Doki Doki Time! ${emoji} ====\n\n${insultMessage}\n\n=========================`;
   
       await sendInsult(client, message, content, insult);
