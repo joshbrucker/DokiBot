@@ -1,5 +1,9 @@
-const { MessageButton, MessageActionRow } = require("discord.js");
-const { emojiUtils } = require("@joshbrucker/discordjs-utils");
+const {
+  Constants: { APIErrors: { UNKNOWN_INTERACTION, UNKNOWN_MESSAGE }},
+  MessageButton,
+  MessageActionRow
+} = require("discord.js");
+const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
 
 const emojiMap = require(__basedir + "/resources/emojiMap.json");
 
@@ -25,7 +29,7 @@ async function sendInsult(client, message, content, insult) {
   });
 
   const collector = reply.createMessageComponentCollector({
-    time: 5000
+    time: 300000
   });
 
   const voteStatuses = {};
@@ -65,7 +69,7 @@ async function sendInsult(client, message, content, insult) {
 
     await buttonInteraction.update({
       components: [new MessageActionRow({components: [upvote, downvote]})]
-    });
+    }).catch(ignore([UNKNOWN_INTERACTION]));
   });
 
   collector.on("end", async () => {
@@ -74,7 +78,7 @@ async function sendInsult(client, message, content, insult) {
 
     await reply.edit({
       components: [new MessageActionRow({components: [upvote, downvote]})]
-    });
+    }).catch(ignore([UNKNOWN_MESSAGE]));
 
     if (insult) {
       await insult.addUpvotes(upvote.label);
