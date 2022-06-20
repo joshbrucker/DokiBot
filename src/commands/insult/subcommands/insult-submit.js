@@ -8,7 +8,6 @@ const { submissionChannel } = require(__basedir + "/settings.json").insults;
 async function execute(interaction) {
   let submission = interaction.options.getString("submission");
 
-  console.log(submission);
   if (!submission.includes(`<@!${interaction.client.user.id}>`)) {
       await interaction.reply(`You must include <@!${interaction.client.user.id}> at least once (or more!) in your submission. This is where DokiBot will insert a random user from your server.\n\n` +
         "__Example__\n" +
