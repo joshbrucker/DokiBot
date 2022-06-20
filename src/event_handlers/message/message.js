@@ -1,3 +1,5 @@
+const { emojiUtils } = require("@joshbrucker/discordjs-utils");
+
 const { authorizationUrl } = require(__basedir + "/settings.json");
 
 const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
