@@ -182,10 +182,6 @@ class DanbooruImageCommand {
               .setImage(post.large_file_url)
               .setColor(palette.Vibrant.hex);
 
-          if (post.tag_string_character.split(" ").includes("vivy")) {
-            embed.setFooter({ text: "❤️ That's me! ❤️" });
-          }
-      
           return {
             embeds: [ embed ],
             content: null
