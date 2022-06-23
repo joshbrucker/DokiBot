@@ -16,13 +16,16 @@ let hasNsfwTag = function(tags) {
 };
 
 let convertToValidTag = async function(tag) {
-  let tokenized = tag.split(/_| /);
-  let matching = tag.replace(/_| /g, "*");
-  let wildcarded = tag.replace(/_| /g, ".*");
+  let baseTag = tag.startsWith("-") ? tag.substring(1) : tag;
 
-  const [ basicSearch, tagAliases, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2, japaneseWildcarded, tagAliases2 ] = await Promise.all([
-    booru.get("/tags", { "search[name]": tag, "search[order]": "count" }),
-    booru.get("/tags", { "search[consequent_aliases][antecedent_name]": tag, "search[order]": "count" }),
+  let tokenized = baseTag.split(/_| /);
+  let matching = baseTag.replace(/_| /g, "*");
+  let wildcarded = baseTag.replace(/_| /g, ".*");
+
+  // [ basicSearch, tagAliases, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2, japaneseWildcarded, tagAliases2 ]
+  const searchResults = await Promise.all([
+    booru.get("/tags", { "search[name]": baseTag, "search[order]": "count" }),
+    booru.get("/tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[order]": "count" }),
     (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[1] + "_" + tokenized[0], "search[order]": "count"}) :  [],
     booru.get("/tags", { "search[name_regex]": wildcarded + ".*", "search[order]": "count" }),
     booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
@@ -30,29 +33,21 @@ let convertToValidTag = async function(tag) {
     booru.get("/tags", { "search[consequent_aliases][name_matches]": matching + "*", "search[order]": "count" })
   ]);
 
-  if (basicSearch.length > 0 && basicSearch[0].post_count > 0) {
-    return basicSearch[0];
-  }
-  else if (tagAliases.length > 0) {
-    return tagAliases[0];
-  }
-  else if (japaneseNameSearch.length > 0 && japaneseNameSearch[0].post_count > 0) {
-    return japaneseNameSearch[0];
-  }
-  else if (wildCardAttempt1.length > 0 && wildCardAttempt1[0].post_count > 0) {
-    return wildCardAttempt1[0];
-  }
-  else if (wildCardAttempt2.length > 0 && wildCardAttempt2[0].post_count > 0) {
-    return wildCardAttempt2[0];
-  }
-  else if (japaneseWildcarded.length > 0 && japaneseWildcarded[0].post_count > 0) {
-    return japaneseWildcarded[0];
-  }
-  else if (tagAliases2.length > 0) {
-    return tagAliases2[0];
+  let resolvedTag;
+
+  for (let i = 0; i < searchResults.length; i++) {
+    let result = searchResults[i];
+    if (result.length > 0 && result[0].post_count > 0) {
+      resolvedTag = result[0];
+      break;
+    }
   }
 
-  return new InvalidTag(tag);
+  if (resolvedTag && tag.startsWith("-")) {
+    resolvedTag.name = "-" + resolvedTag.name;
+  }
+    
+  return resolvedTag || new InvalidTag(tag);
 };
 
 let tagsToReadable = function(title) {
