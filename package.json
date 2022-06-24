@@ -20,7 +20,7 @@
     "lodash": "^4.17.21",
     "mariadb": "^2.5.4",
     "miniget": "^4.2.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "opusscript": "0.0.8",
     "valid-filename": "^3.1.0",
     "winston": "^3.3.3",
