@@ -10,6 +10,7 @@ class GlobalMemberModel {
   }
 
   async updateNextSubmitDate(date) {
+    this.nextSubmitDate = date;
     await runQuery(`UPDATE global_member SET next_submit_date=? WHERE id=?;`, [ date, this.id ]);
     Cache.del([this.cacheKey]);
   }
