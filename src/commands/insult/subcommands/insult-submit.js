@@ -1,3 +1,5 @@
+const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
+
 const GlobalMemberAccessor = require(__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 
@@ -6,43 +8,69 @@ const { maybePluralize } = require(__basedir + "/utils/string-utils.js");
 const { submissionChannel } = require(__basedir + "/settings.json").insults;
 
 async function execute(interaction) {
-  let submission = interaction.options.getString("submission");
-
-  if (!submission.includes(`<@!${interaction.client.user.id}>`)) {
-      await interaction.reply(`You must include <@!${interaction.client.user.id}> at least once (or more!) in your submission. This is where DokiBot will insert a random user from your server.\n\n` +
-        "__Example__\n" +
-        `\`I heard that @${interaction.client.user.username} doesn't know how to use the submit feature! What a noob!\``);
-    return;
-  }
-
-  if (submission.length > 300) {
-    await interaction.reply("Your submission is too long! Cut it back a bit.");
-    return;
-  }
+  const modal = new Modal()
+      .setCustomId("insult-submit")
+      .setTitle("Insult Submission")
+      .setComponents([
+        new MessageActionRow()
+          .setComponents([
+            new TextInputComponent()
+                .setCustomId("submission")
+                .setLabel("Submit your insult!")
+                .setPlaceholder("@user is a big meanie!")
+                .setStyle("SHORT")
+                .setMaxLength("200")
+                .setRequired(true)
+          ])
+      ]);
 
   let member = await GlobalMemberAccessor.get(interaction.user.id);
   let now = new Date();
 
   if (member.nextSubmitDate < now) {
-    let insult = await InsultAccessor.add(submission.replaceAll(`<@!${interaction.client.user.id}>`, "%user%"), "pending", interaction.user.id);
-    try {
-      await sendInsultToSubmissionChannel(interaction, insult);
-    } catch (err) {
-      await InsultAccessor.remove(insult.id);
-      console.log(err);
-      await interaction.reply("Couldn't send your submission to the DokiBot server. Is it down?");
-      return;
-    }
-
-    let tomorrow = new Date(now.setDate(now.getDate() + 1));
-    await member.updateNextSubmitDate(tomorrow);
-
-    await cacheSubmissionChannel(interaction.client);
-
-    await interaction.reply("Submission has been sent! Use `/insult list` to view its status.");
+    await interaction.showModal(modal);
   } else {
-    await interaction.reply(`You cannot submit another insult for another ${getRemainingTimeString(member.nextSubmitDate - now)}`);
+    await interaction.reply({
+      content: `You cannot submit another insult for another ${getRemainingTimeString(member.nextSubmitDate - now)}`,
+      ephemeral: true
+    });
   }
+}
+
+async function handleModal(interaction) {
+  let submission = interaction.fields.getTextInputValue("submission");
+
+  if (!submission.includes("@user")) {
+    await interaction.reply({
+      content: "You must include `@user` at least once (or more!) in your submission, which is where DokiBot would notify someone.",
+      ephemeral: true
+    });
+    return;
+  }
+
+  let member = await GlobalMemberAccessor.get(interaction.user.id);
+
+  let insult = await InsultAccessor.add(submission, "pending", interaction.user.id);
+  try {
+    await sendInsultToSubmissionChannel(interaction, insult);
+  } catch (err) {
+    await InsultAccessor.remove(insult.id);
+    console.log(err);
+    await interaction.reply({
+      content: "Couldn't send your submission to the DokiBot server. Is it down?",
+      ephemeral: true
+    });
+    return;
+  }
+
+  const tomorrow = new Date();
+  tomorrow.setDate(new Date().getDate() + 1);
+
+  await member.updateNextSubmitDate(tomorrow);
+
+  await cacheSubmissionChannel(interaction.client);
+
+  await interaction.reply("📤  Submission has been sent! Use `/insult list` to view its status.\n```" + submission + "```");
 }
 
 async function sendInsultToSubmissionChannel(interaction, insult) {
@@ -51,8 +79,7 @@ async function sendInsultToSubmissionChannel(interaction, insult) {
     let channel = await target.channels.resolve(submissionChannel);
   
     if (channel) {
-      let messageContent = insult.message.replaceAll("%user%", `<@!${target.user.id}>`);
-      let sentMessage = await channel.send(`${messageContent}\n\n**ID:** ${insult.id}\n`);
+      let sentMessage = await channel.send(`${insult.message}\n\n**ID:** ${insult.id}\n`);
       await emojiUtils.react(sentMessage, ["✅", "❌"]);
       return true;
     } else {
@@ -81,4 +108,4 @@ function getRemainingTimeString(time) {
   }
 }
 
-module.exports = execute;
+module.exports = { execute, handleModal };

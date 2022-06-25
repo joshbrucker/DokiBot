@@ -54,4 +54,4 @@ function generateResponse(user, status, description) {
       .setDescription(description)
 }
 
-module.exports = execute;
+module.exports = { execute };

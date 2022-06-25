@@ -24,24 +24,24 @@ class Insult extends InsultModel {
     const upvoteEmoji = emojiUtils.formatForChat(await emojiUtils.fetch(client, emojiMap.upvote));
     const downvoteEmoji = emojiUtils.formatForChat(await emojiUtils.fetch(client, emojiMap.downvote));
 
-    return `${statusEmoji} \u200b **|** \u200b ${ignoreMarkdown(this.formatWithClientUser(client))}` +
+    return `${statusEmoji} \u200b **|** \u200b ${this.message}` +
         ((this.status === "accepted") ? ` \u200b **|** \u200b ${this.upvotes} ${upvoteEmoji} \u200b **|** \u200b ${this.downvotes} ${downvoteEmoji}` : "");
   }
 
-  async formatWithRandomUsers(guild, members) {
+  async formatWithRandomUsers(guild, members, ignoreNotify=false) {
     let insultMessage = this.message;
 
     if (members.size > 0) {
-      const userMatch = insultMessage.match(/%user%/g)
+      const userMatch = insultMessage.match(/@user/g);
       const matchCount = userMatch ? userMatch.length : 0;
       for (let j = 0; j < matchCount; j++) {
         const insultee = members.random();
         const guildMember = await GuildMemberAccessor.get(insultee.id, guild.id);
 
-        if (guildMember.insultNotify) {
-          insultMessage = insultMessage.replace("%user%", "<@!" + insultee.id + ">");
+        if (guildMember.insultNotify && !ignoreNotify) {
+          insultMessage = insultMessage.replace("@user", "<@!" + insultee.id + ">");
         } else {
-          insultMessage = insultMessage.replace("%user%", "**__" + (insultee.nickname || insultee.user.username) + "__**");
+          insultMessage = insultMessage.replace("@user", "**__" + (insultee.nickname || insultee.user.username) + "__**");
         }
 
         if (members.size > 1) {
@@ -53,10 +53,6 @@ class Insult extends InsultModel {
     }
 
     return insultMessage;
-  }
-
-  formatWithClientUser(client) {
-    return this.message.replace(/%user%/g, "<@!" + client.user.id + ">");
   }
 }
 

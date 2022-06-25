@@ -32,28 +32,20 @@ module.exports = {
             .setRequired(false)))
     .addSubcommand(subcommand => subcommand
         .setName("notifyme")
-        .setDescription("Choose whether DokiBot should @ you if your name is chosen for a random insult.")
-        .addBooleanOption(option => option
-            .setName("allow")
-            .setDescription("Let DokiBot @ you in random insults.")
-            .setRequired(true)))
+        .setDescription("Toggle whether DokiBot should @ you if your name is chosen for a random insult."))
     .addSubcommand(subcommand => subcommand
         .setName("submit")
-        .setDescription("Submit an insult to be reviewed by the DokiBot team.")
-        .addStringOption(option => option
-            .setName("submission")
-            .setDescription("Your insult submission. Include @DokiBot where you want DokiBot to mention a user.")
-            .setRequired(true))),
+        .setDescription("Submit an insult to be reviewed by the DokiBot team.")),
 
   async execute(interaction) {
     if (interaction.options.getSubcommand() === "list") {
-      listSubcommand(interaction);
+      listSubcommand.execute(interaction);
     } else if (interaction.options.getSubcommand() === "force") {
-      forceSubcommand(interaction);
+      forceSubcommand.execute(interaction);
     } else if (interaction.options.getSubcommand() === "notifyme") {
-      notifymeSubcommand(interaction);
+      notifymeSubcommand.execute(interaction);
     } else if (interaction.options.getSubcommand() === "submit") {
-      submitSubcommand(interaction);
+      submitSubcommand.execute(interaction);
     }
   },
 };
