@@ -1,11 +1,20 @@
-const auth = require(__basedir + "/auth.json");
-const executeCmd = require(__basedir + "/commands/execute-cmd.js");
+const { Commands } = require(__basedir + "/commands/Commands.js");
+const { ModalHandlers } = require(__basedir + "/commands/ModalHandlers.js");
 
-let interactionCreate = async function(client, interaction) {
-  if (!interaction.isCommand()) return;
-
-  const commandName = interaction.commandName;
-  executeCmd(commandName, interaction);
+async function interactionCreate(client, interaction) {
+  if (interaction.isCommand()) {
+    const commandName = interaction.commandName;
+    const command = Commands.get(commandName);
+    if (command) {
+      command.execute(interaction);
+    }
+  } else if (interaction.isModalSubmit()) {
+    const modalId = interaction.customId;
+    const modalHandler = ModalHandlers.get(modalId);
+    if (modalHandler) {
+      modalHandler(interaction);
+    }
+  }
 };
 
 module.exports = interactionCreate;

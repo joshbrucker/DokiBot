@@ -1,12 +1,10 @@
 const GuildMemberAccessor = require(__basedir + "/database/accessors/GuildMemberAccessor.js");
 
-async function execute(interaction) {
-  let allow = interaction.options.getBoolean("allow");
-  
-  const guildMember = await GuildMemberAccessor.get(interaction.user.id, interaction.guild.id);
-  await guildMember.updateNotifyMe(allow);
+async function execute(interaction) { 
+  let guildMember = await GuildMemberAccessor.get(interaction.user.id, interaction.guild.id);
+  await guildMember.updateNotifyMe(!guildMember.insultNotify);
 
-  await interaction.reply(`${allow ? "✅" : "🛑"} You **__${allow ? "will now" : "will no longer"}__** receive insult notifications.`);
+  await interaction.reply(`${guildMember.insultNotify ? "✅" : "🛑"} You **__${guildMember.insultNotify ? "will now" : "will no longer"}__** receive insult notifications.`);
 }
 
-module.exports = execute;
+module.exports = { execute };

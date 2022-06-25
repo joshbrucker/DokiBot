@@ -1,8 +1,6 @@
-const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 const Discord = require("discord.js");
 
 const InsultAccesor = require(__basedir + "/database/accessors/InsultAccessor.js");
-const utils = require(__basedir + "/utils/utils.js");
 
 async function execute(interaction) {
   let members = interaction.options.getString("members");
@@ -36,13 +34,10 @@ async function execute(interaction) {
     chooseableMembers = interaction.guild.members.cache.filter(entry => !entry.user.bot);
   }
 
-  const insult = await InsultAccesor.getRandomAccepted();
-  const insultMessage = insult ? await insult.formatWithRandomUsers(interaction.guild, chooseableMembers) : "There are no insults added yet!";
-  const emoji = emojiUtils.formatForChat(await utils.randomDokiEmoji(interaction.client));
+  let insult = await InsultAccesor.getRandomAccepted();
+  let insultMessage = await insult.formatWithRandomUsers(interaction.guild, chooseableMembers, ignoreNotify=true);
 
-  const content = `==== ${emoji} Doki Doki Time! ${emoji} ====\n\n${insultMessage}\n\n=========================`;
-
-  await interaction.reply(content);
+  await interaction.reply(insultMessage);
 }
 
-module.exports = execute;
+module.exports = { execute };

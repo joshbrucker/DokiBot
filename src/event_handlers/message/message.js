@@ -29,17 +29,11 @@ async function onMessage(client, message) {
   const currDate = new Date();
 
   if (guildData.nextInsultTime <= currDate && guildData.allowInsults) {
-    await guildData.updateNextInsultTime(utils.generateNewTime(currDate));
-
     let insult = await InsultAccessor.getRandomAccepted();
-    let members = message.guild.members.cache.filter(entry => !entry.user.bot);
 
     if (insult) {
-      const insultMessage = await insult.formatWithRandomUsers(message.guild, members);
-      const emoji = emojiUtils.formatForChat(await utils.randomDokiEmoji(client));
-      const content = `==== ${emoji} Doki Doki Time! ${emoji} ====\n\n${insultMessage}\n\n=========================`;
-  
-      await sendInsult(client, message, content, insult);
+      await sendInsult(client, message, insult);
+      await guildData.updateNextInsultTime(utils.generateNewTime(currDate));
     } else {
       await message.channel.send("There are no insults added yet!");
     }

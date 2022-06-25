@@ -7,7 +7,7 @@ const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
 
 const emojiMap = require(__basedir + "/resources/emojiMap.json");
 
-async function sendInsult(client, message, content, insult) {
+async function sendInsult(client, message, insult) {
   const upvote = new MessageButton({
     style: "SECONDARY",
     label: "0",
@@ -22,8 +22,11 @@ async function sendInsult(client, message, content, insult) {
     customId: "downvote"
   });
 
+  let members = message.guild.members.cache.filter(entry => !entry.user.bot);
+  let insultMessage = await insult.formatWithRandomUsers(message.guild, members);
+
   let reply = await message.channel.send({
-    content: content,
+    content: insultMessage + "\n\u200b",
     components: [new MessageActionRow({components: [upvote, downvote]})],
     fetchReply: true
   });

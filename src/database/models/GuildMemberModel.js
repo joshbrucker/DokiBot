@@ -10,8 +10,9 @@ class GuildMemberModel {
     this.cacheKey = Cache.getGuildMemberKey(this.id, this.guildId);
   }
 
-  async updateNotifyMe(shouldNotify) {
-    await runQuery(`UPDATE guild_member SET insult_notify=? WHERE id=? AND guild_id=?;`, [ shouldNotify, this.id, this.guildId ]);
+  async updateNotifyMe(insultNotify) {
+    this.insultNotify = insultNotify;
+    await runQuery(`UPDATE guild_member SET insult_notify=? WHERE id=? AND guild_id=?;`, [ insultNotify, this.id, this.guildId ]);
     Cache.del([this.cacheKey]);
   }
 }
