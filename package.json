@@ -9,7 +9,7 @@
   "author": "Joshua Brucker",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
+    "@discordjs/opus": "^0.8.0",
     "alias-sampling": "^0.5.2",
     "danbooru": "^3.1.0",
     "dblapi.js": "^2.4.1",
