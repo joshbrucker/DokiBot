@@ -34,7 +34,7 @@ class GuildModel {
 
   async updatePoemFrequency(frequency) {
     this.poemFrequency = frequency;
-    await runQuery(`UPDATE guild SET poem_freq=? WHERE id=?;`, [ frequency, this.id ]);
+    await runQuery(`UPDATE guild SET poem_frequency=? WHERE id=?;`, [ frequency, this.id ]);
     Cache.del([this.cacheKey]);
   }
 

@@ -15,7 +15,7 @@ async function onMessage(client, message) {
   const guildData = await GuildAccessor.get(message.guild.id);
   const guildMemberData = await GuildMemberAccessor.get(message.author.id, message.guild.id);
 
-  // Migration to slash commands assistance
+  // Assistance for migration to slash commands
   let prefix = await utils.getPrefix(guildData.id);
   if (prefix && message.content.startsWith(prefix) && !guildMemberData.disableSlashWarning) {
     message.channel.send(
@@ -24,7 +24,7 @@ async function onMessage(client, message) {
         dokibotURL
     );
 
-    guildMemberData.updateDisableSlashWarning(true);
+    await guildMemberData.updateDisableSlashWarning(true);
   }
 
   const currDate = new Date();
@@ -41,25 +41,7 @@ async function onMessage(client, message) {
   }
 
   if (guildData.nextPoemUpdateTime <= currDate) {
-    let time;
-    switch(guildData.poemFrequency) {
-      case "second":
-        time = 1;
-        break;
-      case "minute":
-        time = 60;
-        break;
-      case "hour":
-        time = 60 * 60;
-        break;
-      case "day":
-        time = 60 * 60 * 24;
-        break;
-    }
-
-    await guildData.updateNextPoemUpdateTime(new Date(currDate.getTime() + time*1000));
-
-    await dokiPoem(client, guildData, message);
+    await dokiPoem(guildData, message);
   }
 }
 
