@@ -1,3 +1,5 @@
+// This file needs a BIG update and cleaning...
+
 const { MessageEmbed } = require("discord.js");
 const contractions = require("expand-contractions");
 const fs = require("fs");
@@ -29,11 +31,29 @@ const lessCommonPrepositions = ["aboard", "along", "amid", "as", "beneath", "bey
     "versus", "via", "within", "without"];
 const prepositions = commonPrepositions.concat(lessCommonPrepositions);
 
-let dokipoemUpdate = async function(client, guildData, message) {
+let dokipoemUpdate = async function(guildData, message) {
   let currentPoem = guildData.currentPoem;
   let nextWord = await generateNextWord(message);
 
   if (!nextWord) return;
+
+  let time;
+  switch(guildData.poemFrequency) {
+    case "second":
+      time = 1;
+      break;
+    case "minute":
+      time = 60;
+      break;
+    case "hour":
+      time = 60 * 60;
+      break;
+    case "day":
+      time = 60 * 60 * 24;
+      break;
+  }
+
+  await guildData.updateNextPoemUpdateTime(new Date(new Date().getTime() + time*1000));
 
   if (currentPoem == null) {
     currentPoem = nextWord[0].toUpperCase() + nextWord.substr(1);
@@ -58,8 +78,9 @@ let dokipoemUpdate = async function(client, guildData, message) {
           .setDescription(currentPoem);
 
       await message.channel.send({embeds: [embed]});
-
       currentPoem = null;
+
+      await guildData.updateNextPoemUpdateTime(new Date());
     }
   }
 
