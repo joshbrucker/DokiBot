@@ -24,12 +24,16 @@
                 "description": "Lists a user's submitted insults. If no parameter is provided, lists your own insults."
             },
             {
-                "name":"/insult notify",
+                "name":"/insult notifyme",
                 "description": "Toggles insult notifications for yourself. By default, this is set to OFF."
             },
             {
                 "name": "/insult submit",
                 "description": "Allows you to submit an insult to DokiBot to be approved by a developer."
+            },
+            {
+                "name": "/insult toggle",
+                "description": "Toggles whether DokiBot should send a random, unprompted insult once per day. By default, this is set to ON.\n**[Requires MANAGE_GUILD permission]**"
             }
         ]
     },
