@@ -1,33 +1,35 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require("discord.js");
 
-const helpEmbed = require(__basedir + "/resources/help/help.json");
-const cmdEmbed = require(__basedir + "/resources/help/cmds.json");
+const colors = require(__basedir + "/resources/colors.json");
+const helpData = require(__basedir + "/resources/help/help.json");
 
-let help = function(client, guild, message, args) {
-    if (args.length === 0) {
-        let embed = JSON.parse(JSON.stringify(helpEmbed));
-        embed.thumbnail = { url: client.user.avatarURL };
-        for (let i = 0; i < embed.fields.length; i++) {
-            embed.fields[i].value = embed.fields[i].value.replace(/%p/g, guild.prefix);
-        }
+module.exports = {
+  data: new SlashCommandBuilder()
+      .setName("help")
+      .setDescription("PMs you a list of all commands."),
 
-        message.author.send({ embeds: [new Discord.MessageEmbed(embed)] });
-    } else if (args.length == 1 && cmdEmbed[args[0]]) {
-        let embed = JSON.parse(JSON.stringify(cmdEmbed[args[0]]));
+  async execute(interaction) {
+    let embed = new Discord.MessageEmbed()
+        .setTitle(":sparkles: __**DokiBot Help**__ :sparkles:")
+        .setDescription("Want to restrict commands to certain users/roles?\nAdmins can change perms for each command under:\n**Server Settings > Integrations > DokiBot**\n\n\u200b")
+        .setColor(colors.dokiPink)
+        .setThumbnail(interaction.client.user.avatarURL());
 
-        const attachment = new Discord.MessageAttachment(__basedir + "/resources/images/hacker.png", "hacker.png");
-        let prettyCommand = args[0].replace(/^\w/, c => c.toUpperCase());
+    for (let i = 0; i < helpData.length; i++) {
+      let section = helpData[i];
+      let name = section.category;
+      let value = section.commands.map(command => `**${command.name}**\n${command.description}`).join("\n\n");
 
-        embed.author = { name: "[" + prettyCommand + "] Command Help", icon_url: "attachment://hacker.png" };
-        embed.color = 16734190;
-        for (let i = 0; i < embed.fields.length; i++) {
-            embed.fields[i].name = embed.fields[i].name.replace(/%p/g, guild.prefix);
-            embed.fields[i].value = embed.fields[i].value.replace(/%p/g, guild.prefix);
-        }
-
-
-        message.channel.send({ embeds: [new Discord.MessageEmbed(embed)], files: [attachment] });
+      embed.addFields([{ name: name + "\n\u200b", value: value + (i == helpData.length - 1 ? "" : "\n\n\n\u200b") }]);
     }
-}
 
-module.exports = help;
+    try {
+      let dmChannel = await interaction.user.createDM();
+      await dmChannel.send({ embeds: [new Discord.MessageEmbed(embed)] });
+      interaction.reply({ ephemeral: true, content: "Sent help info to your DMs!" });
+    } catch (error) {
+      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [new Discord.MessageEmbed(embed)] });
+    }
+  },
+};

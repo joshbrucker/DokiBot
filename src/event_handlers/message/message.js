@@ -1,8 +1,7 @@
-const { emojiUtils } = require("@joshbrucker/discordjs-utils");
-
-const { authorizationUrl } = require(__basedir + "/settings.json");
+const { dokibotURL } = require(__basedir + "/settings.json");
 
 const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
+const GuildMemberAccessor = require(__basedir + "/database/accessors/GuildMemberAccessor.js");
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 const sendInsult = require("./helpers/send-insult.js");
 const dokiPoem = require("./helpers/poem-update.js");
@@ -14,16 +13,18 @@ async function onMessage(client, message) {
   }
 
   const guildData = await GuildAccessor.get(message.guild.id);
+  const guildMemberData = await GuildMemberAccessor.get(message.author.id, message.guild.id);
 
   // Migration to slash commands assistance
   let prefix = await utils.getPrefix(guildData.id);
-  if (prefix && message.content.startsWith(prefix)) {
+  if (prefix && message.content.startsWith(prefix) && !guildMemberData.disableSlashWarning) {
     message.channel.send(
         "Prefixed commands are **no longer** supported. Please use slash commands instead.\n\n" +
-        "To disable this messeage, type `/disable`\n\n" +
-        "If slash commands are not appearing, try reinviting the bot with this link:\n" +
-        authorizationUrl
+        "If slash commands are not appearing, have an admin reinvite the bot:\n" +
+        dokibotURL
     );
+
+    guildMemberData.updateDisableSlashWarning(true);
   }
 
   const currDate = new Date();

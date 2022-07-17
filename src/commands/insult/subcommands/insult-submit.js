@@ -16,7 +16,7 @@ async function execute(interaction) {
           .setComponents([
             new TextInputComponent()
                 .setCustomId("submission")
-                .setLabel("Submit your insult!")
+                .setLabel("Submit your insult (once per day)")
                 .setPlaceholder("@user is a big meanie!")
                 .setStyle("SHORT")
                 .setMaxLength("200")
