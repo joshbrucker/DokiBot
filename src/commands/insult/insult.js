@@ -1,10 +1,9 @@
-const { MessageEmbed } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 // Subcommands
 const listSubcommand = require("./subcommands/insult-list.js");
 const forceSubcommand = require("./subcommands/insult-force.js");
-const notifymeSubcommand = require("./subcommands/insult-notifyme.js");
+const notifySubcommand = require("./subcommands/insult-notify.js");
 const submitSubcommand = require("./subcommands/insult-submit.js");
 
 module.exports = {
@@ -22,7 +21,7 @@ module.exports = {
             .setName("status")
             .setDescription("Filter your insults by status.")
             .setRequired(false)
-            .addChoices({ name: "Accepted", value: "accepted" }, { name: "Rejected", value: "rejected" }, { name: "PEnding", value: "pending" })))
+            .addChoices({ name: "Accepted", value: "accepted" }, { name: "Rejected", value: "rejected" }, { name: "Pending", value: "pending" })))
     .addSubcommand(subcommand => subcommand
         .setName("force")
         .setDescription("Forces an insult.")
@@ -31,7 +30,7 @@ module.exports = {
             .setDescription("Members to be chosen for the insult. Separate multiple members with the $ symbol.")
             .setRequired(false)))
     .addSubcommand(subcommand => subcommand
-        .setName("notifyme")
+        .setName("notify")
         .setDescription("Toggle whether DokiBot should @ you if your name is chosen for a random insult."))
     .addSubcommand(subcommand => subcommand
         .setName("submit")
@@ -42,8 +41,8 @@ module.exports = {
       listSubcommand.execute(interaction);
     } else if (interaction.options.getSubcommand() === "force") {
       forceSubcommand.execute(interaction);
-    } else if (interaction.options.getSubcommand() === "notifyme") {
-      notifymeSubcommand.execute(interaction);
+    } else if (interaction.options.getSubcommand() === "notify") {
+      notifySubcommand.execute(interaction);
     } else if (interaction.options.getSubcommand() === "submit") {
       submitSubcommand.execute(interaction);
     }

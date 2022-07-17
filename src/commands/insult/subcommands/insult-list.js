@@ -1,9 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 const { PagedEmbed } = require("@joshbrucker/discordjs-utils");
 
-const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
-
 const { capitalizeFirstLetter } = require(__basedir + "/utils/string-utils.js");
+const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 
 async function execute(interaction) {
   let user = interaction.options.getUser("user");
@@ -27,7 +26,7 @@ async function splitIntoPages(interaction, insults, user, status) {
 
   for (let i = 0; i < insults.length; i++) {
     let formattedInsult = await insults[i].formatForListCommand(interaction.client);
-    description += formattedInsult + "\n\n";
+    description += formattedInsult + "\n\n\n";
 
     if ((i + 1) % PAGE_LENGTH === 0 || (i + 1) === insults.length) {
       pages.push(generateResponse(user, status, description));

@@ -1,45 +1,83 @@
-{
-    "description": ":sparkles: __**DokiBot Help**__ :sparkles:\n\n\u200b",
-    "color": 16734190,
-    "footer": {
-        "text": "*Needs \"Manage Server\" Permission"
+[
+    {
+        "category": "📜  __Poems__",
+        "commands": [
+            {
+                "name": "/end",
+                "description": "Ends a current poem"
+            },
+            {
+                "name": "/frequency",
+                "description": "Changes the frequency which DokiBot grabs words to make a poem."
+            }
+        ]
     },
-    "fields": [
-        {
-            "name": ":pencil: Formatting Tips",
-            "value": "**<argument>**: You need to include these\n**[argument]**: These are optional\n\n(Do not include the brackets in commands)\n\n\u200b"
-        },
-        {
-            "name": ":scroll: Poems",
-            "value": "**%pend**: Ends a current poem*\n**%pfrequency <time>**: Changes the frequency DokiBot grabs words*\n\n\u200b"
-        },
-        {
-            "name": ":smiling_imp: Insults",
-            "value": "**%psubmit <insult>**: Submits an insult to DokiBot; include `%user%` where you want DokiBot to mention someone\n**%ptoggle**: Turns off/on random insults*\n\n\u200b"
-        },
-        {
-            "name": ":regional_indicator_a: :regional_indicator_l: Anilist",
-            "value": "**%panime <anime>**: Finds info on an anime\n**%paniuser <username>**: Finds info on an anilist user\n**%pcharacter <character>**: Finds info on an anime/manga character\n**%pmanga <manga>**: Finds info on a manga\n\n\u200b"
-        },
-        {
-            "name": ":tada: Fun",
-            "value": "**%pmoniquote**: Posts a random Monika quote from the end of DDLC\n\n\u200b"
-        },
-        {
-            "name": ":frame_photo: Images",
-            "value": "**%pdoki [tags]**: Posts an image of a doki\n**%pneko [tags]**: Posts an image of a beautiful neko girl\n**%pwaifu [tags]**: Posts an image of a random waifu\n\n\u200b"
-        },
-        {
-            "name": ":sound: Sounds",
-            "value": "**%pnep [character]**: Plays a soundclip from Hyperdimension Neptunia\n\n\u200b"
-        },
-        {
-            "name": ":cd: OST",
-            "value": "**%pplay <number>**: Plays a track from the DDLC OST #1-15\n**%pplayall**: Queues all tracks from the DDLC OST\n**%plist**: Lists all songs from the DDLC OST and their numbers\n**%pstop**: Stops the current song and clears the queue\n**%ppause**: Pauses the current song\n**%presume**: Resumes a paused song\n**%pskip**: Skips the current song\n**%pqueue**: Displays the song queue\n**%pclear**: Wipes the entire queue\n\n\u200b"
-        },
-        {
-            "name": ":gear: Miscellaneous",
-            "value": "**%phelp [command]**: Lists all commands or info about a specific command\n**%psetchannel [channel]**: Changes the channel DokiBot will post insults and other messages to*\n**%pprefix <new prefix>**: Changes the prefix used for DokiBot commands*\n**%pvote**: Posts a voting link for DokiBot; voting resets cooldowns\n\n\u200b"
-        }
-    ]
-}
+    {
+        "category": "😈  __Insults__",
+        "commands": [
+            {
+                "name": "/insult force",
+                "description": "Forces an insult. Forcing an insult will **not** notify users, even if they have notify enabled."
+            },
+            {
+                "name": "/insult list",
+                "description": "Lists a user's submitted insults. If no parameter is provided, lists your own insults."
+            },
+            {
+                "name":"/insult notify",
+                "description": "Toggles insult notifications for yourself. By default, this is set to OFF."
+            },
+            {
+                "name": "/insult submit",
+                "description": "Allows you to submit an insult to DokiBot to be approved by a developer."
+            }
+        ]
+    },
+    {
+        "category": "🇦 🇱  __Anilist__",
+        "commands": [
+            {
+                "name": "/anime",
+                "description": "Returns info on an anime."
+            },
+            {
+                "name": "/aniuser",
+                "description": "Returns info on an anilist user."
+            },
+            {
+                "name": "/character",
+                "description": "Returns info on an anime/manga character."
+            },
+            {
+                "name": "/manga",
+                "description": "Returns info on a manga."
+            }
+        ]
+    },
+    {
+        "category": "🎉  __Fun__",
+        "commands": [
+            {
+                "name": "/moniquote",
+                "description": "Posta a random Monika quote from the ending of DDLC."
+            }
+        ]
+    },
+    {
+        "category": "🖼️  __Images__",
+        "commands": [
+            {
+                "name": "/husbando",
+                "description": "Posts an image of a husbando."
+            },
+            {
+                "name": "/neko",
+                "description": "Posts an image of a nekomimi."
+            },
+            {
+                "name": "/waifu",
+                "description": "Posts an image of a waifu."
+            }
+        ]
+    }
+]

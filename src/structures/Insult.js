@@ -25,7 +25,7 @@ class Insult extends InsultModel {
     const downvoteEmoji = emojiUtils.formatForChat(await emojiUtils.fetch(client, emojiMap.downvote));
 
     return `${statusEmoji} \u200b **|** \u200b ${this.message}` +
-        ((this.status === "accepted") ? ` \u200b **|** \u200b ${this.upvotes} ${upvoteEmoji} \u200b **|** \u200b ${this.downvotes} ${downvoteEmoji}` : "");
+        ((this.status === "accepted") ? `\n\n${this.upvotes} ${upvoteEmoji} \u200b \u200b ${this.downvotes} ${downvoteEmoji}` : "");
   }
 
   async formatWithRandomUsers(guild, members, ignoreNotify=false) {

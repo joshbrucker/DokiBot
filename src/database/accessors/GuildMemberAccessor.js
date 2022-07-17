@@ -19,7 +19,7 @@ const GuildMemberAccessor = {
     });
 
     if (data && data.length > 0) {
-      return new GuildMember(data[0].id, data[0].guild_id, data[0].insult_notify);
+      return new GuildMember(data[0].id, data[0].guild_id, data[0].insult_notify, data[0].disable_slash_warning);
     }
 
     return null;
