@@ -1,10 +1,12 @@
-const { dokibotURL } = require(__basedir + "/settings.json");
+const { Constants: { APIErrors: { MISSING_PERMISSIONS }}} = require("discord.js");
+const { ignore } = require("@joshbrucker/discordjs-utils");
 
+const { dokibotURL } = require(__basedir + "/settings.json");
 const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
 const GuildMemberAccessor = require(__basedir + "/database/accessors/GuildMemberAccessor.js");
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 const sendInsult = require("./helpers/send-insult.js");
-const dokiPoem = require("./helpers/poem-update.js");
+const poemUpdate = require("./helpers/poem-update.js");
 const utils = require(__basedir + "/utils/utils.js");
 
 async function onMessage(client, message) {
@@ -36,12 +38,12 @@ async function onMessage(client, message) {
       await sendInsult(client, message, insult);
       await guildData.updateNextInsultTime(utils.generateNewTime(currDate));
     } else {
-      await message.channel.send("There are no insults added yet!");
+      await message.channel.send("There are no insults added yet!").catch(ignore([MISSING_PERMISSIONS]));
     }
   }
 
   if (guildData.nextPoemUpdateTime <= currDate) {
-    await dokiPoem(guildData, message);
+    await poemUpdate(guildData, message);
   }
 }
 

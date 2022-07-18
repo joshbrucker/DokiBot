@@ -1,5 +1,5 @@
 const {
-  Constants: { APIErrors: { UNKNOWN_INTERACTION, UNKNOWN_MESSAGE }},
+  Constants: { APIErrors: { UNKNOWN_INTERACTION, UNKNOWN_MESSAGE, MISSING_PERMISSIONS }},
   MessageButton,
   MessageActionRow
 } = require("discord.js");
@@ -29,7 +29,12 @@ async function sendInsult(client, message, insult) {
     content: insultMessage + "\n\u200b",
     components: [new MessageActionRow({components: [upvote, downvote]})],
     fetchReply: true
-  });
+  }).catch(ignore([MISSING_PERMISSIONS]));
+
+  // Return if the reply errored out due to no permissions
+  if (!reply) {
+    return;
+  }
 
   const collector = reply.createMessageComponentCollector({
     time: 300000

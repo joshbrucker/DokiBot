@@ -1,6 +1,7 @@
 // This file needs a BIG update and cleaning...
 
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Constants: { APIErrors: { MISSING_PERMISSIONS }}} = require("discord.js");
+const { ignore } = require("@joshbrucker/discordjs-utils");
 const contractions = require("expand-contractions");
 const fs = require("fs");
 const isUrl = require("is-url");
@@ -77,9 +78,9 @@ let dokipoemUpdate = async function(guildData, message) {
           .setTitle("Your Poem")
           .setDescription(currentPoem);
 
-      await message.channel.send({embeds: [embed]});
+      await message.channel.send({embeds: [embed]}).catch(ignore([MISSING_PERMISSIONS]));
+      
       currentPoem = null;
-
       await guildData.updateNextPoemUpdateTime(new Date());
     }
   }
