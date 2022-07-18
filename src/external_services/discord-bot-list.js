@@ -28,7 +28,7 @@ let setupDBL = function(auth, client) {
 };
 
 async function resetCooldowns(vote) {
-  let globalMemberData = await GlobalMemberAccessor.get(vote.user.id);
+  let globalMemberData = await GlobalMemberAccessor.get(vote.user);
   await globalMemberData.updateNextSubmitDate(new Date());
 };
 
