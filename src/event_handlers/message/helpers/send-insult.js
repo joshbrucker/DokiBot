@@ -1,5 +1,5 @@
 const {
-  Constants: { APIErrors: { UNKNOWN_INTERACTION, UNKNOWN_MESSAGE, MISSING_PERMISSIONS }},
+  Constants: { APIErrors: { MISSING_ACCESS, MISSING_PERMISSIONS, UNKNOWN_INTERACTION, UNKNOWN_MESSAGE }},
   MessageButton,
   MessageActionRow
 } = require("discord.js");
@@ -77,7 +77,7 @@ async function sendInsult(client, message, insult) {
 
     await buttonInteraction.update({
       components: [new MessageActionRow({components: [upvote, downvote]})]
-    }).catch(ignore([UNKNOWN_INTERACTION]));
+    }).catch(ignore([UNKNOWN_INTERACTION, MISSING_ACCESS]));
   });
 
   collector.on("end", async () => {
@@ -86,7 +86,7 @@ async function sendInsult(client, message, insult) {
 
     await reply.edit({
       components: [new MessageActionRow({components: [upvote, downvote]})]
-    }).catch(ignore([UNKNOWN_MESSAGE]));
+    }).catch(ignore([UNKNOWN_MESSAGE, MISSING_ACCESS]));
 
     if (insult) {
       await insult.addUpvotes(upvote.label);
