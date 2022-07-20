@@ -63,13 +63,17 @@
         "commands": [
             {
                 "name": "/moniquote",
-                "description": "Posta a random Monika quote from the ending of DDLC."
+                "description": "Posts a random Monika quote from the ending of DDLC."
             }
         ]
     },
     {
         "category": "🖼️  __Images__",
         "commands": [
+            {
+                "name": "/doki",
+                "description": "Posts an image of a character from DDLC."
+            },
             {
                 "name": "/husbando",
                 "description": "Posts an image of a husbando."

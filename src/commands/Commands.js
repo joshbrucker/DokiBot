@@ -10,6 +10,7 @@ const Commands = new Discord.Collection();
 Commands.set("anime", require("./anilist/anime.js"));
 Commands.set("aniuser", require("./anilist/aniuser.js"));
 Commands.set("character", require("./anilist/character.js"));
+Commands.set("doki", require("./images/doki.js"));
 Commands.set("help", require("./misc/help.js"));
 Commands.set("husbando", require("./images/husbando.js"));
 Commands.set("insult", require("./insult/insult.js"));
