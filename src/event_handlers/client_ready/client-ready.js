@@ -13,7 +13,7 @@ async function onClientReady(client) {
 
   // Register commands
   if (settings.developerMode) {
-    await rest.put(Routes.applicationGuildCommands(client.user.id, auth.testGuild), { body: commandsJson });
+    await rest.put(Routes.applicationGuildCommands(client.user.id, settings.testGuild), { body: commandsJson });
   } else {
     await rest.put(Routes.applicationCommands(client.user.id), { body: commandsJson });
   }
