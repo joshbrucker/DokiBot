@@ -3,7 +3,6 @@ const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
 const GlobalMemberAccessor = require(__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 
-const { cacheSubmissionChannel } = require(__basedir + "/utils/utils.js");
 const { maybePluralize } = require(__basedir + "/utils/string-utils.js");
 const { submissionChannel } = require(__basedir + "/settings.json").insults;
 
@@ -63,12 +62,12 @@ async function handleModal(interaction) {
     return;
   }
 
+  await cacheSubmissionChannel(interaction.client);
+
   const tomorrow = new Date();
   tomorrow.setDate(new Date().getDate() + 1);
 
   await member.updateNextSubmitDate(tomorrow);
-
-  await cacheSubmissionChannel(interaction.client);
 
   await interaction.reply("📤  Submission has been sent! Use `/insult list` to view its status.\n```" + submission + "```");
 }
@@ -93,6 +92,16 @@ async function sendInsultToSubmissionChannel(interaction, insult) {
       insult: insult,
     }
   });
+}
+
+async function cacheSubmissionChannel(client) {
+  async function cacheMessages(target, { submissionChannel }) {
+    let channel = await target.channels.resolve(submissionChannel);
+    if (channel) {
+      await channel.messages.fetch();
+    }
+  }
+  await client.shard.broadcastEval(cacheMessages, { context: { submissionChannel: submissionChannel }});
 }
 
 function getRemainingTimeString(time) {

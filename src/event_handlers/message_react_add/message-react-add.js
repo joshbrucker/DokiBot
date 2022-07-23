@@ -1,12 +1,11 @@
 const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
 
-const { cacheSubmissionChannel } = require(__basedir + "/utils/utils.js");
 const { approvalsToAccept, rejectionsToDeny, submissionChannel } = require(__basedir + "/settings.json").insults;
 
 let onMessageReactAdd = async function(client, reaction) {
   if (reaction.message.channel.id === submissionChannel) {
     let newStatus;
-  
+
     if (reaction.emoji.toString() === "✅" && reaction.count - 1 >= approvalsToAccept) {
       newStatus = "accepted";
     } else if (reaction.emoji.toString() === "❌" && reaction.count - 1 >= rejectionsToDeny) {
@@ -22,8 +21,8 @@ let onMessageReactAdd = async function(client, reaction) {
   
       if (insult) {
         await insult.updateStatus(newStatus, insult.id);
+        await message.channel.messages.fetch();
         await message.delete();
-        await cacheSubmissionChannel(client);
       }
     }
   }
