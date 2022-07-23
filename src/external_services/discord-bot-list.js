@@ -1,15 +1,14 @@
-const DiscordBotList = require("dblapi.js");
+const DiscordBotList = require("top.gg");
 
+const { dbltoken } = require(__basedir + "/auth.json");
 const GlobalMemberAccessor = require(__basedir + "/database/accessors/GlobalMemberAccessor.js");
 
 
-let setupDBL = function(auth, client) {
-  let DBL_TOKEN = auth.dbltoken;
-  if (DBL_TOKEN) {
+let setupDBL = function(client) {
+  if (dbltoken) {
     let port = auth.webhookPort + client.shard.ids[0];
 
-    const dblInstance = new DiscordBotList(DBL_TOKEN, { webhookPort: port,
-    	webhookAuth: auth.webhookAuth }, client);
+    const dblInstance = new DiscordBotList(dbltoken, { webhookPort: port, webhookAuth: auth.webhookAuth }, client);
 
     dblInstance.webhook.on("ready", (hook) => {
       console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
