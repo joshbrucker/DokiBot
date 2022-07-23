@@ -24,7 +24,7 @@ async function onClientReady(client) {
   }
 
   // Set up Discord Bot List connection
-  setupDbl(auth, client);
+  setupDbl(client);
 
   console.log("I am ready! Serving " + client.guilds.cache.size + " guilds.");
 }
