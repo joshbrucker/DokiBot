@@ -17,6 +17,9 @@ async function onMessage(client, message) {
   const guildData = await GuildAccessor.get(message.guild.id);
   const guildMemberData = await GuildMemberAccessor.get(message.author.id, message.guild.id);
 
+  // Message privacy - ignore message for user if they opted out
+  if (guildMemberData.ignoreMe) return;
+
   // Assistance for migration to slash commands
   let prefix = await utils.getPrefix(guildData.id);
   if (prefix && message.content.startsWith(prefix) && !guildMemberData.disableSlashWarning) {
