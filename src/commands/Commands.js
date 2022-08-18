@@ -13,6 +13,7 @@ Commands.set("character", require("./anilist/character.js"));
 Commands.set("doki", require("./images/doki.js"));
 Commands.set("help", require("./misc/help.js"));
 Commands.set("husbando", require("./images/husbando.js"));
+Commands.set("ignoreme", require("./misc/ignoreme.js"));
 Commands.set("insult", require("./insult/insult.js"));
 Commands.set("manga", require("./anilist/manga.js"));
 Commands.set("moniquote", require("./fun/moniquote.js"));
