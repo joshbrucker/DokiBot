@@ -92,3 +92,7 @@ DMs you a list of all commands.
 
 ### /ignoreme
 Privacy feature - Toggles whether DokiBot can see your non-slash-command messages. This will stop DokiBot from triggering random events (insults, poems, etc.) and collecting poem words when you send a message. Slash commands **will** still work with this feature turned on.
+
+---
+
+[Privacy Policy](https://github.com/joshbrucker/DokiBot/blob/master/PRIVACY.md)
