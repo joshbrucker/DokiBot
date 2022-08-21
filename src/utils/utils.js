@@ -32,15 +32,10 @@ function getAvailableChannel(client, guild) {
   }
 }
 
-function getMembers(guild) {
-  let members = guild.members.cache.array();
-  let humans = [];
-  for (let i = 0; i < members.length; i++) {
-    if (!members[i].user.bot) {
-      humans.push(members[i]);
-    }
-  }
-  return humans;
+async function getAllHumanMembers(guild) {
+  let members = await guild.members.fetch();
+  let humanMembers = members.filter(entry => !entry.user.bot);
+  return humanMembers;
 }
 
 function generateNewTime(date) {
@@ -85,7 +80,7 @@ async function cacheSubmissionChannel(client) {
 module.exports = {
   invalidArgsMsg,
   getAvailableChannel,
-  getMembers,
+  getAllHumanMembers,
   generateNewTime,
   random,
   randomDokiEmoji,

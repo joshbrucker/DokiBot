@@ -1,16 +1,17 @@
 const Discord = require("discord.js");
 
 const InsultAccesor = require(__basedir + "/database/accessors/InsultAccessor.js");
+const utils = require(__basedir + "/utils/utils.js");
 
 async function execute(interaction) {
-  let members = interaction.options.getString("members");
+  let requestedMembers = interaction.options.getString("members");
   let chooseableMembers = new Discord.Collection();
 
-  if (members) {
-    members = members.split("$");
-    members.forEach(string => string.trim());
-    for (let i = 0; i < members.length; i++) {
-      let member = members[i];
+  if (requestedMembers) {
+    requestedMembers = requestedMembers.split("$");
+    requestedMembers.forEach(string => string.trim());
+    for (let i = 0; i < requestedMembers.length; i++) {
+      let member = requestedMembers[i];
       let fetchedMember;
 
       try {
@@ -25,13 +26,13 @@ async function execute(interaction) {
       }
 
       if (!fetchedMember) {
-        interaction.reply("Cannot find member " + members[i]);
+        interaction.reply("Cannot find member **" + requestedMembers[i] + "**");
         return;
       }
       chooseableMembers.set(fetchedMember.id, fetchedMember);
     }
   } else {
-    chooseableMembers = interaction.guild.members.cache.filter(entry => !entry.user.bot);
+    chooseableMembers = await utils.getAllHumanMembers(interaction.guild);
   }
 
   let insult = await InsultAccesor.getRandomAccepted();
