@@ -5,7 +5,7 @@ const Discord = require("discord.js");
 const auth = require("./auth.json");
 const eventHandler = require("./event_handlers/event-handler.js");
 
-const client = new Discord.Client({ intents: [ "GUILDS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGES" ] });
+const client = new Discord.Client({ intents: [ "GUILDS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGES", "GUILD_MEMBERS" ] });
 
 client.on("ready", () => eventHandler.onClientReady(client));
 
