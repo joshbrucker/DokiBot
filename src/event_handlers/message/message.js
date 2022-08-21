@@ -27,7 +27,7 @@ async function onMessage(client, message) {
         "Prefixed commands are **no longer** supported. Please use slash commands instead.\n\n" +
         "If slash commands are not appearing, have an admin reinvite the bot:\n" +
         dokibotURL
-    );
+    ).catch(ignore([MISSING_PERMISSIONS]));
 
     await guildMemberData.updateDisableSlashWarning(true);
   }
