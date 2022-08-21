@@ -87,5 +87,14 @@
                 "description": "Posts an image of a waifu."
             }
         ]
+    },
+    {
+        "category": "⚙  __Misc__",
+        "commands": [
+            {
+                "name": "/ignoreme",
+                "description": "Toggles whether DokiBot can see your messages. This will stop DokiBot from triggering random events (insults, poems, etc.) and collecting poem words when you send a message. Slash commands will still work with this enabled."
+            }
+        ]
     }
 ]
