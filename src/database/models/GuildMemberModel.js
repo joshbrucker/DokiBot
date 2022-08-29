@@ -25,7 +25,7 @@ class GuildMemberModel {
   }
 
   async updateDisableSlashWarning(disableSlashWarning) {
-    this.insultNotify = disableSlashWarning;
+    this.disableSlashWarning = disableSlashWarning;
     await runQuery(`UPDATE guild_member SET disable_slash_warning=? WHERE id=? AND guild_id=?;`, [ disableSlashWarning, this.id, this.guildId ]);
     Cache.del([this.cacheKey]);
   }
