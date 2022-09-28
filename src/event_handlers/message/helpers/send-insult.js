@@ -85,9 +85,12 @@ async function sendInsult(client, message, insult) {
     upvote.disabled = true;
     downvote.disabled = true;
 
-    await reply.edit({
-      components: [new MessageActionRow({components: [upvote, downvote]})]
-    }).catch(ignore([UNKNOWN_MESSAGE, MISSING_ACCESS]));
+
+    if (reply.editable) {
+      await reply.edit({
+        components: [new MessageActionRow({components: [upvote, downvote]})]
+      }).catch(ignore([UNKNOWN_MESSAGE, MISSING_ACCESS]));
+    }
 
     if (insult) {
       await insult.addUpvotes(upvote.label);
