@@ -8,17 +8,29 @@ async function execute(interaction) {
   let chooseableMembers = new Discord.Collection();
 
   if (requestedMembers) {
-    requestedMembers = requestedMembers.split("$");
-    requestedMembers.forEach(string => string.trim());
+    requestedMembers = requestedMembers.split("$").map(string => string.trim());
     for (let i = 0; i < requestedMembers.length; i++) {
       let member = requestedMembers[i];
       let fetchedMember;
 
       try {
-        if (member.startsWith("<@!") && member.endsWith(">")) {
-          member = member.substring(3, member.length - 1);
+        if (member.startsWith("<@") && member.endsWith(">")) {
+          let startIndex = 2;
+          if (member.startsWith("<@!")) {
+            startIndex = 3;
+          }
+          member = member.substring(startIndex, member.length - 1);
         }
-        fetchedMember = await interaction.guild.members.fetch(member);
+
+        // MUST check if it is a number before fetch; otherwise, users can pass in "/" symbols that will throw errors.
+        if (!isNaN(member)) {
+          fetchedMember = await interaction.guild.members.fetch(member);
+        }
+
+        if (!fetchedMember) {
+          let searchResults = await interaction.guild.members.search({ query: member, limit: 1 });
+          fetchedMember = searchResults.first();
+        }
       } catch (err) {
         if (err.httpStatus !== 400) {
           throw err;
