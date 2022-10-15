@@ -14,8 +14,7 @@ let query = async function(query, variables) {
     })
   };
 
-  res = await fetch(url, options);
-  return res;
+  return await fetch(url, options);
 };
 
-module.exports = { query }
+module.exports = { query };

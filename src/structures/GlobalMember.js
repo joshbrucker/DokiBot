@@ -1,4 +1,4 @@
-const GlobalMemberModel = require(__basedir + "/database/models/GlobalMemberModel.js");
+const GlobalMemberModel = require(global.__basedir + "/database/models/GlobalMemberModel.js");
 
 class GlobalMember extends GlobalMemberModel {
   constructor(id, nextSubmitDate) {

@@ -1,14 +1,14 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const anilist = require(__basedir + "/external_services/anilist.js");
+const anilist = require(global.__basedir + "/external_services/anilist.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("aniuser")
-    .setDescription("Searches Anilist for a user.")
-    .addStringOption(option => option
-        .setName("name")
-        .setDescription("The name of the user to search for.")
-        .setRequired(true)),
+      .setName("aniuser")
+      .setDescription("Searches Anilist for a user.")
+      .addStringOption(option => option
+          .setName("name")
+          .setDescription("The name of the user to search for.")
+          .setRequired(true)),
 
   async execute(interaction) {
     let name = interaction.options.get("name").value;

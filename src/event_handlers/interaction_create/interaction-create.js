@@ -1,5 +1,5 @@
-const { Commands } = require(__basedir + "/commands/Commands.js");
-const { ModalHandlers } = require(__basedir + "/commands/ModalHandlers.js");
+const { Commands } = require(global.__basedir + "/commands/Commands.js");
+const { ModalHandlers } = require(global.__basedir + "/commands/ModalHandlers.js");
 
 async function interactionCreate(client, interaction) {
   if (interaction.isCommand()) {
@@ -15,6 +15,6 @@ async function interactionCreate(client, interaction) {
       modalHandler(interaction);
     }
   }
-};
+}
 
 module.exports = interactionCreate;

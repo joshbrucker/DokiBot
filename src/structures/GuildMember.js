@@ -1,4 +1,4 @@
-const GuildMemberModel = require(__basedir + "/database/models/GuildMemberModel.js");
+const GuildMemberModel = require(global.__basedir + "/database/models/GuildMemberModel.js");
 
 class GuildMember extends GuildMemberModel {
   constructor(id, guildId, insultNotify, ignoreMe, disableSlashWarning) {

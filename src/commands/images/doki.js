@@ -17,7 +17,9 @@ module.exports = {
           .setRequired(false)),
 
   async execute(interaction) {
-    let doki = interaction.options.getString("character") ? [interaction.options.getString("character"), "1girl"] : ["doki_doki_literature_club", ""]; // extra "blank" to match tag length of other option
+    let doki = interaction.options.getString("character") ?
+        [ interaction.options.getString("character"), "1girl" ] :
+        [ "doki_doki_literature_club", "" ]; // extra "blank" to match tag length of other option
     let rawRequestedTags = interaction.options.getString("tags");
 
     await handleDanbooruCommand(interaction, "doki", doki, rawRequestedTags);

@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 const { PagedEmbed } = require("@joshbrucker/discordjs-utils");
 
-const { capitalizeFirstLetter } = require(__basedir + "/utils/string-utils.js");
-const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
+const { capitalizeFirstLetter } = require(global.__basedir + "/utils/string-utils.js");
+const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
 
 async function execute(interaction) {
   let user = interaction.options.getUser("user");
@@ -45,12 +45,12 @@ function generateResponse(user, status, description) {
   let username = user ? user.username + "'s" : "Your";
 
   let title = status ?
-      `${username} ${capitalizeFirstLetter(status)} Insults` :
-      `${username} Insults`;
+    `${username} ${capitalizeFirstLetter(status)} Insults` :
+    `${username} Insults`;
 
   return new MessageEmbed()
       .setTitle(title)
-      .setDescription(description)
+      .setDescription(description);
 }
 
 module.exports = { execute };

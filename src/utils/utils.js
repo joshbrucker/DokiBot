@@ -1,10 +1,10 @@
 const { emojiUtils } = require("@joshbrucker/discordjs-utils");
-const { submissionChannel } = require(__basedir + "/settings.json");
-const { runQuery } = require(__basedir + "/database/db.js");
+const { submissionChannel } = require(global.__basedir + "/settings.json");
+const { runQuery } = require(global.__basedir + "/database/db.js");
 
 // temporary function to allow for servers to transition to new slash commands
 async function getPrefix(guildId) {
-  let response = await runQuery(`SELECT prefix FROM guild WHERE id=?;`, [guildId]);
+  let response = await runQuery("SELECT prefix FROM guild WHERE id=?;", [ guildId ]);
   
   if (response.length > 0) {
     return response[0].prefix;
@@ -15,15 +15,15 @@ async function getPrefix(guildId) {
 
 // Outputs a message with the given commands
 function invalidArgsMsg(message, command) {
-  message.channel.send(":x: **" + message.member.displayName + "**, that's not a valid use of \`" + command + "\`!\n" +
-      "Use \`help " + command + "\` for more info.");
+  message.channel.send(":x: **" + message.member.displayName + "**, that's not a valid use of `" + command + "`!\n" +
+      "Use `help " + command + "` for more info.");
 }
 
 function getAvailableChannel(client, guild) {
   let channels = guild.channels.cache.filter((channel) =>
-      channel.type === "text" &&
-      channel.permissionsFor(client.user).has("SEND_MESSAGES" &&
-      channel.permissionsFor(client.user).has("VIEW_CHANNEL")));
+    channel.type === "text" &&
+    channel.permissionsFor(client.user).has("SEND_MESSAGES" &&
+    channel.permissionsFor(client.user).has("VIEW_CHANNEL")));
 
   if (channels.first()) {
     return channels.first();

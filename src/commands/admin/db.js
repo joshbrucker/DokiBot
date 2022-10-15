@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require("@discordjs/builders");
 const { SqlError } = require("mariadb");
 
-const { adminUsers } = require(__basedir + "/settings.json");
-const { runReadOnlyQuery } = require(__basedir + "/database/db.js");
+const { adminUsers } = require(global.__basedir + "/settings.json");
+const { runReadOnlyQuery } = require(global.__basedir + "/database/db.js");
 
 module.exports = {
   data: new SlashCommandBuilder()

@@ -1,11 +1,11 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require("@discordjs/builders");
 
 const guildSubcommand = require("./subcommands/cache-guild.js");
 const globalMemberSubcommand = require("./subcommands/cache-global-member.js");
 const guildMemberSubcommand = require("./subcommands/cache-guild-member.js");
 const flushSubcommand = require("./subcommands/cache-flush.js");
 
-const { adminUsers } = require(__basedir + "/settings.json");
+const { adminUsers } = require(global.__basedir + "/settings.json");
 
 module.exports = {
   data: new SlashCommandBuilder()

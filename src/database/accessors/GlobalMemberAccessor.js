@@ -1,6 +1,6 @@
 const { runQuery } = require("../db.js");
-const Cache = require(__basedir + "/cache/Cache.js");
-const GlobalMember = require(__basedir + "/structures/GlobalMember.js");
+const Cache = require(global.__basedir + "/cache/Cache.js");
+const GlobalMember = require(global.__basedir + "/structures/GlobalMember.js");
 
 const GlobalMemberAccessor = {
   async get(memberId) {
@@ -28,7 +28,7 @@ const GlobalMemberAccessor = {
 
   async remove(memberId) {
     await runQuery(`DELETE FROM global_member WHERE id=?;`, [ memberId ]);
-    Cache.del([Cache.getGlobalMemberKey(memberId)]);
+    Cache.del([ Cache.getGlobalMemberKey(memberId) ]);
   },
 };
 

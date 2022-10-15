@@ -3,8 +3,8 @@ const { MessageEmbed } = require("discord.js");
 const { PagedEmbed } = require("@joshbrucker/discordjs-utils");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
-const colors = require(__basedir + "/resources/colors.json");
-const { random } = require(__basedir + "/utils/utils.js");
+const colors = require(global.__basedir + "/resources/colors.json");
+const { random } = require(global.__basedir + "/utils/utils.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -12,7 +12,7 @@ module.exports = {
       .setDescription("Replies with a quote from Monika."),
 
   async execute(interaction) {
-    const moniquoteDir = __basedir + "/resources/moniquotes";
+    const moniquoteDir = global.__basedir + "/resources/moniquotes";
 
     let dir = await fs.promises.readdir(moniquoteDir);
     let fileName = dir[random(dir.length)];
@@ -34,16 +34,16 @@ module.exports = {
       }
 
       pages.push(
-          new MessageEmbed()
-              .setTitle(title)
-              .setDescription(descr)
-              .setColor(colors.monikaGreen)
-              .setAuthor({ name: "Monika", url: "https://twitter.com/lilmonix3", iconURL: "attachment://monika.png" })
+        new MessageEmbed()
+            .setTitle(title)
+            .setDescription(descr)
+            .setColor(colors.monikaGreen)
+            .setAuthor({ name: "Monika", url: "https://twitter.com/lilmonix3", iconURL: "attachment://monika.png" })
       );
 
       descr = "";
     }
 
-    new PagedEmbed().send(interaction, pages, attachments=[__basedir + "/resources/images/monika.png"]);
+    new PagedEmbed().send(interaction, pages, [ global.__basedir + "/resources/images/monika.png" ]);
   }
 };

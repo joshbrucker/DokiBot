@@ -1,7 +1,7 @@
 const DiscordBotList = require("top.gg");
 
-const auth = require(__basedir + "/auth.json");
-const GlobalMemberAccessor = require(__basedir + "/database/accessors/GlobalMemberAccessor.js");
+const auth = require(global.__basedir + "/auth.json");
+const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 
 
 let setupDBL = function(client) {
@@ -29,6 +29,6 @@ let setupDBL = function(client) {
 async function resetCooldowns(vote) {
   let globalMemberData = await GlobalMemberAccessor.get(vote.user);
   await globalMemberData.updateNextSubmitDate(new Date());
-};
+}
 
 module.exports = setupDBL;

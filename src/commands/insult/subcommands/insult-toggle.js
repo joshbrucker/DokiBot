@@ -1,6 +1,6 @@
 const { Permissions } = require("discord.js");
 
-const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
+const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
 async function execute(interaction) {
   if (interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {

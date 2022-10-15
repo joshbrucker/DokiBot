@@ -1,10 +1,10 @@
 const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
 
-const GlobalMemberAccessor = require(__basedir + "/database/accessors/GlobalMemberAccessor.js");
-const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
+const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
+const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
 
-const { maybePluralize } = require(__basedir + "/utils/string-utils.js");
-const { submissionChannel } = require(__basedir + "/settings.json").insults;
+const { maybePluralize } = require(global.__basedir + "/utils/string-utils.js");
+const { submissionChannel } = require(global.__basedir + "/settings.json").insults;
 
 async function execute(interaction) {
   const modal = new Modal()
@@ -12,15 +12,15 @@ async function execute(interaction) {
       .setTitle("Insult Submission")
       .setComponents([
         new MessageActionRow()
-          .setComponents([
-            new TextInputComponent()
-                .setCustomId("submission")
-                .setLabel("Submit your insult (once per day)")
-                .setPlaceholder("@user is a big meanie!")
-                .setStyle("SHORT")
-                .setMaxLength("200")
-                .setRequired(true)
-          ])
+            .setComponents([
+              new TextInputComponent()
+                  .setCustomId("submission")
+                  .setLabel("Submit your insult (once per day)")
+                  .setPlaceholder("@user is a big meanie!")
+                  .setStyle("SHORT")
+                  .setMaxLength("200")
+                  .setRequired(true)
+            ])
       ]);
 
   let member = await GlobalMemberAccessor.get(interaction.user.id);
@@ -79,7 +79,7 @@ async function sendInsultToSubmissionChannel(interaction, insult) {
   
     if (channel) {
       let sentMessage = await channel.send(`${insult.message}\n\n**ID:** ${insult.id}\n`);
-      await emojiUtils.react(sentMessage, ["✅", "❌"]);
+      await emojiUtils.react(sentMessage, [ "✅", "❌" ]);
       return true;
     } else {
       return false;

@@ -1,6 +1,6 @@
 const { runQuery } = require("../db.js");
-const Cache = require(__basedir + "/cache/Cache.js");
-const Guild = require(__basedir + "/structures/Guild.js");
+const Cache = require(global.__basedir + "/cache/Cache.js");
+const Guild = require(global.__basedir + "/structures/Guild.js");
 
 const GuildAccessor = {
   async get(guildId) {
@@ -18,7 +18,7 @@ const GuildAccessor = {
 
     if (data && data.length > 0) {
       return new Guild(data[0].id, data[0].current_poem, data[0].poem_channel, data[0].next_poem_update_time,
-          data[0].poem_frequency, data[0].allow_insults, data[0].next_insult_time);
+        data[0].poem_frequency, data[0].allow_insults, data[0].next_insult_time);
     }
 
     return null;
@@ -30,7 +30,7 @@ const GuildAccessor = {
 
   async remove(guildId) {
     await runQuery(`DELETE FROM guild WHERE id=?;`, [ guildId ]);
-    Cache.del([Cache.getGuildKey(guildId)]);
+    Cache.del([ Cache.getGuildKey(guildId) ]);
   },
 };
 

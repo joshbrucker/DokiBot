@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
-const InsultAccesor = require(__basedir + "/database/accessors/InsultAccessor.js");
-const utils = require(__basedir + "/utils/utils.js");
+const InsultAccesor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
+const utils = require(global.__basedir + "/utils/utils.js");
 
 async function execute(interaction) {
   let requestedMembers = interaction.options.getString("members");
@@ -48,7 +48,7 @@ async function execute(interaction) {
   }
 
   let insult = await InsultAccesor.getRandomAccepted();
-  let insultMessage = await insult.formatWithRandomUsers(interaction.guild, chooseableMembers, ignoreNotify=true);
+  let insultMessage = await insult.formatWithRandomUsers(interaction.guild, chooseableMembers, true);
 
   await interaction.reply(insultMessage);
 }

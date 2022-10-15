@@ -1,13 +1,13 @@
 const { Routes } = require("discord-api-types/v10");
 const { REST } = require("@discordjs/rest");
 
-const auth = require(__basedir + "/auth.json");
-const settings = require(__basedir + "/settings.json");
-const setupDbl = require(__basedir + "/external_services/discord-bot-list.js");
-const { Commands } = require(__basedir + "/commands/Commands.js");
+const auth = require(global.__basedir + "/auth.json");
+const settings = require(global.__basedir + "/settings.json");
+const setupDbl = require(global.__basedir + "/external_services/discord-bot-list.js");
+const { Commands } = require(global.__basedir + "/commands/Commands.js");
 
 async function onClientReady(client) {
-  const rest = new REST({ version: "10" }).setToken(auth.token)
+  const rest = new REST({ version: "10" }).setToken(auth.token);
   const commandsJson = Commands.map(command => command.data);
 
   // Register commands

@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require("@discordjs/builders");
 const Discord = require("discord.js");
 
-const colors = require(__basedir + "/resources/colors.json");
-const helpData = require(__basedir + "/resources/help/help.json");
+const colors = require(global.__basedir + "/resources/colors.json");
+const helpData = require(global.__basedir + "/resources/help/help.json");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -26,10 +26,10 @@ module.exports = {
 
     try {
       let dmChannel = await interaction.user.createDM();
-      await dmChannel.send({ embeds: [new Discord.MessageEmbed(embed)] });
+      await dmChannel.send({ embeds: [ new Discord.MessageEmbed(embed) ]});
       interaction.reply({ ephemeral: true, content: "Sent help info to your DMs!" });
     } catch (error) {
-      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [new Discord.MessageEmbed(embed)] });
+      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ new Discord.MessageEmbed(embed) ]});
     }
   },
 };
