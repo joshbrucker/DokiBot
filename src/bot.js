@@ -15,6 +15,5 @@ client.on("guildCreate", (guild) => eventHandler.onGuildCreate(guild));
 client.on("guildDelete", (guild) => eventHandler.onGuildDelete(guild));
 client.on("messageCreate", (message) => eventHandler.onMessage(client, message));
 client.on("messageReactionAdd", (reaction) => eventHandler.onMessageReactAdd(client, reaction));
-client.on("messageReactionRemove", (reaction) => eventHandler.onMessageReactRemove(client, reaction));
 
 client.login(auth.token);
