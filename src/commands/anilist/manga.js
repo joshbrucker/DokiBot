@@ -1,14 +1,14 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const anilist = require(__basedir + "/external_services/anilist.js");
+const anilist = require(global.__basedir + "/external_services/anilist.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("manga")
-    .setDescription("Searches Anilist for a manga.")
-    .addStringOption(option => option
-        .setName("title")
-        .setDescription("The title of the manga to search for.")
-        .setRequired(true)),
+      .setName("manga")
+      .setDescription("Searches Anilist for a manga.")
+      .addStringOption(option => option
+          .setName("title")
+          .setDescription("The title of the manga to search for.")
+          .setRequired(true)),
 
   async execute(interaction) {
     let title = interaction.options.get("title").value;

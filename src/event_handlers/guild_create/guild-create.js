@@ -1,4 +1,4 @@
-const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
+const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
 async function onGuildCreate(guild) {
   await GuildAccessor.add(guild.id);

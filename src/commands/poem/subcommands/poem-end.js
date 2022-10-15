@@ -1,6 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 
-const GuildAccessor = require(__basedir + "/database/accessors/GuildAccessor.js");
+const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
 async function execute(interaction) {
   let guildData = await GuildAccessor.get(interaction.guild.id);
@@ -14,7 +14,7 @@ async function execute(interaction) {
       .setTitle("Your Poem")
       .setDescription(guildData.currentPoem);
 
-  await interaction.reply({ embeds: [embed] });
+  await interaction.reply({ embeds: [ embed ]});
 
   await guildData.updateNextPoemUpdateTime(new Date());
   await guildData.updateCurrentPoem(null);

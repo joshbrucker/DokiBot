@@ -1,6 +1,6 @@
 const mariadb = require("mariadb");
 
-const auth = require(__basedir + "/auth.json");
+const auth = require(global.__basedir + "/auth.json");
 
 const pool = mariadb.createPool({
   host: auth.dbHost,
@@ -20,8 +20,6 @@ async function runQuery(queryString, queryVars=[]) {
 
     if (!res) res = [];
     if (res.meta) delete res.meta;
-  } catch(err) {
-    throw err;
   } finally {
     if (conn) await conn.end();
   }
@@ -44,8 +42,6 @@ async function runReadOnlyQuery(queryString, queryVars=[]) {
 
     if (!res) res = [];
     if (res.meta) delete res.meta;
-  } catch(err) {
-    throw err;
   } finally {
     if (conn) await conn.end();
   }

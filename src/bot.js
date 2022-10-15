@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 global.__basedir = __dirname;
 
 const Discord = require("discord.js");
@@ -13,7 +14,7 @@ client.on("interactionCreate", (interaction) => eventHandler.onInteractionCreate
 client.on("guildCreate", (guild) => eventHandler.onGuildCreate(guild));
 client.on("guildDelete", (guild) => eventHandler.onGuildDelete(guild));
 client.on("messageCreate", (message) => eventHandler.onMessage(client, message));
-client.on("messageReactionAdd", (reaction, user) => eventHandler.onMessageReactAdd(client, reaction));
-client.on("messageReactionRemove", (reaction, user) => eventHandler.onMessageReactRemove(client, reaction));
+client.on("messageReactionAdd", (reaction) => eventHandler.onMessageReactAdd(client, reaction));
+client.on("messageReactionRemove", (reaction) => eventHandler.onMessageReactRemove(client, reaction));
 
 client.login(auth.token);

@@ -1,9 +1,8 @@
 const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 
-const { ignoreMarkdown } = require(__basedir + "/utils/string-utils.js");
-const emojiMap = require(__basedir + "/resources/emojiMap.json");
-const InsultModel = require(__basedir + "/database/models/InsultModel.js");
-const GuildMemberAccessor = require(__basedir + "/database/accessors/GuildMemberAccessor.js");
+const emojiMap = require(global.__basedir + "/resources/emojiMap.json");
+const InsultModel = require(global.__basedir + "/database/models/InsultModel.js");
+const GuildMemberAccessor = require(global.__basedir + "/database/accessors/GuildMemberAccessor.js");
 
 
 class Insult extends InsultModel {

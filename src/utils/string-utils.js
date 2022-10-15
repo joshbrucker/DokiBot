@@ -11,7 +11,7 @@ function timeFormat(date) {
 }
 
 function getMonthName(int) {
-  switch(int) {
+  switch (int) {
     case 1:
       return "January";
     case 2:
@@ -84,15 +84,15 @@ function startsWithVowel(word) {
 }
 
 function maybePluralize(noun, count, suffix="s") {
-  return `${noun}${count !== 1 ? suffix : ''}`;
+  return `${noun}${count !== 1 ? suffix : ""}`;
 }
 
 function ignoreMarkdown(content) {
   return content
       .replace(/\*/g, "\\*")
-      .replace(/\_/g, "\\_")
+      .replace(/_/g, "\\_")
       .replace(/\|/g, "\\|")
-      .replace(/\~/g, "\\~");
+      .replace(/~/g, "\\~");
 }
 
 module.exports = {

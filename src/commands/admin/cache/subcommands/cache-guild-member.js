@@ -1,4 +1,4 @@
-const Cache = require(__basedir + "/cache/Cache.js");
+const Cache = require(global.__basedir + "/cache/Cache.js");
 
 async function execute(interaction, memberId, guildId) {
   const key = Cache.getGuildMemberKey(memberId, guildId);

@@ -1,5 +1,5 @@
 const { runQuery } = require("../db.js");
-const Cache = require(__basedir + "/cache/Cache.js");
+const Cache = require(global.__basedir + "/cache/Cache.js");
 
 class GlobalMemberModel {
   constructor(id, nextSubmitDate) {
@@ -12,7 +12,7 @@ class GlobalMemberModel {
   async updateNextSubmitDate(date) {
     this.nextSubmitDate = date;
     await runQuery(`UPDATE global_member SET next_submit_date=? WHERE id=?;`, [ date, this.id ]);
-    Cache.del([this.cacheKey]);
+    Cache.del([ this.cacheKey ]);
   }
 }
 

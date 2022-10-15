@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const GuildMemberAccessor = require(__basedir + "/database/accessors/GuildMemberAccessor.js");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const GuildMemberAccessor = require(global.__basedir + "/database/accessors/GuildMemberAccessor.js");
 
 module.exports = {
   data: new SlashCommandBuilder()

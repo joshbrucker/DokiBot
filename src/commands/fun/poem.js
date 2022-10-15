@@ -1,8 +1,8 @@
 const Discord = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
-const utils = require(__basedir + "/utils/utils");
-const dokiWords = require(__basedir + "/resources/doki_words.json");
+const utils = require(global.__basedir + "/utils/utils");
+const dokiWords = require(global.__basedir + "/resources/doki_words.json");
 const { MessageActionRow, MessageButton } = require("discord.js");
 
 const WORD_COUNT = 10; // Discord ActionRows/Buttons restricts WORD_COUNT to 25 (5 rows w/ 5 buttons)
@@ -15,7 +15,7 @@ module.exports = {
       .setDescription("Create your own poem!"),
 
   async execute(interaction) {
-    let randomWords = {}
+    let randomWords = {};
     let dokiWordsCopy = JSON.parse(JSON.stringify(dokiWords));
 
     // choose random words to display to user as buttons
@@ -49,16 +49,16 @@ module.exports = {
     }
 
     let reply = await interaction.reply({
-      embeds: [new Discord.MessageEmbed({
-        description: "Select 3 tags to generate a poem!"
-      })],
-      components: [...actionRows],
+      embeds: [
+        new Discord.MessageEmbed({ description: "Select 3 tags to generate a poem!" })
+      ],
+      components: [ ...actionRows ],
       fetchReply: true
     });
 
     const collector = reply.createMessageComponentCollector({
       time: TIMEOUT
-    })
+    });
 
     let selected = new Set();
     collector.on("collect", async interaction => {
@@ -81,7 +81,7 @@ module.exports = {
 
       if (selected.size !== SELECT_COUNT) {
         await interaction.update({
-          components: [...actionRows]
+          components: [ ...actionRows ]
         });
       } else {
         for (let i = 0; i < actionRows.length; i++) {
@@ -91,10 +91,12 @@ module.exports = {
         }
 
         await interaction.update({
-          embeds: [new Discord.MessageEmbed({
-            description: "Generating a poem..."
-          })],
-          components: [...actionRows]
+          embeds: [
+            new Discord.MessageEmbed({
+              description: "Generating a poem..."
+            })
+          ],
+          components: [ ...actionRows ]
         });
         collector.stop("all_options_selected");
       }

@@ -1,8 +1,8 @@
 const { runQuery } = require("../db.js");
-const Cache = require(__basedir + "/cache/Cache.js");
+const Cache = require(global.__basedir + "/cache/Cache.js");
 const GlobalMemberAccessor = require("./GlobalMemberAccessor.js");
 const GuildAccessor = require("./GuildAccessor.js");
-const GuildMember = require(__basedir + "/structures/GuildMember.js");
+const GuildMember = require(global.__basedir + "/structures/GuildMember.js");
 
 const GuildMemberAccessor = {
   async get(memberId, guildId) {
@@ -35,7 +35,7 @@ const GuildMemberAccessor = {
 
   async remove(memberId, guildId) {
     await runQuery(`DELETE FROM guild_member WHERE id=? AND guild_id=?;`, [ memberId, guildId ]);
-    Cache.del([Cache.getGuildMemberKey(memberId, guildId)]);
+    Cache.del([ Cache.getGuildMemberKey(memberId, guildId) ]);
   },
 };
 

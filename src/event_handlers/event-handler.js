@@ -4,7 +4,6 @@ const onInteractionCreate = require("./interaction_create/interaction-create");
 const onGuildDelete = require("./guild_delete/guild-delete");
 const onMessage = require("./message/message");
 const onMessageReactAdd = require("./message_react_add/message-react-add");
-const onMessageReactRemove = require("./message_react_remove/message-react-remove");
 
 module.exports = {
   onClientReady,
@@ -12,6 +11,5 @@ module.exports = {
   onGuildDelete,
   onInteractionCreate,
   onMessageReactAdd,
-  onMessageReactRemove,
   onMessage
 };

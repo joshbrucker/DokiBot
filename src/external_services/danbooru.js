@@ -1,6 +1,6 @@
 const Danbooru = require("danbooru");
 
-const auth = require(__basedir + "/auth.json");
+const auth = require(global.__basedir + "/auth.json");
 
 const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
 
@@ -26,7 +26,7 @@ let convertToValidTag = async function(tag) {
   const searchResults = await Promise.all([
     booru.get("/tags", { "search[name]": baseTag, "search[order]": "count" }),
     booru.get("/tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[order]": "count" }),
-    (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[1] + "_" + tokenized[0], "search[order]": "count"}) :  [],
+    (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[1] + "_" + tokenized[0], "search[order]": "count" }) :  [],
     booru.get("/tags", { "search[name_regex]": wildcarded + ".*", "search[order]": "count" }),
     booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
     (tokenized.length === 2) ? booru.get("/tags", { "search[name_regex]": tokenized[1] + "_" + tokenized[0] + ".*", "search[order]": "count" }) : [],
@@ -71,7 +71,7 @@ let tagsToReadable = function(title) {
 };
 
 let getImage = async function(tags, imageCount) {
-  return await booru.posts({limit: imageCount, tags: Array.from(tags).join(" ")});
+  return await booru.posts({ limit: imageCount, tags: Array.from(tags).join(" ") });
 };
 
 module.exports = {

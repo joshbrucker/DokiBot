@@ -1,7 +1,7 @@
-const { v4 } = require('uuid');
+const { v4 } = require("uuid");
 
 const { runQuery } = require("../db.js");
-const Insult = require(__basedir + "/structures/Insult.js");
+const Insult = require(global.__basedir + "/structures/Insult.js");
 const GlobalMemberAccessor = require("./GlobalMemberAccessor.js");
 
 const InsultModel = {
@@ -10,7 +10,7 @@ const InsultModel = {
     
     if (data && data.length > 0) {
       return new Insult(data[0].id, data[0].status, data[0].message, data[0].member_id,
-          data[0].upvotes, data[0].downvotes);
+        data[0].upvotes, data[0].downvotes);
     }
 
     return null;
@@ -30,7 +30,7 @@ const InsultModel = {
       for (let i = 0; i < data.length; i++) {
         processedResults.push(
           new Insult(data[i].id, data[i].status, data[i].message, data[i].member_id,
-              data[i].upvotes, data[i].downvotes)
+            data[i].upvotes, data[i].downvotes)
         );
       }
     }
@@ -43,7 +43,7 @@ const InsultModel = {
 
     if (data && data.length > 0) {
       return new Insult(data[0].id, data[0].status, data[0].message, data[0].member_id,
-          data[0].upvotes, data[0].downvotes);
+        data[0].upvotes, data[0].downvotes);
     }
   },
 

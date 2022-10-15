@@ -1,14 +1,14 @@
 const { 
   Constants: { APIErrors: { UNKNOWN_MESSAGE }},
   MessageEmbed
-} = require('discord.js');
+} = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 const Vibrant = require("node-vibrant");
 
-const danbooru = require(__basedir + "/external_services/danbooru");
-const { maybePluralize, prefixWithAnOrA } = require(__basedir + "/utils/string-utils.js");
+const danbooru = require(global.__basedir + "/external_services/danbooru");
+const { maybePluralize, prefixWithAnOrA } = require(global.__basedir + "/utils/string-utils.js");
 
-const STARTING_DEFAULT_TAGS = ["-comic", "is:sfw", "order:random", "-loli", "-shota"];
+const STARTING_DEFAULT_TAGS = [ "-comic", "is:sfw", "order:random", "-loli", "-shota" ];
 const STARTING_MAX_TAGS = 12;
 
 async function handleDanbooruCommand(interaction, name, additionalDefaultTags, rawRequestedTags) {
@@ -24,7 +24,7 @@ async function handleDanbooruCommand(interaction, name, additionalDefaultTags, r
   }
 
   if (requestedTags.length > 0) {
-    await interaction.reply(`Searching with tags: [ **${[...requestedTags].join(", ")}** ]`);
+    await interaction.reply(`Searching with tags: [ **${[ ...requestedTags ].join(", ")}** ]`);
   } else {
     await interaction.reply(`Searching for ${prefixWithAnOrA(name)}...`);
   }
@@ -33,13 +33,13 @@ async function handleDanbooruCommand(interaction, name, additionalDefaultTags, r
 
   if (invalidTags.length > 0) {
     await interaction.editReply(`:x: Oops, I can't find the following ${maybePluralize("tag", invalidTags.length)} [ **${invalidTags.join(", ")}** ]`)
-        .catch(ignore([UNKNOWN_MESSAGE]));
+        .catch(ignore([ UNKNOWN_MESSAGE ]));
     return;
   }
 
   if (isNsfw && !channel.nsfw) {
     await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel")
-        .catch(ignore([UNKNOWN_MESSAGE]));
+        .catch(ignore([ UNKNOWN_MESSAGE ]));
     return;
   }
 
@@ -47,10 +47,10 @@ async function handleDanbooruCommand(interaction, name, additionalDefaultTags, r
 
   if (posts[0]) {
     await interaction.editReply(await generateMessagePayload(posts[0]))
-        .catch(ignore([UNKNOWN_MESSAGE]));
+        .catch(ignore([ UNKNOWN_MESSAGE ]));
   } else {
     await interaction.editReply(`:x: I couldn't find ${prefixWithAnOrA(name)} with those tags`)
-        .catch(ignore([UNKNOWN_MESSAGE]));
+        .catch(ignore([ UNKNOWN_MESSAGE ]));
   }
 }
 
@@ -112,7 +112,7 @@ async function parseTags(defaultTags, requestedTags) {
     validTags.add("random:1"); // will need to change if using more than 1 image at a time...
   }
 
-  validTags = [...validTags]; // convert back to list from set
+  validTags = [ ...validTags ]; // convert back to list from set
   let invalidTags = userTags.filter(t => t instanceof danbooru.InvalidTag).map(t => t.tag);
   let isNsfw = danbooru.hasNsfwTag(validTags);
 
@@ -132,9 +132,9 @@ async function generateMessagePayload(post) {
 
     let embed = new MessageEmbed()
         .setDescription(
-            "Pictured: **" + danbooru.tagsToReadable(post.tag_string_character) + "**\n" +
-            "From: **" + danbooru.tagsToReadable(post.tag_string_copyright) + "**\n" +
-            "https://danbooru.donmai.us/posts/" + post.id
+          "Pictured: **" + danbooru.tagsToReadable(post.tag_string_character) + "**\n" +
+          "From: **" + danbooru.tagsToReadable(post.tag_string_copyright) + "**\n" +
+          "https://danbooru.donmai.us/posts/" + post.id
         )
         .setImage(post.large_file_url)
         .setColor(palette.Vibrant.hex);

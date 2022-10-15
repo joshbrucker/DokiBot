@@ -1,7 +1,7 @@
 const { handleDanbooruCommand, STARTING_MAX_TAGS, STARTING_DEFAULT_TAGS } = require("./DanbooruImageCommand");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
-const DEFAULT_TAGS = ["cat_ears"];
+const DEFAULT_TAGS = [ "cat_ears" ];
 
 module.exports = {
   data: new SlashCommandBuilder()

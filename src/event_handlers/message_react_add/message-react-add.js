@@ -1,6 +1,6 @@
-const InsultAccessor = require(__basedir + "/database/accessors/InsultAccessor.js");
+const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
 
-const { approvalsToAccept, rejectionsToDeny, submissionChannel } = require(__basedir + "/settings.json").insults;
+const { approvalsToAccept, rejectionsToDeny, submissionChannel } = require(global.__basedir + "/settings.json").insults;
 
 let onMessageReactAdd = async function(client, reaction) {
   if (reaction.message.channel.id === submissionChannel) {
