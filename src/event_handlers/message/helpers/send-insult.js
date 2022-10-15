@@ -35,9 +35,7 @@ async function sendInsult(client, message, insult) {
   }).catch(ignore([ MISSING_PERMISSIONS ]));
 
   // Return if the reply errored out due to no permissions
-  if (!reply) {
-    return;
-  }
+  if (!reply) return;
 
   const collector = reply.createMessageComponentCollector({
     time: 300000
@@ -89,7 +87,7 @@ async function sendInsult(client, message, insult) {
     upvote.disabled = true;
     downvote.disabled = true;
 
-    if (reply.editable) {
+    if (reply.guild && reply.guild.available && reply.editable) {
       await reply.edit({
         components: [
           new MessageActionRow({ components: [ upvote, downvote ]})
