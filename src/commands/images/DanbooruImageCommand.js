@@ -3,9 +3,9 @@ const {
   MessageEmbed
 } = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
-const Vibrant = require("node-vibrant");
 
 const danbooru = require(global.__basedir + "/external_services/danbooru");
+const { generatePalette } = require(global.__basedir + "/utils/utils.js");
 const { maybePluralize, prefixWithAnOrA } = require(global.__basedir + "/utils/string-utils.js");
 
 const STARTING_DEFAULT_TAGS = [ "-comic", "is:sfw", "order:random", "-loli", "-shota" ];
@@ -109,7 +109,7 @@ async function parseTags(defaultTags, requestedTags) {
   // if tag count will be over 20k, switch to faster (but potentially less effective) random tag
   if (validTags.has("order:random") && smallestTagCount >= 20000) {
     validTags.delete("order:random");
-    validTags.add("random:1"); // will need to change if using more than 1 image at a time...
+    validTags.add("random:1"); // will need to change if supporting more than 1 image at a time in the future...
   }
 
   validTags = [ ...validTags ]; // convert back to list from set
@@ -127,8 +127,12 @@ async function parseTags(defaultTags, requestedTags) {
 async function generateMessagePayload(post) {
   if (post.file_ext === "png" || post.file_ext === "jpg" ||
       post.file_ext === "jpeg" || post.file_ext === "gif") {
-    let vibrant = new Vibrant(post.preview_file_url);
-    let palette = await vibrant.getPalette();
+
+    let url = post.preview_file_url || post.large_file_url || post.file_url;
+    let palette;
+    if (url) {
+      palette = await generatePalette(url);
+    }
 
     let embed = new MessageEmbed()
         .setDescription(
@@ -137,7 +141,7 @@ async function generateMessagePayload(post) {
           "https://danbooru.donmai.us/posts/" + post.id
         )
         .setImage(post.large_file_url)
-        .setColor(palette.Vibrant.hex);
+        .setColor(palette?.Vibrant.hex || 0xfc00ff);
 
     return {
       embeds: [ embed ],

@@ -1,13 +1,21 @@
-const Danbooru = require("danbooru");
-
 const auth = require(global.__basedir + "/auth.json");
-
-const booru = new Danbooru(auth.danbooruLogin + ":" + auth.danbooruKey);
+const { fetch } = require(global.__basedir + "/utils/utils.js");
 
 class InvalidTag {
   constructor(tag) {
     this.tag = tag;
   }
+}
+
+let callDanbooruApi = async function(endpoint, params) {
+  let link = `https://danbooru.donmai.us/${endpoint}.json?login=${auth.danbooruLogin}&api_key=${auth.danbooruKey}`;
+  for (let [key, value] of Object.entries(params)) {
+    link += `&${key}=${value}`;
+  }
+
+  let res = await fetch(link);
+
+  return JSON.parse(await res.text());
 }
 
 let hasNsfwTag = function(tags) {
@@ -18,20 +26,59 @@ let hasNsfwTag = function(tags) {
 let convertToValidTag = async function(tag) {
   let baseTag = tag.startsWith("-") ? tag.substring(1) : tag;
 
-  let tokenized = baseTag.split(/_| /);
-  let matching = baseTag.replace(/_| /g, "*");
-  let wildcarded = baseTag.replace(/_| /g, ".*");
+  let tokenized = baseTag.split(/ /g);
 
-  // [ basicSearch, tagAliases, japaneseNameSearch, wildCardAttempt1, wildCardAttempt2, japaneseWildcarded, tagAliases2 ]
-  const searchResults = await Promise.all([
-    booru.get("/tags", { "search[name]": baseTag, "search[order]": "count" }),
-    booru.get("/tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[order]": "count" }),
-    (tokenized.length === 2) ? await booru.get("/tags", { "search[name_comma]": tokenized[1] + "_" + tokenized[0], "search[order]": "count" }) :  [],
-    booru.get("/tags", { "search[name_regex]": wildcarded + ".*", "search[order]": "count" }),
-    booru.get("/tags", { "search[name_regex]": ".*" + wildcarded + ".*", "search[order]": "count" }),
-    (tokenized.length === 2) ? booru.get("/tags", { "search[name_regex]": tokenized[1] + "_" + tokenized[0] + ".*", "search[order]": "count" }) : [],
-    booru.get("/tags", { "search[consequent_aliases][name_matches]": matching + "*", "search[order]": "count" })
-  ]);
+  // The below code attempts to resolve a tag in a way that tries to
+  // be as fast as possible while also respecting the number of calls
+  // made to Danbooru - always changing and improving
+
+  let searchResults = [];
+
+  // Attempt to resolve directly to tag
+  if (tokenized.length === 1) {
+    searchResults = await Promise.all([
+      callDanbooruApi("tags", { "search[name]": baseTag, "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[order]": "count" })
+    ]);
+  }
+
+  // Attempt to resolve to name
+  if (tokenized.length === 2) {
+    let initialOrder = tokenized[0] + "_" + tokenized[1];
+    let flippedOrder = tokenized[1] + "_" + tokenized[0];
+
+    searchResults = await Promise.all([
+      callDanbooruApi("tags", { "search[name_comma]": initialOrder, "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_comma]": flippedOrder, "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": initialOrder + ".*", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": flippedOrder + ".*", "search[order]": "count" }),
+    ]);
+  } else if (tokenized.length > 2) {
+    let initialRegex = tokenized[0] + "_" + tokenized[1] + ".*" + tokenized.slice(2).join(".*") + ".*";
+    let flippedRegex = tokenized[1] + "_" + tokenized[0] + ".*" + tokenized.slice(2).join(".*") + ".*";
+
+    searchResults = await Promise.all([
+      callDanbooruApi("tags", { "search[name_regex]": initialRegex, "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": flippedRegex, "search[order]": "count" }),
+    ]);
+
+  }
+
+  // All words separated by regex wildcards
+  if (searchResults.every(arr => arr.length === 0)) {
+    let regex = baseTag.replace(/_| /g, ".*");
+
+    searchResults = await Promise.all([
+      callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[order]": "count" })
+    ]);
+  }
+
+  // Matching alias - final attempt in rare cases
+  if (searchResults.every(arr => arr.length === 0)) {
+    searchResults = await Promise.all([
+      callDanbooruApi("tags", { "search[consequent_aliases][antecedent_name_matches]": matching + "*", "search[order]": "count" })
+    ]);
+  }
 
   let resolvedTag;
 
@@ -46,7 +93,7 @@ let convertToValidTag = async function(tag) {
   if (resolvedTag && tag.startsWith("-")) {
     resolvedTag.name = "-" + resolvedTag.name;
   }
-    
+
   return resolvedTag || new InvalidTag(tag);
 };
 
@@ -71,7 +118,7 @@ let tagsToReadable = function(title) {
 };
 
 let getImage = async function(tags, imageCount) {
-  return await booru.posts({ limit: imageCount, tags: Array.from(tags).join(" ") });
+  return await callDanbooruApi("posts", { limit: imageCount, tags: Array.from(tags).join(" ") });
 };
 
 module.exports = {
