@@ -1,3 +1,6 @@
+const Vibrant = require("node-vibrant");
+const { Headers } = require("node-fetch");
+
 const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 const { submissionChannel } = require(global.__basedir + "/settings.json");
 const { runQuery } = require(global.__basedir + "/database/db.js");
@@ -11,6 +14,22 @@ async function getPrefix(guildId) {
   }
 
   return null;
+}
+
+async function fetch(link, options) {
+  let headers = new Headers({
+    "User-Agent": "DokiBot/1.0"
+  });
+  let res = await require("node-fetch")(link, { ...options, headers: headers });
+  return res;
+}
+
+async function generatePalette(src) {
+  let res = await fetch(src);
+  let vibrant = new Vibrant(await res.buffer());
+  let palette = await vibrant.getPalette();
+
+  return palette;
 }
 
 // Outputs a message with the given commands
@@ -85,5 +104,7 @@ module.exports = {
   random,
   randomDokiEmoji,
   getPrefix,
-  cacheSubmissionChannel
+  cacheSubmissionChannel,
+  fetch,
+  generatePalette
 };
