@@ -25,8 +25,9 @@ let hasNsfwTag = function(tags) {
 
 let convertToValidTag = async function(tag) {
   let baseTag = tag.startsWith("-") ? tag.substring(1) : tag;
-
   let tokenized = baseTag.split(/ /g);
+  let matching = baseTag.replace(/_| /g, "*");
+  let regex = baseTag.replace(/_| /g, ".*");
 
   // The below code attempts to resolve a tag in a way that tries to
   // be as fast as possible while also respecting the number of calls
@@ -34,49 +35,39 @@ let convertToValidTag = async function(tag) {
 
   let searchResults = [];
 
-  // Attempt to resolve directly to tag
   if (tokenized.length === 1) {
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name]": baseTag, "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[order]": "count" })
+      callDanbooruApi("tags", { "search[name]": baseTag, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[consequent_aliases][antecedent_name]": baseTag, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
-  }
-
-  // Attempt to resolve to name
-  if (tokenized.length === 2) {
+  } else if (tokenized.length === 2) {
     let initialOrder = tokenized[0] + "_" + tokenized[1];
     let flippedOrder = tokenized[1] + "_" + tokenized[0];
 
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name_comma]": initialOrder, "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_comma]": flippedOrder, "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": initialOrder + ".*", "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": flippedOrder + ".*", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_comma]": initialOrder, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_comma]": flippedOrder, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": initialOrder + ".*", "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": flippedOrder + ".*", "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
   } else if (tokenized.length > 2) {
     let initialRegex = tokenized[0] + "_" + tokenized[1] + ".*" + tokenized.slice(2).join(".*") + ".*";
     let flippedRegex = tokenized[1] + "_" + tokenized[0] + ".*" + tokenized.slice(2).join(".*") + ".*";
 
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name_regex]": initialRegex, "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": flippedRegex, "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": initialRegex, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": flippedRegex, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
 
-  }
-
-  // All words separated by regex wildcards
-  if (searchResults.every(arr => arr.length === 0)) {
-    let regex = baseTag.replace(/_| /g, ".*");
-
-    searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[order]": "count" })
-    ]);
   }
 
   // Matching alias - final attempt in rare cases
   if (searchResults.every(arr => arr.length === 0)) {
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[consequent_aliases][antecedent_name_matches]": matching + "*", "search[order]": "count" })
+      callDanbooruApi("tags", { "search[consequent_aliases][name_matches]": matching + "*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
   }
 
