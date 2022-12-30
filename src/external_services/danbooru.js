@@ -46,10 +46,8 @@ let convertToValidTag = async function(tag) {
     let flippedOrder = tokenized[1] + "_" + tokenized[0];
 
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name_comma]": initialOrder, "search[hide_empty]": "true", "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_comma]": flippedOrder, "search[hide_empty]": "true", "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": initialOrder + ".*", "search[hide_empty]": "true", "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": flippedOrder + ".*", "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_comma]": initialOrder + "|" + flippedOrder, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": initialOrder + ".*" + "|" + flippedOrder + ".*", "search[hide_empty]": "true", "search[order]": "count" }),
       callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
   } else if (tokenized.length > 2) {
@@ -57,8 +55,7 @@ let convertToValidTag = async function(tag) {
     let flippedRegex = tokenized[1] + "_" + tokenized[0] + ".*" + tokenized.slice(2).join(".*") + ".*";
 
     searchResults = await Promise.all([
-      callDanbooruApi("tags", { "search[name_regex]": initialRegex, "search[hide_empty]": "true", "search[order]": "count" }),
-      callDanbooruApi("tags", { "search[name_regex]": flippedRegex, "search[hide_empty]": "true", "search[order]": "count" }),
+      callDanbooruApi("tags", { "search[name_regex]": initialRegex + "|" + flippedRegex, "search[hide_empty]": "true", "search[order]": "count" }),
       callDanbooruApi("tags", { "search[name_regex]": ".*" + regex + ".*", "search[hide_empty]": "true", "search[order]": "count" })
     ]);
 
