@@ -1,5 +1,4 @@
 const {
-  Constants: { APIErrors: { MISSING_ACCESS, MISSING_PERMISSIONS, UNKNOWN_INTERACTION, UNKNOWN_MESSAGE }},
   MessageButton,
   MessageActionRow
 } = require("discord.js");
@@ -7,6 +6,7 @@ const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
 
 const emojiMap = require(global.__basedir + "/resources/emojiMap.json");
 const utils = require(global.__basedir + "/utils/utils.js");
+const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function sendInsult(client, message, insult) {
   const upvote = new MessageButton({
@@ -32,7 +32,7 @@ async function sendInsult(client, message, insult) {
       new MessageActionRow({ components: [ upvote, downvote ]})
     ],
     fetchReply: true
-  }).catch(ignore([ MISSING_PERMISSIONS ]));
+  }).catch(ignore(IGNORE_ERRORS.SEND));
 
   // Return if the reply errored out due to no permissions
   if (!reply) return;
@@ -80,7 +80,7 @@ async function sendInsult(client, message, insult) {
       components: [
         new MessageActionRow({ components: [ upvote, downvote ]})
       ]
-    }).catch(ignore([ UNKNOWN_INTERACTION, MISSING_ACCESS ]));
+    }).catch(ignore(IGNORE_ERRORS.UPDATE));
   });
 
   collector.on("end", async () => {
@@ -92,7 +92,7 @@ async function sendInsult(client, message, insult) {
         components: [
           new MessageActionRow({ components: [ upvote, downvote ]})
         ]
-      }).catch(ignore([ UNKNOWN_MESSAGE, MISSING_ACCESS ]));
+      }).catch(ignore(IGNORE_ERRORS.EDIT));
     }
 
     if (insult) {

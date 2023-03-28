@@ -1,10 +1,11 @@
 const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
+const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
-
 const { maybePluralize } = require(global.__basedir + "/utils/string-utils.js");
 const { submissionChannel } = require(global.__basedir + "/settings.json").insults;
+const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function execute(interaction) {
   const modal = new Modal()
@@ -78,7 +79,8 @@ async function sendInsultToSubmissionChannel(interaction, insult) {
     let channel = await target.channels.resolve(submissionChannel);
   
     if (channel) {
-      let sentMessage = await channel.send(`${insult.message}\n\n**ID:** ${insult.id}\n`);
+      let sentMessage = await channel.send(`${insult.message}\n\n**ID:** ${insult.id}\n`)
+          .catch(ignore(IGNORE_ERRORS.SEND));
       await emojiUtils.react(sentMessage, [ "✅", "❌" ]);
       return true;
     } else {
