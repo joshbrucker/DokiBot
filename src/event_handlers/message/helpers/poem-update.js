@@ -4,6 +4,7 @@ const contractions = require("expand-contractions");
 const fs = require("fs");
 const isUrl = require("is-url");
 const WordPOS = require("wordpos");
+const { MessageEmbed } = require("discord.js");
 
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
