@@ -1,12 +1,10 @@
-const { 
-  Constants: { APIErrors: { UNKNOWN_MESSAGE }},
-  MessageEmbed
-} = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const danbooru = require(global.__basedir + "/external_services/danbooru");
 const { generatePalette } = require(global.__basedir + "/utils/utils.js");
 const { maybePluralize, prefixWithAnOrA } = require(global.__basedir + "/utils/string-utils.js");
+const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 const STARTING_DEFAULT_TAGS = [ "-comic", "is:sfw", "order:random", "-loli", "-shota" ];
 const STARTING_MAX_TAGS = 12;
@@ -33,13 +31,13 @@ async function handleDanbooruCommand(interaction, name, additionalDefaultTags, r
 
   if (invalidTags.length > 0) {
     await interaction.editReply(`:x: Oops, I can't find the following ${maybePluralize("tag", invalidTags.length)} [ **${invalidTags.join(", ")}** ]`)
-        .catch(ignore([ UNKNOWN_MESSAGE ]));
+        .catch(ignore(IGNORE_ERRORS.EDIT));
     return;
   }
 
   if (isNsfw && !channel.nsfw) {
     await interaction.editReply(":underage: I'm not allowed to post NSFW content in this channel")
-        .catch(ignore([ UNKNOWN_MESSAGE ]));
+        .catch(ignore(IGNORE_ERRORS.EDIT));
     return;
   }
 
@@ -47,10 +45,10 @@ async function handleDanbooruCommand(interaction, name, additionalDefaultTags, r
 
   if (posts[0]) {
     await interaction.editReply(await generateMessagePayload(posts[0]))
-        .catch(ignore([ UNKNOWN_MESSAGE ]));
+        .catch(ignore(IGNORE_ERRORS.EDIT));
   } else {
     await interaction.editReply(`:x: I couldn't find ${prefixWithAnOrA(name)} with those tags`)
-        .catch(ignore([ UNKNOWN_MESSAGE ]));
+        .catch(ignore(IGNORE_ERRORS.EDIT));
   }
 }
 

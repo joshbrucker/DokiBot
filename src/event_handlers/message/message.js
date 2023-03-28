@@ -1,7 +1,7 @@
-const { Constants: { APIErrors: { MISSING_PERMISSIONS }}} = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const { dokibotURL } = require(global.__basedir + "/settings.json");
+const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 const GuildMemberAccessor = require(global.__basedir + "/database/accessors/GuildMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
@@ -20,18 +20,6 @@ async function onMessage(client, message) {
   // Message privacy - ignore message for user if they opted out
   if (guildMemberData.ignoreMe) return;
 
-  // Assistance for migration to slash commands
-  let prefix = await utils.getPrefix(guildData.id);
-  if (prefix && message.content.startsWith(prefix) && !guildMemberData.disableSlashWarning) {
-    message.channel.send(
-      "Prefixed commands are **no longer** supported. Please use slash commands instead.\n\n" +
-      "If slash commands are not appearing, have an admin reinvite the bot:\n" +
-      dokibotURL
-    ).catch(ignore([ MISSING_PERMISSIONS ]));
-
-    await guildMemberData.updateDisableSlashWarning(true);
-  }
-
   const currDate = new Date();
 
   if (guildData.nextInsultTime <= currDate && guildData.allowInsults) {
@@ -41,7 +29,8 @@ async function onMessage(client, message) {
       await sendInsult(client, message, insult);
       await guildData.updateNextInsultTime(utils.generateNewTime(currDate));
     } else {
-      await message.channel.send("There are no insults added yet!").catch(ignore([ MISSING_PERMISSIONS ]));
+      await message.channel.send("There are no insults added yet!")
+          .catch(ignore(IGNORE_ERRORS.SEND));
     }
   }
 

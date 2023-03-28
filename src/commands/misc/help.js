@@ -26,7 +26,10 @@ module.exports = {
 
     try {
       let dmChannel = await interaction.user.createDM();
-      await dmChannel.send({ embeds: [ new Discord.MessageEmbed(embed) ]});
+      await dmChannel.send({ embeds: [ new Discord.MessageEmbed(embed) ]})
+          .catch(_ => {
+            console.log("Unable to send DM! Do you have strict DM perms?");
+          });
       interaction.reply({ ephemeral: true, content: "Sent help info to your DMs!" });
     } catch (error) {
       interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ new Discord.MessageEmbed(embed) ]});

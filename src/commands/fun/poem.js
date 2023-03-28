@@ -1,9 +1,11 @@
 const Discord = require("discord.js");
+const { MessageActionRow, MessageButton } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const utils = require(global.__basedir + "/utils/utils");
 const dokiWords = require(global.__basedir + "/resources/doki_words.json");
-const { MessageActionRow, MessageButton } = require("discord.js");
+const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 const WORD_COUNT = 10; // Discord ActionRows/Buttons restricts WORD_COUNT to 25 (5 rows w/ 5 buttons)
 const SELECT_COUNT = 3;
@@ -82,7 +84,7 @@ module.exports = {
       if (selected.size !== SELECT_COUNT) {
         await interaction.update({
           components: [ ...actionRows ]
-        });
+        }).catch(ignore(IGNORE_ERRORS.UPDATE));
       } else {
         for (let i = 0; i < actionRows.length; i++) {
           for (let j = 0; j < actionRows[i].components.length; j++) {
@@ -97,7 +99,8 @@ module.exports = {
             })
           ],
           components: [ ...actionRows ]
-        });
+        }).catch(ignore(IGNORE_ERRORS.UPDATE));
+
         collector.stop("all_options_selected");
       }
     });
