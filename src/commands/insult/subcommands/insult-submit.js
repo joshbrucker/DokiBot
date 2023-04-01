@@ -1,5 +1,4 @@
 const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
-const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
@@ -75,7 +74,7 @@ async function handleModal(interaction) {
 
 async function sendInsultToSubmissionChannel(interaction, insult) {
   async function sendInsult(target, { submissionChannel, insult }) {
-    const { emojiUtils } = require("@joshbrucker/discordjs-utils");
+    const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
     let channel = await target.channels.resolve(submissionChannel);
   
     if (channel) {
