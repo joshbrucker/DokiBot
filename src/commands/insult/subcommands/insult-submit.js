@@ -75,6 +75,8 @@ async function handleModal(interaction) {
 async function sendInsultToSubmissionChannel(interaction, insult) {
   async function sendInsult(target, { submissionChannel, insult }) {
     const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
+    const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
+
     let channel = await target.channels.resolve(submissionChannel);
   
     if (channel) {
