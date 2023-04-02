@@ -4,7 +4,6 @@ const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/Glo
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
 const { maybePluralize } = require(global.__basedir + "/utils/string-utils.js");
 const { submissionChannel } = require(global.__basedir + "/settings.json").insults;
-const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function execute(interaction) {
   const modal = new Modal()
