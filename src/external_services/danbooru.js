@@ -9,14 +9,14 @@ class InvalidTag {
 
 let callDanbooruApi = async function(endpoint, params) {
   let link = `https://danbooru.donmai.us/${endpoint}.json?login=${auth.danbooruLogin}&api_key=${auth.danbooruKey}`;
-  for (let [key, value] of Object.entries(params)) {
+  for (let [ key, value ] of Object.entries(params)) {
     link += `&${key}=${value}`;
   }
 
   let res = await fetch(link);
 
   return JSON.parse(await res.text());
-}
+};
 
 let hasNsfwTag = function(tags) {
   tags = new Set(tags);

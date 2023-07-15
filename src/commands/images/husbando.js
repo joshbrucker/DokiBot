@@ -1,4 +1,4 @@
-const { handleDanbooruCommand, STARTING_MAX_TAGS, STARTING_DEFAULT_TAGS } = require("./DanbooruImageCommand");
+const { handleDanbooruCommand, MAX_TAG_COUNT, STARTING_DEFAULT_TAGS } = require("./DanbooruImageCommand");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 const DEFAULT_TAGS = [ "*boy" ];
@@ -9,7 +9,7 @@ module.exports = {
       .setDescription("Posts an image of a husbando.")
       .addStringOption(option => option
           .setName("tags")
-          .setDescription(`Search up to ${STARTING_MAX_TAGS - STARTING_DEFAULT_TAGS.length - DEFAULT_TAGS.length} tags. Separate tags with the $ symbol.`)
+          .setDescription(`Search up to ${MAX_TAG_COUNT - STARTING_DEFAULT_TAGS.length - DEFAULT_TAGS.length} tags. Separate tags with the $ symbol.`)
           .setRequired(false)),
 
   async execute(interaction) {

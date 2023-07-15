@@ -6,15 +6,17 @@ const { generatePalette } = require(global.__basedir + "/utils/utils.js");
 const { maybePluralize, prefixWithAnOrA } = require(global.__basedir + "/utils/string-utils.js");
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
+// is:sfw is technically free, but since users can input tag "nsfw", we need to count it here
 const STARTING_DEFAULT_TAGS = [ "-comic", "is:sfw", "order:random", "-loli", "-shota" ];
-const STARTING_MAX_TAGS = 12;
+const STARTING_FREE_TAGS = [ "-status:banned" ];
+const MAX_TAG_COUNT = 12;
 
-async function handleDanbooruCommand(interaction, name, additionalDefaultTags, rawRequestedTags) {
+async function handleDanbooruCommand(interaction, name, commandDefaultTags, rawRequestedTags) {
   let channel = interaction.channel;
 
   let requestedTags = splitRawTags(rawRequestedTags);
-  let maxTags = STARTING_MAX_TAGS - STARTING_DEFAULT_TAGS.length - additionalDefaultTags.length;
-  let defaultTags = STARTING_DEFAULT_TAGS.concat(additionalDefaultTags);
+  let maxTags = MAX_TAG_COUNT - STARTING_DEFAULT_TAGS.length - commandDefaultTags.length;
+  let defaultTags = STARTING_DEFAULT_TAGS.concat(commandDefaultTags).concat(STARTING_FREE_TAGS);
 
   if (requestedTags.length > maxTags) {
     await interaction.reply(`You can only have up to ${maxTags} tags!`);
@@ -156,6 +158,6 @@ async function generateMessagePayload(post) {
 
 module.exports = {
   STARTING_DEFAULT_TAGS,
-  STARTING_MAX_TAGS,
+  MAX_TAG_COUNT,
   handleDanbooruCommand
 };
