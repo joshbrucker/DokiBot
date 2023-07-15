@@ -13,7 +13,7 @@ module.exports = {
           .addChoices({ name: "Monika", value: "monika_(doki_doki_literature_club) " }, { name: "Sayori", value: "sayori_(doki_doki_literature_club) " }, { name: "Natsuki", value: "natsuki_(doki_doki_literature_club) " }, { name: "Yuri", value: "yuri_(doki_doki_literature_club) " }))
       .addStringOption(option => option
           .setName("tags")
-          .setDescription(`Search up to ${MAX_TAG_COUNT - STARTING_DEFAULT_TAGS.length - 2} tags. Separate tags with the $ symbol.`)
+          .setDescription(`Search up to ${MAX_TAG_COUNT - STARTING_DEFAULT_TAGS.length - 2} tags. Separate tags with commas or $ symbols.`)
           .setRequired(false)),
 
   async execute(interaction) {

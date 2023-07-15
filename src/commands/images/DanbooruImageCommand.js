@@ -57,9 +57,9 @@ async function handleDanbooruCommand(interaction, name, commandDefaultTags, rawR
 function splitRawTags(rawRequestedTags) {
   let splitTags = [];
   if (rawRequestedTags) {
-    splitTags = rawRequestedTags.toLowerCase().split("$");
+    splitTags = rawRequestedTags.toLowerCase().split(/[$,]/g);
   }
-  splitTags.forEach(t => t.trim());
+  splitTags = splitTags.map(t => t.trim());
   return splitTags.filter(t => t !== "");
 }
 
