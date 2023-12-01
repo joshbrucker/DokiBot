@@ -1,11 +1,15 @@
-const {
-  Constants: { APIErrors: { MISSING_ACCESS, MISSING_PERMISSIONS, UNKNOWN_CHANNEL, UNKNOWN_INTERACTION, UNKNOWN_MESSAGE }},
-} = require("discord.js");
+const { RESTJSONErrorCodes: {
+  MissingAccess,
+  MissingPermissions,
+  UnknownChannel,
+  UnknownInteraction,
+  UnknownMessage
+}} = require("discord-api-types/rest/v10");
 
 module.exports = {
   IGNORE_ERRORS: {
-    SEND: [ MISSING_PERMISSIONS, UNKNOWN_CHANNEL ],
-    UPDATE: [ UNKNOWN_MESSAGE, UNKNOWN_INTERACTION, MISSING_PERMISSIONS, MISSING_ACCESS ],
-    EDIT: [ UNKNOWN_MESSAGE, UNKNOWN_INTERACTION, MISSING_PERMISSIONS, MISSING_ACCESS ],
+    SEND: [ MissingPermissions, UnknownChannel ],
+    UPDATE: [ UnknownMessage, UnknownInteraction, MissingPermissions, MissingAccess ],
+    EDIT: [ UnknownMessage, UnknownInteraction, MissingPermissions, MissingAccess ],
   }
 };

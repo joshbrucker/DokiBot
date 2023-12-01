@@ -2,11 +2,17 @@
 global.__basedir = __dirname;
 
 const Discord = require("discord.js");
+const { IntentsBitField } = require("discord.js");
 
 const auth = require("./auth.json");
 const eventHandler = require("./event_handlers/event-handler.js");
 
-const client = new Discord.Client({ intents: [ "GUILDS", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGES", "GUILD_MEMBERS" ]});
+const client = new Discord.Client({ intents: [
+  IntentsBitField.Flags.Guilds,
+  IntentsBitField.Flags.GuildMessages,
+  IntentsBitField.Flags.GuildMembers,
+  IntentsBitField.Flags.GuildMessageReactions
+]});
 
 client.on("ready", () => eventHandler.onClientReady(client));
 

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Discord = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 const colors = require(global.__basedir + "/resources/colors.json");
 const helpData = require(global.__basedir + "/resources/help/help.json");
@@ -10,7 +10,7 @@ module.exports = {
       .setDescription("PMs you a list of all commands."),
 
   async execute(interaction) {
-    let embed = new Discord.MessageEmbed()
+    let embed = new EmbedBuilder()
         .setTitle(":sparkles: __**DokiBot Help**__ :sparkles:")
         .setDescription("Want to restrict commands to certain users/roles?\nAdmins can change perms for each command under:\n**Server Settings > Integrations > DokiBot**\n\n\u200b")
         .setColor(colors.dokiPink)
@@ -26,13 +26,13 @@ module.exports = {
 
     try {
       let dmChannel = await interaction.user.createDM();
-      await dmChannel.send({ embeds: [ new Discord.MessageEmbed(embed) ]})
+      await dmChannel.send({ embeds: [ embed ]})
           .catch(_ => {
             console.log("Unable to send DM! Do you have strict DM perms?");
           });
       interaction.reply({ ephemeral: true, content: "Sent help info to your DMs!" });
     } catch (error) {
-      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ new Discord.MessageEmbed(embed) ]});
+      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ embed ]});
     }
   },
 };

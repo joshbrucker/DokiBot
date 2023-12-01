@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { PagedEmbed } = require("@joshbrucker/discordjs-utils");
 
 const { capitalizeFirstLetter } = require(global.__basedir + "/utils/string-utils.js");
@@ -48,7 +48,7 @@ function generateResponse(user, status, description) {
     `${username} ${capitalizeFirstLetter(status)} Insults` :
     `${username} Insults`;
 
-  return new MessageEmbed()
+  return new EmbedBuilder()
       .setTitle(title)
       .setDescription(description);
 }

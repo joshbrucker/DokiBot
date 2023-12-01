@@ -4,7 +4,7 @@ const contractions = require("expand-contractions");
 const fs = require("fs");
 const isUrl = require("is-url");
 const WordPOS = require("wordpos");
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
@@ -75,7 +75,7 @@ let dokipoemUpdate = async function(guildData, message) {
 
     let oddsOfEndingPoem = allLines.length * 5;
     if (oddsOfEndingPoem > (utils.random(100) + 1)) {
-      let embed = new MessageEmbed()
+      let embed = new EmbedBuilder()
           .setTitle("Your Poem")
           .setDescription(currentPoem);
 

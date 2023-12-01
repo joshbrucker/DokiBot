@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const danbooru = require(global.__basedir + "/external_services/danbooru");
@@ -134,7 +134,7 @@ async function generateMessagePayload(post) {
       palette = await generatePalette(url);
     }
 
-    let embed = new MessageEmbed()
+    let embed = new EmbedBuilder()
         .setDescription(
           "Pictured: **" + danbooru.tagsToReadable(post.tag_string_character) + "**\n" +
           "From: **" + danbooru.tagsToReadable(post.tag_string_copyright) + "**\n" +
