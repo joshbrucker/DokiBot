@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
@@ -10,7 +10,7 @@ async function execute(interaction) {
     return;
   }
 
-  let embed = new MessageEmbed()
+  let embed = new EmbedBuilder()
       .setTitle("Your Poem")
       .setDescription(guildData.currentPoem);
 

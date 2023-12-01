@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { PagedEmbed } = require("@joshbrucker/discordjs-utils");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -34,7 +34,7 @@ module.exports = {
       }
 
       pages.push(
-        new MessageEmbed()
+        new EmbedBuilder()
             .setTitle(title)
             .setDescription(descr)
             .setColor(colors.monikaGreen)

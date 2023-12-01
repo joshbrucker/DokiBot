@@ -1,6 +1,5 @@
-const Discord = require("discord.js");
 const { MessageActionRow, MessageButton } = require("discord.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const utils = require(global.__basedir + "/utils/utils");
@@ -52,7 +51,7 @@ module.exports = {
 
     let reply = await interaction.reply({
       embeds: [
-        new Discord.MessageEmbed({ description: "Select 3 tags to generate a poem!" })
+        new EmbedBuilder().setDescription("Select 3 tags to generate a poem!")
       ],
       components: [ ...actionRows ],
       fetchReply: true
@@ -94,9 +93,7 @@ module.exports = {
 
         await interaction.update({
           embeds: [
-            new Discord.MessageEmbed({
-              description: "Generating a poem..."
-            })
+            new EmbedBuilder().setDescription("Generating a poem...")
           ],
           components: [ ...actionRows ]
         }).catch(ignore(IGNORE_ERRORS.UPDATE));
