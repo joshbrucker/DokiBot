@@ -1,4 +1,4 @@
-const { MessageActionRow, MessageButton } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder } = require("discord.js");
 const { SlashCommandBuilder, EmbedBuilder } = require("@discordjs/builders");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
@@ -30,16 +30,15 @@ module.exports = {
     // generate action rows
     let actionRows = [];
     for (let i = 0; i < Object.keys(randomWords).length; i++) {
-      let actionRow = new MessageActionRow();
+      let actionRow = new ActionRowBuilder();
 
       let buttons = [];
       for (let j = 0; j < 5 && i < Object.keys(randomWords).length; j++, i++) {
         let key = Object.keys(randomWords)[i];
-        buttons.push(new MessageButton({
-          label: key,
-          style: "SECONDARY",
-          customId: key.toLowerCase()
-        }));
+        buttons.push(new ButtonBuilder()
+            .setLabel(key)
+            .setStyle("SECONDARY")
+            .setCustomId(key.toLowerCase()));
       }
 
       actionRow.addComponents(...buttons);
