@@ -1,4 +1,4 @@
-const { TextInputComponent, Modal, MessageActionRow } = require("discord.js");
+const { TextInputComponent, Modal, ActionRowBuilder } = require("discord.js");
 
 const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
@@ -10,7 +10,7 @@ async function execute(interaction) {
       .setCustomId("insult-submit")
       .setTitle("Insult Submission")
       .setComponents([
-        new MessageActionRow()
+        new ActionRowBuilder()
             .setComponents([
               new TextInputComponent()
                   .setCustomId("submission")

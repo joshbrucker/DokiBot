@@ -1,6 +1,6 @@
 const {
-  MessageButton,
-  MessageActionRow
+  ButtonBuilder,
+  ActionRowBuilder
 } = require("discord.js");
 const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
 
@@ -9,14 +9,13 @@ const utils = require(global.__basedir + "/utils/utils.js");
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function sendInsult(client, message, insult) {
-  const upvote = new MessageButton({
-    style: "SECONDARY",
-    label: "0",
-    emoji: await emojiUtils.fetch(client, emojiMap.upvote),
-    customId: "upvote"
-  });
+  const upvote = new ButtonBuilder()
+      .setStyle("SECONDARY")
+      .setLabel("0")
+      .setEmoji(await emojiUtils.fetch(client, emojiMap.upvote))
+      .setCustomId("upvote");
 
-  const downvote = new MessageButton({
+  const downvote = new ButtonBuilder({
     style: "SECONDARY",
     label: "0",
     emoji: await emojiUtils.fetch(client, emojiMap.downvote),
@@ -29,7 +28,7 @@ async function sendInsult(client, message, insult) {
   let reply = await message.channel.send({
     content: insultMessage + "\n\u200b",
     components: [
-      new MessageActionRow({ components: [ upvote, downvote ]})
+      new ActionRowBuilder().addComponents([ upvote, downvote ])
     ],
     fetchReply: true
   }).catch(ignore(IGNORE_ERRORS.SEND));
@@ -78,7 +77,7 @@ async function sendInsult(client, message, insult) {
 
     await buttonInteraction.update({
       components: [
-        new MessageActionRow({ components: [ upvote, downvote ]})
+        new ActionRowBuilder().addComponents([ upvote, downvote ])
       ]
     }).catch(ignore(IGNORE_ERRORS.UPDATE));
   });
@@ -90,7 +89,7 @@ async function sendInsult(client, message, insult) {
     if (reply.guild && reply.guild.available && reply.editable) {
       await reply.edit({
         components: [
-          new MessageActionRow({ components: [ upvote, downvote ]})
+          new ActionRowBuilder().addComponents([ upvote, downvote ])
         ]
       }).catch(ignore(IGNORE_ERRORS.EDIT));
     }
