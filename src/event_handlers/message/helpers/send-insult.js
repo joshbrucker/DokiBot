@@ -10,17 +10,16 @@ const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function sendInsult(client, message, insult) {
   const upvote = new ButtonBuilder()
-      .setStyle("SECONDARY")
+      .setStyle("Secondary")
       .setLabel("0")
       .setEmoji(await emojiUtils.fetch(client, emojiMap.upvote))
       .setCustomId("upvote");
 
-  const downvote = new ButtonBuilder({
-    style: "SECONDARY",
-    label: "0",
-    emoji: await emojiUtils.fetch(client, emojiMap.downvote),
-    customId: "downvote"
-  });
+  const downvote = new ButtonBuilder()
+      .setStyle("Secondary")
+      .setLabel("0")
+      .setEmoji(await emojiUtils.fetch(client, emojiMap.downvote))
+      .setCustomId("downvote");
 
   let members = await utils.getAllHumanMembers(message.guild);
   let insultMessage = await insult.formatWithRandomUsers(message.guild, members);

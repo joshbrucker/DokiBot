@@ -37,7 +37,7 @@ module.exports = {
         let key = Object.keys(randomWords)[i];
         buttons.push(new ButtonBuilder()
             .setLabel(key)
-            .setStyle("SECONDARY")
+            .setStyle("Secondary")
             .setCustomId(key.toLowerCase()));
       }
 
@@ -72,7 +72,7 @@ module.exports = {
           let currentButton = actionRows[i].components[j];
           if (customId.startsWith(currentButton.label.toLowerCase())) {
             isActive ? (selected.delete(customId.substr(0, customId.indexOf("_")))) : (selected.add(customId));
-            currentButton.setStyle(isActive ? "SECONDARY" : "PRIMARY");
+            currentButton.setStyle(isActive ? "Secondary" : "Primary");
             currentButton.setCustomId(isActive ? customId.substr(0, customId.indexOf("_")) : customId + "_active");
             break;
           }
