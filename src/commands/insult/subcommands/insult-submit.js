@@ -16,7 +16,7 @@ async function execute(interaction) {
                   .setCustomId("submission")
                   .setLabel("Submit your insult (once per day)")
                   .setPlaceholder("@user is a big meanie!")
-                  .setStyle("SHORT")
+                  .setStyle("Short")
                   .setMaxLength("200")
                   .setRequired(true)
             ])

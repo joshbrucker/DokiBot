@@ -2,7 +2,7 @@ const {
   ButtonBuilder,
   ActionRowBuilder
 } = require("discord.js");
-const { ignore, emojiUtils } = require("@joshbrucker/discordjs-utils");
+const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const emojiMap = require(global.__basedir + "/resources/emojiMap.json");
 const utils = require(global.__basedir + "/utils/utils.js");
@@ -12,13 +12,13 @@ async function sendInsult(client, message, insult) {
   const upvote = new ButtonBuilder()
       .setStyle("Secondary")
       .setLabel("0")
-      .setEmoji(await emojiUtils.fetch(client, emojiMap.upvote))
+      .setEmoji(emojiMap.upvote)
       .setCustomId("upvote");
 
   const downvote = new ButtonBuilder()
       .setStyle("Secondary")
       .setLabel("0")
-      .setEmoji(await emojiUtils.fetch(client, emojiMap.downvote))
+      .setEmoji(emojiMap.downvote)
       .setCustomId("downvote");
 
   let members = await utils.getAllHumanMembers(message.guild);
@@ -50,29 +50,36 @@ async function sendInsult(client, message, insult) {
       voteStatuses[member.id] = "";
     }
 
+    let newUpvotes = parseInt(upvote.data.label);
+    let newDownvotes = parseInt(downvote.data.label);
+
     if (buttonInteraction.customId === "upvote") {
+
       if (voteStatuses[member.id] === "upvote") {
-        upvote.label--;
+        newUpvotes--;
         voteStatuses[member.id] = "";
       } else {
         if (voteStatuses[member.id] === "downvote") {
-          downvote.label--;
+          newDownvotes--;
         }
-        upvote.label++;
+        newUpvotes++;
         voteStatuses[member.id] = "upvote";
       }
     } else {
       if (voteStatuses[member.id] === "downvote") {
-        downvote.label--;
+        newDownvotes--;
         voteStatuses[member.id] = "";
       } else {
         if (voteStatuses[member.id] === "upvote") {
-          upvote.label--;
+          newUpvotes--;
         }
-        downvote.label++;
+        newDownvotes++;
         voteStatuses[member.id] = "downvote";
       }
     }
+
+    upvote.setLabel(newUpvotes.toString());
+    downvote.setLabel(newDownvotes.toString());
 
     await buttonInteraction.update({
       components: [
@@ -82,8 +89,8 @@ async function sendInsult(client, message, insult) {
   });
 
   collector.on("end", async () => {
-    upvote.disabled = true;
-    downvote.disabled = true;
+    upvote.setDisabled(true);
+    downvote.setDisabled(true);
 
     if (reply.guild && reply.guild.available && reply.editable) {
       await reply.edit({
@@ -94,8 +101,8 @@ async function sendInsult(client, message, insult) {
     }
 
     if (insult) {
-      await insult.addUpvotes(upvote.label);
-      await insult.addDownvotes(downvote.label);
+      await insult.addUpvotes(upvote.data.label);
+      await insult.addDownvotes(downvote.data.label);
     }
   });
 }
