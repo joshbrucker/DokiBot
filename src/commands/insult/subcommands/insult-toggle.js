@@ -1,9 +1,9 @@
-const { Permissions } = require("discord.js");
+const { PermissionFlagsBits } = require("discord.js");
 
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
 async function execute(interaction) {
-  if (interaction.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
+  if (interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
     let guild = await GuildAccessor.get(interaction.guild.id);
     await guild.updateAllowInsults(!guild.allowInsults);
     await interaction.reply(`${guild.allowInsults ? "✅" : "🛑"} Insults **__${guild.allowInsults ? "will now" : "will no longer"}__** appear randomly.`);  
