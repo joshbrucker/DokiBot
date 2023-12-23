@@ -1,4 +1,4 @@
-const { TextInputComponent, Modal, ActionRowBuilder } = require("discord.js");
+const { TextInputBuilder, ModalBuilder, ActionRowBuilder } = require("discord.js");
 
 const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
@@ -6,18 +6,18 @@ const { maybePluralize } = require(global.__basedir + "/utils/string-utils.js");
 const { submissionChannel } = require(global.__basedir + "/settings.json").insults;
 
 async function execute(interaction) {
-  const modal = new Modal()
+  const modal = new ModalBuilder()
       .setCustomId("insult-submit")
       .setTitle("Insult Submission")
       .setComponents([
         new ActionRowBuilder()
             .setComponents([
-              new TextInputComponent()
+              new TextInputBuilder()
                   .setCustomId("submission")
                   .setLabel("Submit your insult (once per day)")
                   .setPlaceholder("@user is a big meanie!")
                   .setStyle("Short")
-                  .setMaxLength("200")
+                  .setMaxLength(200)
                   .setRequired(true)
             ])
       ]);
