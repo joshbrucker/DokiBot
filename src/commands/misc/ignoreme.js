@@ -4,7 +4,8 @@ const GuildMemberAccessor = require(global.__basedir + "/database/accessors/Guil
 module.exports = {
   data: new SlashCommandBuilder()
       .setName("ignoreme")
-      .setDescription("Toggles whether DokiBot can see your non-slash-command messages (disables random trigger features)."),
+      .setDescription("Toggles whether DokiBot can see your non-slash-command messages (disables random trigger features).")
+      .setDMPermission(false),
 
   async execute(interaction) {
     let guildMember = await GuildMemberAccessor.get(interaction.user.id, interaction.guild.id);

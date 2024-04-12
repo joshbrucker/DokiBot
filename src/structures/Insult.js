@@ -27,13 +27,13 @@ class Insult extends InsultModel {
         ((this.status === "accepted") ? `\n\n${this.upvotes} ${upvoteEmoji} \u200b \u200b ${this.downvotes} ${downvoteEmoji}` : "");
   }
 
-  async formatWithRandomUsers(guild, members, ignoreNotify=false) {
+  async formatWithRandomGuildMembers(guild, members, ignoreNotify=false) {
     let insultMessage = this.message;
 
     if (members.size > 0) {
-      const userMatch = insultMessage.match(/@user/g);
-      const matchCount = userMatch ? userMatch.length : 0;
-      for (let j = 0; j < matchCount; j++) {
+      const notificationMatch = insultMessage.match(/@user/g);
+      const notificationCount = notificationMatch ? notificationMatch.length : 0;
+      for (let j = 0; j < notificationCount; j++) {
         const insultee = members.random();
         const guildMember = await GuildMemberAccessor.get(insultee.id, guild.id);
 
@@ -49,6 +49,32 @@ class Insult extends InsultModel {
       }
     } else {
       insultMessage += "\n(No members found... is anyone around?)";
+    }
+
+    return insultMessage;
+  }
+
+  async formatWithRandomUsers(users, ignoreNotify=false) {
+    let insultMessage = this.message;
+
+    if (users.size > 0) {
+      const notificationMatch = insultMessage.match(/@user/g);
+      const notificationCount = notificationMatch ? notificationMatch.length : 0;
+      for (let j = 0; j < notificationCount; j++) {
+        const insultee = users.random();
+
+        if (!ignoreNotify) {
+          insultMessage = insultMessage.replace("@user", "<@!" + insultee.id + ">");
+        } else {
+          insultMessage = insultMessage.replace("@user", "**__" + insultee.username + "__**");
+        }
+
+        if (users.size > 1) {
+          users.delete(insultee.id);
+        }
+      }
+    } else {
+      insultMessage += "\n(No users found... is anyone around?)";
     }
 
     return insultMessage;
