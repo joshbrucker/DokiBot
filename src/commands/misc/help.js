@@ -7,7 +7,7 @@ const helpData = require(global.__basedir + "/resources/help/help.json");
 module.exports = {
   data: new SlashCommandBuilder()
       .setName("help")
-      .setDescription("PMs you a list of all commands."),
+      .setDescription("DMs you a list of all commands."),
 
   async execute(interaction) {
     let embed = new EmbedBuilder()

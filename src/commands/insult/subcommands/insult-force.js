@@ -24,12 +24,11 @@ async function execute(interaction) {
 
         // MUST check if it is a number before fetch; otherwise, users can pass in "/" symbols that will throw errors.
         if (!isNaN(member)) {
-          fetchedMember = await interaction.guild.members.fetch(member);
-        }
-
-        if (!fetchedMember) {
-          let searchResults = await interaction.guild.members.search({ query: member, limit: 1 });
-          fetchedMember = searchResults.first();
+          if (interaction.inGuild()) {
+            fetchedMember = await interaction.guild.members.fetch(member);
+          } else {
+            fetchedMember = await interaction.client.users.fetch(member);  // If not in guild, try to resolve the provided user
+          }
         }
       } catch (err) {
         if (err.httpStatus !== 400) {
@@ -44,13 +43,23 @@ async function execute(interaction) {
       chooseableMembers.set(fetchedMember.id, fetchedMember);
     }
   } else {
-    chooseableMembers = await utils.getAllHumanMembers(interaction.guild);
+    if (interaction.inGuild()) {
+      chooseableMembers = await utils.getAllHumanMembers(interaction.guild);
+    } else {
+      chooseableMembers.set(interaction.user.id, interaction.user);  // If not in guild, choose the user who called the command
+    }
   }
 
   let insult = await InsultAccesor.getRandomAccepted();
-  let insultMessage = await insult.formatWithRandomUsers(interaction.guild, chooseableMembers, true);
 
-  await interaction.reply(insultMessage);
+  let insultMessage;
+  if (interaction.inGuild()) {
+    insultMessage = await insult.formatWithRandomGuildMembers(interaction.guild, chooseableMembers, true);
+  } else {
+    insultMessage = await insult.formatWithRandomUsers(chooseableMembers, true);
+  }
+
+  interaction.reply(insultMessage);
 }
 
 module.exports = { execute };

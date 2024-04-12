@@ -3,6 +3,11 @@ const { PermissionFlagsBits } = require("discord.js");
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
 async function execute(interaction) {
+  if (!interaction.inGuild()) {
+    await interaction.reply("This command is not available in DMs!");
+    return;
+  }
+
   if (interaction.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
     let guild = await GuildAccessor.get(interaction.guild.id);
     await guild.updateAllowInsults(!guild.allowInsults);

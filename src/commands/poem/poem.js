@@ -7,6 +7,7 @@ module.exports = {
   data: new SlashCommandBuilder()
       .setName("poem")
       .setDescription("Commands for the poem feature.")
+      .setDMPermission(false)
       .addSubcommand(subcommand => subcommand
           .setName("end")
           .setDescription("Ends and outputs the current poem."))

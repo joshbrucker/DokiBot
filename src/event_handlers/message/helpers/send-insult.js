@@ -22,7 +22,7 @@ async function sendInsult(client, message, insult) {
       .setCustomId("downvote");
 
   let members = await utils.getAllHumanMembers(message.guild);
-  let insultMessage = await insult.formatWithRandomUsers(message.guild, members);
+  let insultMessage = await insult.formatWithRandomGuildMembers(message.guild, members);
 
   let reply = await message.channel.send({
     content: insultMessage + "\n\u200b",
