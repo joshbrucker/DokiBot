@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
+const randomColor = require("randomcolor");
 
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 
@@ -12,7 +13,8 @@ async function execute(interaction) {
 
   let embed = new EmbedBuilder()
       .setTitle("Your Poem")
-      .setDescription(guildData.currentPoem);
+      .setDescription(guildData.currentPoem)
+      .setColor(randomColor({ luminosity: "bright" }));
 
   await interaction.reply({ embeds: [ embed ]});
 

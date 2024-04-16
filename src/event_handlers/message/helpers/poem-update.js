@@ -1,13 +1,13 @@
 // This file needs a BIG update and cleaning...
+const { EmbedBuilder } = require("discord.js");
 const { ignore } = require("@joshbrucker/discordjs-utils");
 const contractions = require("expand-contractions");
 const fs = require("fs");
 const isUrl = require("is-url");
+const randomColor = require("randomcolor");
 const WordPOS = require("wordpos");
-const { EmbedBuilder } = require("discord.js");
 
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
-
 const utils = require(__basedir + "/utils/utils.js");
 const db = require(__basedir + "/database/db.js");
 
@@ -77,7 +77,8 @@ let dokipoemUpdate = async function(guildData, message) {
     if (oddsOfEndingPoem > (utils.random(100) + 1)) {
       let embed = new EmbedBuilder()
           .setTitle("Your Poem")
-          .setDescription(currentPoem);
+          .setDescription(currentPoem)
+          .setColor(randomColor({ luminosity: "bright" }));
 
       await message.channel.send({ embeds: [ embed ]})
           .catch(ignore(IGNORE_ERRORS.SEND));
