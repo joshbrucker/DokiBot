@@ -11,7 +11,8 @@ const client = new Discord.Client({ intents: [
   IntentsBitField.Flags.Guilds,
   IntentsBitField.Flags.GuildMessages,
   IntentsBitField.Flags.GuildMembers,
-  IntentsBitField.Flags.GuildMessageReactions
+  IntentsBitField.Flags.GuildMessageReactions,
+  IntentsBitField.Flags.MessageContent
 ]});
 
 client.on("ready", () => eventHandler.onClientReady(client));

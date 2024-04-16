@@ -1,6 +1,5 @@
 const { ignore } = require("@joshbrucker/discordjs-utils");
 
-const { dokibotURL } = require(global.__basedir + "/settings.json");
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 const GuildAccessor = require(global.__basedir + "/database/accessors/GuildAccessor.js");
 const GuildMemberAccessor = require(global.__basedir + "/database/accessors/GuildMemberAccessor.js");
