@@ -10,7 +10,7 @@
     "@joshbrucker/discordjs-utils": "^0.3.1",
     "bufferutil": "^4.0.5",
     "discord-api-types": "^0.37.65",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.3",
     "expand-contractions": "^1.0.1",
     "i": "^0.3.7",
     "is-url": "^1.2.4",
