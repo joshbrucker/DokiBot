@@ -1,4 +1,4 @@
-const { TextInputBuilder, ModalBuilder, ActionRowBuilder } = require("discord.js");
+const { TextInputBuilder, ModalBuilder, ActionRowBuilder, MessageFlags } = require("discord.js");
 
 const GlobalMemberAccessor = require(global.__basedir + "/database/accessors/GlobalMemberAccessor.js");
 const InsultAccessor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
@@ -30,7 +30,7 @@ async function execute(interaction) {
   } else {
     await interaction.reply({
       content: `You cannot submit another insult for another ${getRemainingTimeString(member.nextSubmitDate - now)}`,
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
   }
 }
@@ -41,7 +41,7 @@ async function handleModal(interaction) {
   if (!submission.includes("@user")) {
     await interaction.reply({
       content: "You must include `@user` at least once (or more!) in your submission, which is where DokiBot would notify someone.",
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
     return;
   }
@@ -56,7 +56,7 @@ async function handleModal(interaction) {
     console.log(err);
     await interaction.reply({
       content: "Couldn't send your submission to the DokiBot server. Is it down?",
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
     return;
   }

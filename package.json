@@ -1,33 +1,33 @@
 {
   "name": "dokibot",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A bot based on the game Doki Doki Literature Club.",
   "main": "index.js",
   "author": "Joshua Brucker",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/rest": "^0.3.0",
+    "@discordjs/rest": "^2.4.3",
     "@joshbrucker/discordjs-utils": "^0.3.1",
-    "bufferutil": "^4.0.5",
-    "discord-api-types": "^0.37.65",
-    "discord.js": "^14.14.1",
+    "bufferutil": "^4.0.9",
+    "discord-api-types": "^0.37.119",
+    "discord.js": "^14.18.0",
     "expand-contractions": "^1.0.1",
     "i": "^0.3.7",
     "is-url": "^1.2.4",
-    "mariadb": "^2.5.5",
+    "mariadb": "^3.4.0",
     "node-cache": "^5.1.2",
-    "node-fetch": "^2.6.6",
-    "node-vibrant": "^3.2.1-alpha.1",
-    "npm": "^10.2.4",
+    "node-fetch": "^3.3.2",
+    "node-vibrant": "^4.0.3",
+    "npm": "^10.9.2",
     "randomcolor": "^0.6.2",
     "top.gg": "^2.3.2",
-    "utf-8-validate": "^5.0.7",
-    "uuid": "^8.3.2",
+    "utf-8-validate": "^6.0.5",
+    "uuid": "^11.1.0",
     "valid-filename": "^4.0.0",
     "wordpos": "^2.1.0",
-    "zlib-sync": "^0.1.7"
+    "zlib-sync": "^0.1.9"
   },
   "devDependencies": {
-    "eslint": "^8.24.0"
+    "eslint": "^9.21.0"
   }
 }

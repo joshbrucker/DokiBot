@@ -53,7 +53,7 @@ module.exports = {
         new EmbedBuilder().setDescription("Select 3 tags to generate a poem!")
       ],
       components: [ ...actionRows ],
-      fetchReply: true
+      withResponse: true
     });
 
     const collector = reply.createMessageComponentCollector({
