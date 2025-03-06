@@ -1,5 +1,5 @@
-const Vibrant = require("node-vibrant");
-const { Headers } = require("node-fetch");
+const { Vibrant } = require("node-vibrant/node");
+const { default: nodeFetch, Headers } = require("node-fetch");
 
 const { emojiUtils } = require("@joshbrucker/discordjs-utils");
 const { submissionChannel } = require(global.__basedir + "/settings.json");
@@ -20,14 +20,14 @@ async function fetch(link, options) {
   let headers = new Headers({
     "User-Agent": "DokiBot/1.0"
   });
-  let res = await require("node-fetch")(link, { ...options, headers: headers });
+  let res = await nodeFetch(link, { ...options, headers: headers });
   return res;
 }
 
 async function generatePalette(src) {
   let res = await fetch(src);
-  let vibrant = new Vibrant(await res.buffer());
-  let palette = await vibrant.getPalette();
+  let buffer = Buffer.from(await res.arrayBuffer());
+  let palette = await Vibrant.from(buffer).getPalette();
 
   return palette;
 }

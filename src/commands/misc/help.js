@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, MessageFlags } = require("discord.js");
 
 const colors = require(global.__basedir + "/resources/colors.json");
 const helpData = require(global.__basedir + "/resources/help/help.json");
@@ -30,9 +30,15 @@ module.exports = {
           .catch(_ => {
             console.log("Unable to send DM! Do you have strict DM perms?");
           });
-      interaction.reply({ ephemeral: true, content: "Sent help info to your DMs!" });
+      interaction.reply({
+        content: "Sent help info to your DMs!",
+        flags: MessageFlags.Ephemeral
+      });
     } catch (error) {
-      interaction.reply({ ephemeral: true, content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ embed ]});
+      interaction.reply({
+        content: "I don't have permission to DM you :(. Here's a temporary command list just for you.", embeds: [ embed ],
+        flags: MessageFlags.Ephemeral
+      });
     }
   },
 };

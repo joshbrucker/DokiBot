@@ -29,7 +29,7 @@ async function sendInsult(client, message, insult) {
     components: [
       new ActionRowBuilder().addComponents([ upvote, downvote ])
     ],
-    fetchReply: true
+    withResponse: true
   }).catch(ignore(IGNORE_ERRORS.SEND));
 
   // Return if the reply errored out due to no permissions

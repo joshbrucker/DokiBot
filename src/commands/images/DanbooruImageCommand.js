@@ -128,7 +128,7 @@ async function generateMessagePayload(post) {
   if (post.file_ext === "png" || post.file_ext === "jpg" ||
       post.file_ext === "jpeg" || post.file_ext === "gif") {
 
-    let url = post.preview_file_url || post.large_file_url || post.file_url;
+    let url = post.preview_file_url || post.file_url || post.large_file_url;
     let palette;
     if (url) {
       palette = await generatePalette(url);

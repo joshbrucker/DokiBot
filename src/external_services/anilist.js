@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+const { default: fetch } = require("node-fetch");
 
 let query = async function(query, variables) {
   let url = "https://graphql.anilist.co";
