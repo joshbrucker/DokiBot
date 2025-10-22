@@ -7,7 +7,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^2.4.3",
-    "@joshbrucker/discordjs-utils": "^0.3.1",
+    "@joshbrucker/discordjs-utils": "^0.4.0",
     "bufferutil": "^4.0.9",
     "discord-api-types": "^0.37.119",
     "discord.js": "^14.18.0",

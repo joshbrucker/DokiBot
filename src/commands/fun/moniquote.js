@@ -44,6 +44,6 @@ module.exports = {
       descr = "";
     }
 
-    new PagedEmbed().send(interaction, pages, [ global.__basedir + "/resources/images/monika.png" ]);
+    new PagedEmbed().withWrapAround(true).send(interaction, pages, [ global.__basedir + "/resources/images/monika.png" ]);
   }
 };
