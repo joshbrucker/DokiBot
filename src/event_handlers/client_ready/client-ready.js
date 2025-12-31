@@ -3,7 +3,6 @@ const { REST } = require("@discordjs/rest");
 
 const auth = require(global.__basedir + "/auth.json");
 const settings = require(global.__basedir + "/settings.json");
-const setupDbl = require(global.__basedir + "/external_services/discord-bot-list.js");
 const { Commands } = require(global.__basedir + "/commands/Commands.js");
 
 async function onClientReady(client) {
@@ -23,10 +22,7 @@ async function onClientReady(client) {
     await channel.messages.fetch();
   }
 
-  // Set up Discord Bot List connection
-  setupDbl(client);
-
-  console.log("I am ready! Serving " + client.guilds.cache.size + " guilds.");
+  console.log(`I'm ready! Writing poetry with ${client.guilds.cache.size} guilds.`);
 }
 
 module.exports = onClientReady;
