@@ -6,7 +6,7 @@ const { AutoPoster } = require("topgg-autoposter");
 
 const auth = require("./auth.json");
 const settings = require("./settings.json");
-const startWebserver = require("./webserver.js");
+const { startTopggWebhook } = require("./webserver.js");
 
 const shardingManager = new ShardingManager("./bot.js", { token: auth.token });
 
@@ -18,8 +18,8 @@ if (settings.sendTopggMetrics) {
   });
 }
 
-// Start webserver for Top.gg webhook and Prometheus metrics
-startWebserver();
+// Start webserver for Top.gg webhook
+startTopggWebhook();
 
 shardingManager.on("shardCreate", shard => console.log(`Launched shard ${shard.id}`));
 shardingManager.spawn();

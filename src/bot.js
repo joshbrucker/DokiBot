@@ -6,6 +6,9 @@ const { IntentsBitField } = require("discord.js");
 
 const auth = require("./auth.json");
 const eventHandler = require("./event_handlers/event-handler.js");
+const { startPrometheusMetrics } = require("./webserver.js");
+
+startPrometheusMetrics();
 
 const client = new Discord.Client({ intents: [
   IntentsBitField.Flags.Guilds,
