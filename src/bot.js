@@ -8,8 +8,6 @@ const auth = require("./auth.json");
 const eventHandler = require("./event_handlers/event-handler.js");
 const { startPrometheusMetrics } = require("./webserver.js");
 
-startPrometheusMetrics();
-
 const client = new Discord.Client({ intents: [
   IntentsBitField.Flags.Guilds,
   IntentsBitField.Flags.GuildMessages,
@@ -17,6 +15,8 @@ const client = new Discord.Client({ intents: [
   IntentsBitField.Flags.GuildMessageReactions,
   IntentsBitField.Flags.MessageContent
 ]});
+
+startPrometheusMetrics(client);
 
 client.on("ready", () => eventHandler.onClientReady(client));
 
