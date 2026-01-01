@@ -32,7 +32,7 @@ function startPrometheusMetrics(client) {
   });
 
   // For sharding, we need to keep incrementing the port.
-  const port = settings.webserver.prometheusWebhookPort + client.shard.ids[0];
+  const port = settings.webserver.prometheusWebhookPort + (client.shard?.ids?.[0] ?? 0);
   prometheusMetricsApp.listen(port, () => {
     console.log(`Prometheus metrics running on port ${port}`);
   });

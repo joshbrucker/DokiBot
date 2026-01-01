@@ -7,7 +7,7 @@ async function interactionCreate(client, interaction) {
     const commandName = interaction.commandName;
     const command = Commands.get(commandName);
     if (command) {
-      commandsCounter.inc({ command: commandName, shard_id: interaction.guild.shardId });
+      commandsCounter.inc({ command: commandName, shard_id: interaction.guild.shardId ?? 0 });
       command.execute(interaction);
     }
   } else if (interaction.isModalSubmit()) {
