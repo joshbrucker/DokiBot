@@ -23,9 +23,7 @@ function startTopggWebhook() {
   });
 }
 
-let prometheusPort = settings.webserver.prometheusWebhookPort;
-
-function startPrometheusMetrics() {
+function startPrometheusMetrics(client) {
   const prometheusMetricsApp = express();
 
   prometheusMetricsApp.get('/metrics', async (req, res) => {
@@ -34,7 +32,7 @@ function startPrometheusMetrics() {
   });
 
   // For sharding, we need to keep incrementing the port.
-  const port = prometheusPort++;
+  const port = settings.webserver.prometheusWebhookPort + client.shard.ids[0];
   prometheusMetricsApp.listen(port, () => {
     console.log(`Prometheus metrics running on port ${port}`);
   });
