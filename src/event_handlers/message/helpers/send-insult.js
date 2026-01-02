@@ -6,6 +6,7 @@ const { ignore } = require("@joshbrucker/discordjs-utils");
 
 const emojiMap = require(global.__basedir + "/resources/emojiMap.json");
 const utils = require(global.__basedir + "/utils/utils.js");
+const { insultsSentCounter } = require(global.__basedir + '/utils/metrics.js');
 const { IGNORE_ERRORS } = require(global.__basedir + "/constants/constants.js");
 
 async function sendInsult(client, message, insult) {
@@ -34,6 +35,8 @@ async function sendInsult(client, message, insult) {
 
   // Return if the reply errored out due to no permissions
   if (!reply) return;
+
+  insultsSentCounter.inc({ trigger: 'auto' });
 
   const collector = reply.createMessageComponentCollector({
     time: 300000

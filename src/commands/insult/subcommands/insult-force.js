@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 
 const InsultAccesor = require(global.__basedir + "/database/accessors/InsultAccessor.js");
 const utils = require(global.__basedir + "/utils/utils.js");
+const { insultsSentCounter } = require(global.__basedir + '/utils/metrics.js');
 
 async function execute(interaction) {
   let requestedMembers = interaction.options.getString("members");
@@ -60,6 +61,8 @@ async function execute(interaction) {
   }
 
   interaction.reply(insultMessage);
+
+  insultsSentCounter.inc({ trigger: 'command' });
 }
 
 module.exports = { execute };
