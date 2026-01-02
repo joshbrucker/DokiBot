@@ -7,7 +7,7 @@ promClient.collectDefaultMetrics();
 const commandsCounter = new promClient.Counter({
   name: 'discord_commands_total',
   help: 'Total number of Discord commands used',
-  labelNames: ['command', 'shard_id'],
+  labelNames: ['command'],
 });
 
 module.exports = {
