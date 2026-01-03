@@ -7,7 +7,7 @@ async function interactionCreate(client, interaction) {
     const commandName = interaction.commandName;
     const command = Commands.get(commandName);
     if (command) {
-      commandsCounter.inc({ command: commandName, subcommand: interaction.options?.getSubcommand() ?? '' });
+      commandsCounter.inc({ command: commandName, subcommand: interaction.options?.getSubcommand(false) ?? '' });
       command.execute(interaction);
     }
   } else if (interaction.isModalSubmit()) {
