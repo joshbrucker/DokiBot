@@ -61,8 +61,6 @@ async function handleModal(interaction) {
     return;
   }
 
-  await cacheSubmissionChannel(interaction.client);
-
   const tomorrow = new Date();
   tomorrow.setDate(new Date().getDate() + 1);
 
@@ -94,16 +92,6 @@ async function sendInsultToSubmissionChannel(interaction, insult) {
       insult: insult,
     }
   });
-}
-
-async function cacheSubmissionChannel(client) {
-  async function cacheMessages(target, { submissionChannel }) {
-    let channel = await target.channels.resolve(submissionChannel);
-    if (channel) {
-      await channel.messages.fetch();
-    }
-  }
-  await client.shard.broadcastEval(cacheMessages, { context: { submissionChannel: submissionChannel }});
 }
 
 function getRemainingTimeString(time) {

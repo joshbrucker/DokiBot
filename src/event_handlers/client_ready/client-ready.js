@@ -22,6 +22,15 @@ async function onClientReady(client) {
     await channel.messages.fetch();
   }
 
+  // Initial cache of guild members for insult functionality
+  for (const guild of client.guilds.cache.values()) {
+    try {
+      await guild.members.fetch();
+    } catch (err) {
+      console.log(`Failed to fetch members for ${guild.name}`, err);
+    }
+  }
+
   console.log(`I'm ready! Writing poetry with ${client.guilds.cache.size} guilds.`);
 }
 

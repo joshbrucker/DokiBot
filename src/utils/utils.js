@@ -52,9 +52,7 @@ function getAvailableChannel(client, guild) {
 }
 
 async function getAllHumanMembers(guild) {
-  let members = await guild.members.fetch();
-  let humanMembers = members.filter(entry => !entry.user.bot);
-  return humanMembers;
+  return guild.members.cache.filter(entry => !entry.user.bot);
 }
 
 function generateNewTime(date) {
@@ -86,16 +84,6 @@ async function randomDokiEmoji(client) {
   return await emojiUtils.fetch(client, doki);
 }
 
-async function cacheSubmissionChannel(client) {
-  async function cacheMessages(target, { submissionChannel }) {
-    let channel = target.channels.resolve(submissionChannel);
-    if (channel) {
-      await channel.messages.fetch();
-    }
-  }
-  await client.shard.broadcastEval(cacheMessages, { context: { submissionChannel: submissionChannel }});
-}
-
 module.exports = {
   invalidArgsMsg,
   getAvailableChannel,
@@ -104,7 +92,6 @@ module.exports = {
   random,
   randomDokiEmoji,
   getPrefix,
-  cacheSubmissionChannel,
   fetch,
   generatePalette
 };
