@@ -21,7 +21,6 @@ let onMessageReactAdd = async function(client, reaction) {
   
       if (insult) {
         await insult.updateStatus(newStatus, insult.id);
-        await message.channel.messages.fetch();
         await message.delete();
       }
     }
