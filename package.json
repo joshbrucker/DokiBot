@@ -25,7 +25,7 @@
     "randomcolor": "^0.6.2",
     "topgg-autoposter": "^2.0.2",
     "utf-8-validate": "^6.0.5",
-    "uuid": "^11.1.0",
+    "uuid": "^14.0.0",
     "valid-filename": "^4.0.0",
     "wordpos": "^2.1.0",
     "zlib-sync": "^0.1.9"
